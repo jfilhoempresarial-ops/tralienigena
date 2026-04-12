@@ -8,131 +8,135 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0a120a; color: #d4e8c2; font-family: 'Barlow', sans-serif; min-height: 100vh; }
-    ::-webkit-scrollbar { width: 6px; background: #0d180d; }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    body { background: #f5f5f5; color: #1a1a1a; font-family: 'Barlow', sans-serif; min-height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; background: #eee; }
+    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
     input, textarea, select { font-family: 'Barlow', sans-serif; }
 
-    /* HEADER */
-    .header {
-      background: linear-gradient(135deg, #0f1f0f, #111);
-      border-bottom: 2px solid #6ab04c;
-      padding: 14px 20px;
-      position: sticky; top: 0; z-index: 100;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .header-title { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; line-height: 1.2; }
-    .header-title span { color: #6ab04c; }
-    .header-sub { color: #3a5a3a; font-size: 10px; letter-spacing: 1px; margin-top: 2px; }
-    .header-badge { background: #6ab04c22; border: 1px solid #6ab04c44; border-radius: 20px; padding: 4px 12px; color: #6ab04c; font-size: 12px; font-weight: 700; }
+    .header { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-bottom: 3px solid #3a8c2f; padding: 12px 16px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-family: 'Oswald', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: 1px; line-height: 1.2; color: #1a1a1a; }
+    .header-title span { color: #3a8c2f; }
+    .header-voz { color: #2d6e24; font-size: 13px; font-family: 'Oswald', sans-serif; font-weight: 700; letter-spacing: 1px; margin-top: 1px; }
+    .header-sub { color: #aaa; font-size: 10px; letter-spacing: 1px; }
+    .header-badge { background: #3a8c2f15; border: 1px solid #3a8c2f44; border-radius: 20px; padding: 4px 12px; color: #3a8c2f; font-size: 12px; font-weight: 700; white-space: nowrap; }
 
-    /* TABS */
-    .tabs { background: #0d180d; border-bottom: 1px solid #222; display: flex; padding: 0 20px; }
-    .tab-btn { background: transparent; border: none; border-bottom: 2px solid transparent; color: #3a5a3a; padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 700; font-family: 'Barlow', sans-serif; letter-spacing: 0.5px; transition: all 0.2s; }
-    .tab-btn.active { border-bottom-color: #6ab04c; color: #6ab04c; }
+    .tabs { background: #fff; border-bottom: 1px solid #e5e5e5; display: flex; overflow-x: auto; padding: 0 8px; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { background: transparent; border: none; border-bottom: 2px solid transparent; color: #aaa; padding: 11px 13px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Barlow', sans-serif; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn.active { border-bottom-color: #3a8c2f; color: #3a8c2f; }
 
-    /* CONTAINER */
-    .container { max-width: 700px; margin: 0 auto; padding: 20px 16px; }
+    .container { max-width: 700px; margin: 0 auto; padding: 16px; }
 
-    /* CARD */
-    .card { background: #0f1f0f; border: 1px solid #1e3a1e; border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .card-nome { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700; color: #d4e8c2; }
-    .card-local { color: #5a7a5a; font-size: 12px; margin-top: 2px; }
-    .card-rodovia { color: #6ab04c; font-weight: 700; }
-    .card-autor { color: #3a5a3a; font-size: 11px; margin-top: 4px; text-align: right; }
-    .card-desc { color: #8aaa80; font-size: 13px; line-height: 1.6; margin: 10px 0; }
-    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-    .card-data { color: #3a5a3a; font-size: 11px; }
-    .btn-util { background: transparent; border: 1px solid #1e3a1e; border-radius: 20px; color: #3a5a3a; padding: 4px 12px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Barlow', sans-serif; transition: all 0.2s; }
-    .btn-util:hover { border-color: #6ab04c; color: #6ab04c; }
-    .btn-util.curtido { background: #6ab04c22; border-color: #6ab04c; color: #6ab04c; cursor: default; }
+    .card { background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    .card-nome { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700; color: #1a1a1a; }
+    .card-tipo { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; margin-top: 3px; margin-bottom: 6px; }
+    .card-local { color: #888; font-size: 12px; }
+    .card-rodovia { color: #3a8c2f; font-weight: 700; }
+    .card-autor { color: #bbb; font-size: 11px; margin-top: 3px; text-align: right; }
+    .card-desc { color: #555; font-size: 13px; line-height: 1.6; margin: 8px 0; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 6px; }
+    .card-data { color: #bbb; font-size: 11px; }
+    .btn-util { background: transparent; border: 1px solid #ddd; border-radius: 20px; color: #aaa; padding: 4px 12px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Barlow', sans-serif; transition: all 0.2s; }
+    .btn-util:hover { border-color: #3a8c2f; color: #3a8c2f; }
+    .btn-util.curtido { background: #3a8c2f15; border-color: #3a8c2f; color: #3a8c2f; cursor: default; }
 
-    /* BADGES */
-    .badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
-    .badge { border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; font-family: monospace; }
-    .preco-tag { background: #6ab04c15; border: 1px solid #6ab04c33; border-radius: 6px; padding: 5px 10px; color: #6ab04c; font-weight: 700; font-size: 14px; display: inline-block; margin-bottom: 8px; }
+    .horario-tag { display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 3px 8px; font-size: 11px; color: #166534; font-weight: 700; margin-bottom: 8px; }
 
-    /* ESTRELAS */
+    .badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+    .badge { border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; font-family: monospace; }
+    .preco-tag { background: #3a8c2f12; border: 1px solid #3a8c2f33; border-radius: 6px; padding: 4px 10px; color: #3a8c2f; font-weight: 700; font-size: 13px; display: inline-block; margin-bottom: 8px; }
+
     .stars { display: flex; gap: 2px; }
-    .star { font-size: 18px; color: #2a4a2a; cursor: pointer; user-select: none; transition: color 0.15s; }
-    .star.on { color: #6ab04c; }
+    .star { font-size: 17px; color: #ddd; cursor: pointer; user-select: none; transition: color 0.15s; }
+    .star.on { color: #3a8c2f; }
     .star.readonly { cursor: default; }
 
-    /* FORM */
-    .form-group { margin-bottom: 16px; }
-    .form-label { color: #5a7a5a; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
-    .form-input { background: #0d180d; border: 1px solid #1e3a1e; border-radius: 6px; color: #d4e8c2; padding: 10px 12px; font-size: 14px; width: 100%; outline: none; transition: border-color 0.2s; }
-    .form-input:focus { border-color: #6ab04c55; }
-    .form-input::placeholder { color: #2a4a2a; }
-    textarea.form-input { min-height: 100px; resize: vertical; }
-    select.form-input option { background: #0f1f0f; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr 80px; gap: 10px; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { color: #666; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 5px; display: block; text-transform: uppercase; }
+    .form-input { background: #fff; border: 1px solid #ddd; border-radius: 6px; color: #1a1a1a; padding: 10px 12px; font-size: 14px; width: 100%; outline: none; transition: border-color 0.2s; }
+    .form-input:focus { border-color: #3a8c2f88; }
+    .form-input::placeholder { color: #bbb; }
+    textarea.form-input { min-height: 90px; resize: vertical; }
+    select.form-input option { background: #fff; color: #1a1a1a; }
+    .form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-row3 { display: grid; grid-template-columns: 1fr 1fr 80px; gap: 10px; }
 
-    /* CATEGORIAS BOTOES */
-    .cat-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-    .cat-btn { background: #0f1f0f; border: 1px solid #1e3a1e; border-radius: 6px; color: #3a5a3a; padding: 6px 12px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Barlow', sans-serif; transition: all 0.15s; }
+    .cat-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+    .cat-btn { background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; color: #888; padding: 6px 10px; cursor: pointer; font-size: 11px; font-weight: 700; font-family: 'Barlow', sans-serif; transition: all 0.15s; }
 
-    /* BOTAO SUBMIT */
-    .btn-submit { background: linear-gradient(135deg, #6ab04c, #4a7c3f); border: none; border-radius: 8px; color: #0a120a; padding: 14px; font-size: 15px; font-weight: 700; font-family: 'Barlow', sans-serif; cursor: pointer; width: 100%; letter-spacing: 0.5px; transition: opacity 0.2s; }
+    .dias-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .dia-btn { background: #f5f5f5; border: 1px solid #ddd; border-radius: 20px; color: #888; padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Barlow', sans-serif; transition: all 0.15s; min-width: 44px; text-align: center; }
+    .dia-btn.on { background: #3a8c2f15; border-color: #3a8c2f; color: #3a8c2f; }
+
+    .btn-submit { background: linear-gradient(135deg, #3a8c2f, #2d6e24); border: none; border-radius: 8px; color: #fff; padding: 14px; font-size: 15px; font-weight: 700; font-family: 'Barlow', sans-serif; cursor: pointer; width: 100%; letter-spacing: 0.5px; transition: opacity 0.2s; }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* FILTROS */
-    .filtros { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-    .filtros-row { display: flex; gap: 10px; }
+    .filtros { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .filtros-row { display: flex; gap: 8px; }
 
-    /* ALERTS */
-    .alert-info { background: #6ab04c11; border: 1px solid #6ab04c33; border-radius: 8px; padding: 12px 14px; color: #6ab04c; font-size: 13px; margin-bottom: 16px; }
-    .alert-success { background: #10b98122; border: 1px solid #10b98155; border-radius: 8px; padding: 12px 14px; color: #10b981; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 16px; }
-    .loading { text-align: center; color: #3a5a3a; padding: 40px; }
-
-    /* PAGE HIDDEN */
+    .alert-info { background: #3a8c2f10; border: 1px solid #3a8c2f33; border-radius: 8px; padding: 11px 13px; color: #2d6e24; font-size: 13px; margin-bottom: 14px; }
+    .alert-success { background: #f0fdf4; border: 1px solid #3a8c2f55; border-radius: 8px; padding: 12px; color: #166534; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 14px; }
+    .loading { text-align: center; color: #aaa; padding: 40px; }
     .page { display: none; }
     .page.active { display: block; }
-
-    .resultado-count { color: #3a5a3a; font-size: 12px; margin-bottom: 12px; }
+    .resultado-count { color: #aaa; font-size: 12px; margin-bottom: 10px; }
+    .section-title { font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .section-sub { color: #888; font-size: 12px; margin-bottom: 14px; }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div>
     <div class="header-title">👽 <span>Tr.Alienigena</span></div>
-    <div style="color:#d4e8c2; font-size:12px; font-family:'Barlow',sans-serif;">A Voz do Motorista</div>
-    <div class="header-sub">DICAS DOS CAMINHONEIROS • COLABORATIVO</div>
+    <div class="header-voz">A VOZ DO MOTORISTA</div>
+    <div class="header-sub">PONTOS DE PARADA • SERVIÇOS • VAGAS</div>
   </div>
-  <div class="header-badge" id="totalBadge">0 dicas</div>
+  <div class="header-badge" id="totalBadge">0 pontos</div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('feed')">📋 Feed</button>
   <button class="tab-btn" onclick="showTab('busca')">🔍 Buscar</button>
+  <button class="tab-btn" onclick="showTab('vagas')">💼 Vagas</button>
   <button class="tab-btn" onclick="showTab('nova')">➕ Adicionar</button>
+  <button class="tab-btn" onclick="showTab('admin')">🔐 Admin</button>
 </div>
 
-<!-- FEED -->
 <div class="container">
+
   <div id="page-feed" class="page active">
-    <div id="feedList"><div class="loading">Carregando dicas...</div></div>
+    <div id="feedList"><div class="loading">Carregando...</div></div>
   </div>
 
-  <!-- BUSCA -->
   <div id="page-busca" class="page">
     <div class="filtros">
       <input class="form-input" id="filtroBusca" placeholder="🔍 Nome, cidade ou rodovia..." oninput="filtrar()" />
       <div class="filtros-row">
         <select class="form-input" id="filtroCat" onchange="filtrar()">
-          <option value="">Todas as categorias</option>
-          <option value="diesel">⛽ Diesel Barato</option>
-          <option value="dormida">🛏️ Dormida</option>
+          <option value="">Todos os serviços</option>
+          <option value="diesel">⛽ Combustível/Diesel</option>
+          <option value="arla">🧴 ARLA 32</option>
+          <option value="dormida">🛏️ Dormida/Pousada</option>
           <option value="banheiro">🚿 Banheiro/Chuveiro</option>
+          <option value="restaurante">🍽️ Alimentação</option>
           <option value="borracharia">🔧 Borracharia</option>
-          <option value="restaurante">🍽️ Restaurante</option>
-          <option value="estacionamento">🅿️ Estacionamento Seguro</option>
-          <option value="wifi">📶 Wi-Fi</option>
           <option value="mecanico">🔩 Mecânico</option>
+          <option value="eletricista">⚡ Eletricista Veicular</option>
+          <option value="pecas">🏪 Loja de Peças</option>
+          <option value="funilaria">🚗 Funilaria/Pintura</option>
+          <option value="guindaste">🏗️ Guincho/Guindaste</option>
+          <option value="estacionamento">🅿️ Estacionamento Seguro</option>
+          <option value="wifi">📶 Wi-Fi Grátis</option>
+          <option value="impressao">🖨️ Impressão/Xerox</option>
+          <option value="farmacia">💊 Farmácia</option>
+          <option value="banco">🏦 Banco/Caixa 24h</option>
+          <option value="prf">🚔 Posto PRF</option>
+          <option value="pedagio">💰 Pedágio</option>
+          <option value="balanca">⚖️ Balança/Fiscalização</option>
+          <option value="perigo">⚠️ Trecho Perigoso</option>
+          <option value="obras">🚧 Obras na Pista</option>
+          <option value="caminhao_pesado">🚛 Libera Caminhão Pesado</option>
         </select>
         <select class="form-input" id="filtroEstado" onchange="filtrar()">
           <option value="">Todos os estados</option>
@@ -150,17 +154,47 @@
     <div id="buscaList"></div>
   </div>
 
-  <!-- NOVA DICA -->
+  <div id="page-vagas" class="page">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div>
+        <div class="section-title">💼 Vagas de Emprego</div>
+        <div class="section-sub">Transporte e logística • Ceará e região</div>
+      </div>
+      <div id="vagasBadge" class="header-badge">0 vagas</div>
+    </div>
+    <input class="form-input" id="filtroVagas" placeholder="🔍 Buscar por cidade ou cargo..." oninput="filtrarVagas()" style="margin-bottom:12px" />
+    <div id="vagasList"><div class="loading">Carregando vagas...</div></div>
+  </div>
+
   <div id="page-nova" class="page">
-    <div class="alert-info">💡 Compartilha o que você sabe pra ajudar os brothers na estrada!</div>
-    <div id="alertSucesso" style="display:none" class="alert-success">✅ Dica enviada! Valeu, brother!</div>
+    <div class="alert-info">📍 Cadastre um ponto de parada, serviço ou informação útil pra estrada!</div>
+    <div id="alertSucesso" style="display:none" class="alert-success">✅ Cadastrado! Valeu, brother!</div>
 
     <div class="form-group">
-      <label class="form-label">NOME DO POSTO / LOCAL *</label>
-      <input class="form-input" id="fNome" placeholder="Ex: Posto Rodoviário Irmãos Silva" />
+      <label class="form-label">TIPO DE LOCAL *</label>
+      <select class="form-input" id="fTipo">
+        <option value="">Selecione o tipo...</option>
+        <option value="posto">⛽ Posto de Combustível</option>
+        <option value="pousada">🏠 Pousada / Apoio ao Motorista</option>
+        <option value="parada">🅿️ Ponto de Parada</option>
+        <option value="restaurante">🍽️ Restaurante Rodoviário</option>
+        <option value="oficina">🔧 Oficina / Borracharia</option>
+        <option value="pecas">🏪 Loja de Peças</option>
+        <option value="eletricista">⚡ Eletricista Veicular</option>
+        <option value="funilaria">🚗 Funilaria / Pintura</option>
+        <option value="guindaste">🏗️ Guincho / Guindaste</option>
+        <option value="complexo">🏢 Complexo Rodoviário</option>
+        <option value="perigo">⚠️ Alerta de Trecho</option>
+      </select>
     </div>
+
     <div class="form-group">
-      <div class="form-row">
+      <label class="form-label">NOME DO LOCAL *</label>
+      <input class="form-input" id="fNome" placeholder="Ex: Pousada do Zé, Oficina do Marquinhos..." />
+    </div>
+
+    <div class="form-group">
+      <div class="form-row3">
         <div>
           <label class="form-label">RODOVIA</label>
           <input class="form-input" id="fRodovia" placeholder="BR-116" />
@@ -184,34 +218,117 @@
         </div>
       </div>
     </div>
+
     <div class="form-group">
-      <label class="form-label">SEU APELIDO NA ESTRADA *</label>
-      <input class="form-input" id="fAutor" placeholder="Ex: Tucano_RJ" />
+      <label class="form-label">ENDEREÇO / LOCALIZAÇÃO</label>
+      <input class="form-input" id="fEndereco" placeholder="Ex: Km 342 da BR-116 ou cole o link do Google Maps" />
+      <div style="font-size:11px;color:#aaa;margin-top:4px">📍 Pode colar o link do Google Maps</div>
     </div>
+
     <div class="form-group">
-      <label class="form-label">O QUE TEM LÁ? * (selecione todos)</label>
+      <div class="form-row2">
+        <div>
+          <label class="form-label">SEU NOME *</label>
+          <input class="form-input" id="fAutor" placeholder="Ex: João Silva" />
+        </div>
+        <div>
+          <label class="form-label">SEU WHATSAPP</label>
+          <input class="form-input" id="fTelefone" placeholder="(85) 99999-9999" type="tel" />
+        </div>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-top:4px">🔒 WhatsApp privado — só o administrador vê</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">SERVIÇOS DISPONÍVEIS * (selecione todos)</label>
       <div class="cat-grid" id="catGrid"></div>
     </div>
+
+    <div class="form-group">
+      <label class="form-label">DIAS DE FUNCIONAMENTO</label>
+      <div class="dias-grid" id="diasGrid"></div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row2">
+        <div>
+          <label class="form-label">ABRE ÀS</label>
+          <input class="form-input" id="fAbre" type="time" />
+        </div>
+        <div>
+          <label class="form-label">FECHA ÀS</label>
+          <input class="form-input" id="fFecha" type="time" />
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#555">
+          <input type="checkbox" id="fAberto24h" onchange="toggle24h(this)" style="width:16px;height:16px;accent-color:#3a8c2f"> Funciona 24 horas
+        </label>
+      </div>
+    </div>
+
     <div class="form-group" id="grupoDiesel" style="display:none">
       <label class="form-label">PREÇO DO DIESEL (R$/L)</label>
       <input class="form-input" id="fDiesel" placeholder="5,89" style="max-width:160px" />
     </div>
+
     <div class="form-group">
       <label class="form-label">SUA NOTA</label>
       <div class="stars" id="formStars"></div>
     </div>
+
     <div class="form-group">
-      <label class="form-label">DESCRIÇÃO *</label>
-      <textarea class="form-input" id="fDesc" placeholder="Conta tudo que você sabe: preços, qualidade, segurança, o que tem, o que falta..."></textarea>
+      <label class="form-label">DESCRIÇÃO / OBSERVAÇÕES *</label>
+      <textarea class="form-input" id="fDesc" placeholder="Conta tudo: qualidade, segurança, preços, diferenciais, o que tem, o que falta..."></textarea>
     </div>
-    <button class="btn-submit" id="btnEnviar" onclick="enviarDica()">🚛 ENVIAR DICA</button>
+
+    <button class="btn-submit" id="btnEnviar" onclick="enviarDica()">🚛 CADASTRAR PONTO</button>
   </div>
+
+  <div id="page-admin" class="page">
+    <div id="adminLogin">
+      <div class="section-title" style="margin-bottom:16px">🔐 Área do Administrador</div>
+      <div class="form-group">
+        <label class="form-label">SENHA DE ACESSO</label>
+        <input class="form-input" id="adminSenha" type="password" placeholder="Digite a senha" />
+      </div>
+      <button class="btn-submit" onclick="entrarAdmin()">ENTRAR</button>
+      <div id="erroSenha" style="display:none;color:#dc2626;font-size:13px;margin-top:10px;text-align:center">❌ Senha incorreta</div>
+    </div>
+    <div id="adminPanel" style="display:none">
+      <div class="section-title" style="margin-bottom:14px">📊 Painel Admin</div>
+      <div class="card" style="margin-bottom:14px">
+        <div style="font-weight:700;color:#2d6e24;margin-bottom:8px;font-size:15px">📁 Importar Vagas (CSV)</div>
+        <div style="font-size:12px;color:#888;margin-bottom:10px">Colunas: <strong>cidade, cargo, descricao, quantidade</strong><br>Salve o Excel como CSV antes de importar.</div>
+        <input type="file" id="fileVagas" accept=".csv" style="margin-bottom:10px;font-size:13px;color:#555" onchange="previewPlanilha()" />
+        <div id="previewVagas" style="display:none">
+          <div style="font-size:12px;color:#3a8c2f;margin-bottom:8px" id="previewInfo"></div>
+          <button class="btn-submit" onclick="importarVagas()" id="btnImportar">🚀 PUBLICAR VAGAS</button>
+        </div>
+        <div id="importStatus" style="display:none;margin-top:10px;font-size:13px;font-weight:700;text-align:center"></div>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="font-weight:700;color:#1a1a1a;font-size:15px">💼 Vagas Publicadas</div>
+          <button onclick="limparTodasVagas()" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Barlow',sans-serif">🗑️ Limpar Todas</button>
+        </div>
+        <div id="adminVagasList"><div class="loading">Carregando...</div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="font-weight:700;color:#1a1a1a;font-size:15px">📋 Pontos Cadastrados</div>
+          <div id="adminTotalPontos" style="font-size:12px;color:#888"></div>
+        </div>
+        <div id="adminPontosList"><div class="loading">Carregando...</div></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- FIREBASE SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4-eS5dLimqSewLPwwA_IT2haMV3kLD9s",
@@ -226,195 +343,371 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  const TIPOS = {
+    posto:      { label: "⛽ Posto de Combustível",    color: "#16a34a" },
+    pousada:    { label: "🏠 Pousada / Apoio",          color: "#7c3aed" },
+    parada:     { label: "🅿️ Ponto de Parada",          color: "#0284c7" },
+    restaurante:{ label: "🍽️ Restaurante Rodoviário",   color: "#d97706" },
+    oficina:    { label: "🔧 Oficina / Borracharia",    color: "#dc2626" },
+    pecas:      { label: "🏪 Loja de Peças",             color: "#0891b2" },
+    eletricista:{ label: "⚡ Eletricista Veicular",      color: "#ca8a04" },
+    funilaria:  { label: "🚗 Funilaria / Pintura",      color: "#9333ea" },
+    guindaste:  { label: "🏗️ Guincho / Guindaste",      color: "#c2410c" },
+    complexo:   { label: "🏢 Complexo Rodoviário",      color: "#0f766e" },
+    perigo:     { label: "⚠️ Alerta de Trecho",          color: "#be123c" },
+  };
+
   const CATEGORIAS = [
-    { id: "diesel", label: "⛽ Diesel Barato", color: "#6ab04c" },
-    { id: "dormida", label: "🛏️ Dormida", color: "#3b82f6" },
-    { id: "banheiro", label: "🚿 Banheiro/Chuveiro", color: "#10b981" },
-    { id: "borracharia", label: "🔧 Borracharia", color: "#ef4444" },
-    { id: "restaurante", label: "🍽️ Restaurante", color: "#8b5cf6" },
-    { id: "estacionamento", label: "🅿️ Estacionamento Seguro", color: "#06b6d4" },
-    { id: "wifi", label: "📶 Wi-Fi", color: "#ec4899" },
-    { id: "mecanico", label: "🔩 Mecânico", color: "#f97316" },
+    { id: "diesel",         label: "⛽ Combustível/Diesel",     color: "#16a34a" },
+    { id: "arla",           label: "🧴 ARLA 32",                color: "#0ea5e9" },
+    { id: "dormida",        label: "🛏️ Dormida/Pousada",        color: "#7c3aed" },
+    { id: "banheiro",       label: "🚿 Banheiro/Chuveiro",      color: "#0891b2" },
+    { id: "restaurante",    label: "🍽️ Alimentação",            color: "#d97706" },
+    { id: "borracharia",    label: "🔧 Borracharia",            color: "#dc2626" },
+    { id: "mecanico",       label: "🔩 Mecânico",               color: "#ea580c" },
+    { id: "eletricista",    label: "⚡ Eletricista Veicular",   color: "#ca8a04" },
+    { id: "pecas",          label: "🏪 Loja de Peças",          color: "#0891b2" },
+    { id: "funilaria",      label: "🚗 Funilaria/Pintura",      color: "#9333ea" },
+    { id: "guindaste",      label: "🏗️ Guincho/Guindaste",      color: "#c2410c" },
+    { id: "estacionamento", label: "🅿️ Estacionamento Seguro",  color: "#0284c7" },
+    { id: "wifi",           label: "📶 Wi-Fi Grátis",           color: "#db2777" },
+    { id: "impressao",      label: "🖨️ Impressão/Xerox",        color: "#4f46e5" },
+    { id: "farmacia",       label: "💊 Farmácia",               color: "#059669" },
+    { id: "banco",          label: "🏦 Banco/Caixa 24h",        color: "#1e40af" },
+    { id: "prf",            label: "🚔 Posto PRF",              color: "#1d4ed8" },
+    { id: "pedagio",        label: "💰 Pedágio",                color: "#b45309" },
+    { id: "balanca",        label: "⚖️ Balança/Fiscalização",   color: "#9333ea" },
+    { id: "perigo",         label: "⚠️ Trecho Perigoso",        color: "#be123c" },
+    { id: "obras",          label: "🚧 Obras na Pista",         color: "#c2410c" },
+    { id: "caminhao_pesado",label: "🚛 Libera Caminhão Pesado", color: "#15803d" },
   ];
 
-  let todasDicas = [];
-  let catsSelecionadas = [];
-  let notaForm = 5;
-  let curtidos = new Set();
+  const DIAS = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+  let todasDicas = [], catsSelecionadas = [], diasSelecionados = [];
+  let notaForm = 5, curtidos = new Set();
+  let todasVagas = [], adminLogado = false, vagasImportadas = [];
+  const ADMIN_SENHA = 'tralienigena2024';
 
-  // ---- INIT ----
   window.addEventListener('DOMContentLoaded', () => {
-    buildCatGrid();
-    buildFormStars();
-    carregarDicas();
+    buildCatGrid(); buildDiasGrid(); buildFormStars(); carregarDicas();
   });
 
   async function carregarDicas() {
     try {
-      const q = query(collection(db, "dicas"), orderBy("data", "desc"));
-      const snap = await getDocs(q);
+      const snap = await getDocs(query(collection(db,"dicas"), orderBy("data","desc")));
       todasDicas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderFeed(todasDicas);
-      document.getElementById('totalBadge').textContent = todasDicas.length + ' dicas';
-    } catch (e) {
+      document.getElementById('totalBadge').textContent = todasDicas.length + ' pontos';
+    } catch(e) {
       document.getElementById('feedList').innerHTML = '<div class="loading">Erro ao carregar. Verifique a conexão.</div>';
     }
   }
 
   function renderFeed(dicas) {
     const el = document.getElementById('feedList');
-    if (dicas.length === 0) { el.innerHTML = '<div class="loading">Nenhuma dica ainda. Seja o primeiro!</div>'; return; }
+    if (!dicas.length) { el.innerHTML = '<div class="loading">Nenhum ponto cadastrado ainda. Seja o primeiro!</div>'; return; }
     el.innerHTML = dicas.map(d => cardHTML(d)).join('');
   }
 
   function cardHTML(d) {
-    const badges = (d.categorias || []).map(c => {
+    const tipo = TIPOS[d.tipo] || { label: '📍 Ponto de Parada', color: '#3a8c2f' };
+    const badges = (d.categorias||[]).map(c => {
       const cat = CATEGORIAS.find(x => x.id === c);
-      if (!cat) return '';
-      return `<span class="badge" style="background:${cat.color}22;color:${cat.color};border:1px solid ${cat.color}55">${cat.label}</span>`;
+      return cat ? `<span class="badge" style="background:${cat.color}20;color:${cat.color};border:1px solid ${cat.color}44">${cat.label}</span>` : '';
     }).join('');
-    const stars = [1,2,3,4,5].map(s => `<span class="star readonly ${s <= d.nota ? 'on' : ''}">★</span>`).join('');
+    const stars = [1,2,3,4,5].map(s => `<span class="star readonly ${s<=(d.nota||0)?'on':''}">★</span>`).join('');
     const preco = d.preco_diesel ? `<div class="preco-tag">⛽ R$ ${d.preco_diesel}/L</div>` : '';
     const data = d.data ? new Date(d.data).toLocaleDateString('pt-BR') : '';
     const jaUtil = curtidos.has(d.id);
+    const enderecoHTML = d.endereco ? (() => {
+      const url = d.endereco.startsWith('http') ? d.endereco : `https://www.google.com/maps/search/${encodeURIComponent(d.endereco)}`;
+      return `<a href="${url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;color:#2d6e24;font-size:12px;text-decoration:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;margin-bottom:8px">📍 ${d.endereco.startsWith('http')?'Ver no Google Maps':d.endereco}</a>`;
+    })() : '';
+    let horarioHTML = '';
+    if (d.aberto24h) {
+      horarioHTML = `<div class="horario-tag">🕐 Aberto 24 horas</div>`;
+    } else if (d.abre || d.fecha) {
+      const diasStr = d.dias && d.dias.length ? d.dias.join(', ')+' • ' : '';
+      horarioHTML = `<div class="horario-tag">🕐 ${diasStr}${d.abre||'?'}h às ${d.fecha||'?'}h</div>`;
+    }
     return `
       <div class="card">
-        <div class="card-top">
-          <div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1;min-width:0">
             <div class="card-nome">${d.nome}</div>
-            <div class="card-local">${d.rodovia ? `<span class="card-rodovia">${d.rodovia} • </span>` : ''}${d.cidade}, ${d.estado}</div>
+            <span class="card-tipo" style="background:${tipo.color}18;color:${tipo.color};border:1px solid ${tipo.color}44">${tipo.label}</span>
+            <div class="card-local">${d.rodovia?`<span class="card-rodovia">${d.rodovia} • </span>`:''}${d.cidade}, ${d.estado}</div>
           </div>
-          <div>
+          <div style="text-align:right;flex-shrink:0;margin-left:8px">
             <div class="stars">${stars}</div>
             <div class="card-autor">por ${d.autor}</div>
           </div>
         </div>
+        ${horarioHTML}
         <div class="badges">${badges}</div>
-        ${preco}
+        ${enderecoHTML}${preco}
         <p class="card-desc">${d.descricao}</p>
         <div class="card-footer">
           <span class="card-data">${data}</span>
-          <button class="btn-util ${jaUtil ? 'curtido' : ''}" onclick="curtir('${d.id}', this)">👍 ${d.curtidas || 0} útil</button>
+          <button class="btn-util ${jaUtil?'curtido':''}" onclick="curtir('${d.id}',this)">👍 ${d.curtidas||0} útil</button>
         </div>
       </div>`;
   }
 
   window.curtir = async function(id, btn) {
     if (curtidos.has(id)) return;
-    curtidos.add(id);
-    btn.classList.add('curtido');
-    const dica = todasDicas.find(d => d.id === id);
+    curtidos.add(id); btn.classList.add('curtido');
+    const dica = todasDicas.find(d => d.id===id);
     if (!dica) return;
-    const novoVal = (dica.curtidas || 0) + 1;
-    dica.curtidas = novoVal;
-    btn.textContent = `👍 ${novoVal} útil`;
-    try { await updateDoc(doc(db, "dicas", id), { curtidas: novoVal }); } catch {}
+    dica.curtidas = (dica.curtidas||0)+1;
+    btn.textContent = `👍 ${dica.curtidas} útil`;
+    try { await updateDoc(doc(db,"dicas",id), { curtidas: dica.curtidas }); } catch{}
   }
 
-  // ---- BUSCA ----
   window.filtrar = function() {
     const q = document.getElementById('filtroBusca').value.toLowerCase();
     const cat = document.getElementById('filtroCat').value;
     const estado = document.getElementById('filtroEstado').value;
     const res = todasDicas.filter(d => {
       const txt = !q || d.nome.toLowerCase().includes(q) || d.cidade.toLowerCase().includes(q) || (d.rodovia||'').toLowerCase().includes(q);
-      const c = !cat || (d.categorias||[]).includes(cat);
-      const e = !estado || d.estado === estado;
-      return txt && c && e;
+      return txt && (!cat||(d.categorias||[]).includes(cat)) && (!estado||d.estado===estado);
     });
     document.getElementById('resultadoCount').textContent = res.length + ' resultado(s)';
     document.getElementById('buscaList').innerHTML = res.map(d => cardHTML(d)).join('');
   }
 
-  // ---- FORM ----
   function buildCatGrid() {
-    const grid = document.getElementById('catGrid');
-    grid.innerHTML = CATEGORIAS.map(c => `
-      <button class="cat-btn" id="cat-${c.id}" onclick="toggleCat('${c.id}','${c.color}')">${c.label}</button>
-    `).join('');
+    document.getElementById('catGrid').innerHTML = CATEGORIAS.map(c =>
+      `<button class="cat-btn" id="cat-${c.id}" onclick="toggleCat('${c.id}','${c.color}')">${c.label}</button>`
+    ).join('');
+  }
+
+  function buildDiasGrid() {
+    document.getElementById('diasGrid').innerHTML = DIAS.map((d,i) =>
+      `<button class="dia-btn" id="dia-${i}" onclick="toggleDia(${i},'${d}')">${d}</button>`
+    ).join('');
   }
 
   window.toggleCat = function(id, color) {
-    const btn = document.getElementById('cat-' + id);
+    const btn = document.getElementById('cat-'+id);
     if (catsSelecionadas.includes(id)) {
-      catsSelecionadas = catsSelecionadas.filter(c => c !== id);
-      btn.style.background = '#0f1f0f';
-      btn.style.borderColor = '#333';
-      btn.style.color = '#666';
+      catsSelecionadas = catsSelecionadas.filter(c=>c!==id);
+      btn.style.cssText = 'background:#f5f5f5;border-color:#ddd;color:#888';
     } else {
       catsSelecionadas.push(id);
-      btn.style.background = color + '22';
-      btn.style.borderColor = color;
-      btn.style.color = color;
+      btn.style.cssText = `background:${color}20;border-color:${color};color:${color}`;
     }
-    document.getElementById('grupoDiesel').style.display = catsSelecionadas.includes('diesel') ? 'block' : 'none';
+    document.getElementById('grupoDiesel').style.display = catsSelecionadas.includes('diesel')?'block':'none';
+  }
+
+  window.toggleDia = function(idx, nome) {
+    const btn = document.getElementById('dia-'+idx);
+    if (diasSelecionados.includes(nome)) {
+      diasSelecionados = diasSelecionados.filter(d=>d!==nome); btn.classList.remove('on');
+    } else {
+      diasSelecionados.push(nome); btn.classList.add('on');
+    }
+  }
+
+  window.toggle24h = function(cb) {
+    document.getElementById('fAbre').disabled = cb.checked;
+    document.getElementById('fFecha').disabled = cb.checked;
+    if (cb.checked) { document.getElementById('fAbre').value=''; document.getElementById('fFecha').value=''; }
   }
 
   function buildFormStars() {
-    const el = document.getElementById('formStars');
-    el.innerHTML = [1,2,3,4,5].map(s =>
+    document.getElementById('formStars').innerHTML = [1,2,3,4,5].map(s =>
       `<span class="star on" id="fstar-${s}" onclick="setNota(${s})">★</span>`
     ).join('');
   }
 
   window.setNota = function(n) {
-    notaForm = n;
-    for (let i = 1; i <= 5; i++) {
-      document.getElementById('fstar-' + i).classList.toggle('on', i <= n);
-    }
+    notaForm=n;
+    for(let i=1;i<=5;i++) document.getElementById('fstar-'+i).classList.toggle('on',i<=n);
   }
 
   window.enviarDica = async function() {
-    const nome = document.getElementById('fNome').value.trim();
-    const cidade = document.getElementById('fCidade').value.trim();
-    const estado = document.getElementById('fEstado').value;
-    const autor = document.getElementById('fAutor').value.trim();
-    const desc = document.getElementById('fDesc').value.trim();
-    if (!nome || !cidade || !estado || !autor || !desc || catsSelecionadas.length === 0) {
-      alert('Preencha: nome do posto, cidade, estado, apelido, pelo menos uma categoria e a descrição.');
-      return;
+    const nome=document.getElementById('fNome').value.trim();
+    const cidade=document.getElementById('fCidade').value.trim();
+    const estado=document.getElementById('fEstado').value;
+    const autor=document.getElementById('fAutor').value.trim();
+    const desc=document.getElementById('fDesc').value.trim();
+    const tipo=document.getElementById('fTipo').value;
+    if (!nome||!cidade||!estado||!autor||!desc||!tipo||catsSelecionadas.length===0) {
+      alert('Preencha: tipo, nome, cidade, estado, seu nome, serviços e descrição.'); return;
     }
-    const btn = document.getElementById('btnEnviar');
-    btn.disabled = true; btn.textContent = 'Salvando...';
-    const nova = {
-      nome, cidade, estado, autor,
-      rodovia: document.getElementById('fRodovia').value.trim(),
-      preco_diesel: document.getElementById('fDiesel').value.trim(),
-      descricao: desc,
-      categorias: [...catsSelecionadas],
-      nota: notaForm,
-      curtidas: 0,
-      data: new Date().toISOString(),
-    };
+    const btn=document.getElementById('btnEnviar');
+    btn.disabled=true; btn.textContent='Salvando...';
     try {
-      await addDoc(collection(db, "dicas"), nova);
-      document.getElementById('alertSucesso').style.display = 'block';
-      document.getElementById('fNome').value = '';
-      document.getElementById('fCidade').value = '';
-      document.getElementById('fEstado').value = '';
-      document.getElementById('fAutor').value = '';
-      document.getElementById('fRodovia').value = '';
-      document.getElementById('fDiesel').value = '';
-      document.getElementById('fDesc').value = '';
-      catsSelecionadas = [];
-      buildCatGrid();
-      notaForm = 5; buildFormStars();
-      await carregarDicas();
-      setTimeout(() => { document.getElementById('alertSucesso').style.display = 'none'; showTab('feed'); }, 2000);
-    } catch(e) {
-      alert('Erro ao salvar. Tente novamente.');
-    }
-    btn.disabled = false; btn.textContent = '🚛 ENVIAR DICA';
+      await addDoc(collection(db,"dicas"), {
+        nome, cidade, estado, autor, tipo,
+        telefone_privado: document.getElementById('fTelefone').value.trim(),
+        rodovia: document.getElementById('fRodovia').value.trim(),
+        endereco: document.getElementById('fEndereco').value.trim(),
+        preco_diesel: document.getElementById('fDiesel').value.trim(),
+        descricao: desc,
+        categorias: [...catsSelecionadas],
+        dias: [...diasSelecionados],
+        abre: document.getElementById('fAbre').value,
+        fecha: document.getElementById('fFecha').value,
+        aberto24h: document.getElementById('fAberto24h').checked,
+        nota: notaForm, curtidas: 0,
+        data: new Date().toISOString(),
+      });
+      document.getElementById('alertSucesso').style.display='block';
+      ['fNome','fCidade','fAutor','fTelefone','fRodovia','fEndereco','fDiesel','fDesc'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('fEstado').value=''; document.getElementById('fTipo').value='';
+      document.getElementById('fAbre').value=''; document.getElementById('fFecha').value='';
+      document.getElementById('fAberto24h').checked=false;
+      catsSelecionadas=[]; buildCatGrid(); diasSelecionados=[]; buildDiasGrid();
+      notaForm=5; buildFormStars(); await carregarDicas();
+      setTimeout(()=>{ document.getElementById('alertSucesso').style.display='none'; showTab('feed'); },2000);
+    } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
+    btn.disabled=false; btn.textContent='🚛 CADASTRAR PONTO';
   }
 
-  // ---- TABS ----
+  async function carregarVagas() {
+    try {
+      const snap = await getDocs(query(collection(db,"vagas"),orderBy("data","desc")));
+      todasVagas = snap.docs.map(d=>({id:d.id,...d.data()}));
+      renderVagas(todasVagas);
+      document.getElementById('vagasBadge').textContent = todasVagas.length+' vagas';
+    } catch(e) { document.getElementById('vagasList').innerHTML='<div class="loading">Erro ao carregar.</div>'; }
+  }
+
+  function renderVagas(vagas) {
+    const el=document.getElementById('vagasList');
+    if (!vagas.length) { el.innerHTML='<div class="loading">Nenhuma vaga disponível no momento.</div>'; return; }
+    el.innerHTML=vagas.map(v=>`
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div>
+            <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a">${v.cargo}</div>
+            <div style="color:#3a8c2f;font-size:12px;font-weight:700;margin-top:2px">📍 ${v.cidade} — CE</div>
+          </div>
+          <div style="background:#3a8c2f;color:#fff;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0">${v.quantidade} vaga${v.quantidade>1?'s':''}</div>
+        </div>
+        ${v.descricao?`<p style="color:#555;font-size:13px;line-height:1.6;margin-top:10px">${v.descricao}</p>`:''}
+        <div style="color:#bbb;font-size:11px;margin-top:8px">${v.data?new Date(v.data).toLocaleDateString('pt-BR'):''}</div>
+      </div>`).join('');
+  }
+
+  window.filtrarVagas = function() {
+    const q=document.getElementById('filtroVagas').value.toLowerCase();
+    renderVagas(todasVagas.filter(v=>!q||v.cidade.toLowerCase().includes(q)||v.cargo.toLowerCase().includes(q)||(v.descricao||'').toLowerCase().includes(q)));
+  }
+
+  function verificarAdminLogado() {
+    if (adminLogado) {
+      document.getElementById('adminLogin').style.display='none';
+      document.getElementById('adminPanel').style.display='block';
+      carregarVagasAdmin(); carregarPontosAdmin();
+    }
+  }
+
+  window.entrarAdmin = function() {
+    if (document.getElementById('adminSenha').value===ADMIN_SENHA) {
+      adminLogado=true;
+      document.getElementById('adminLogin').style.display='none';
+      document.getElementById('adminPanel').style.display='block';
+      document.getElementById('erroSenha').style.display='none';
+      carregarVagasAdmin(); carregarPontosAdmin();
+    } else { document.getElementById('erroSenha').style.display='block'; }
+  }
+
+  window.previewPlanilha = async function() {
+    const file=document.getElementById('fileVagas').files[0];
+    if (!file) return;
+    const text=await file.text();
+    const lines=text.split('\n').filter(l=>l.trim());
+    const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/['"]/g,''));
+    vagasImportadas=lines.slice(1).map(line=>{
+      const vals=line.split(',').map(v=>v.trim().replace(/['"]/g,''));
+      const obj={}; headers.forEach((h,i)=>obj[h]=vals[i]||'');
+      return {cidade:obj.cidade||'',cargo:obj.cargo||'',descricao:obj.descricao||'',quantidade:parseInt(obj.quantidade)||1,data:new Date().toISOString()};
+    }).filter(v=>v.cidade&&v.cargo);
+    document.getElementById('previewInfo').textContent=`✅ ${vagasImportadas.length} vagas encontradas`;
+    document.getElementById('previewVagas').style.display='block';
+  }
+
+  window.importarVagas = async function() {
+    if (!vagasImportadas.length) return;
+    const btn=document.getElementById('btnImportar');
+    const status=document.getElementById('importStatus');
+    btn.disabled=true; btn.textContent='Publicando...';
+    try {
+      for (const v of vagasImportadas) await addDoc(collection(db,"vagas"),v);
+      status.style.display='block'; status.style.color='#2d6e24';
+      status.textContent=`✅ ${vagasImportadas.length} vagas publicadas!`;
+      await carregarVagasAdmin();
+      document.getElementById('fileVagas').value='';
+      document.getElementById('previewVagas').style.display='none';
+      vagasImportadas=[];
+    } catch(e) { status.style.display='block'; status.style.color='#dc2626'; status.textContent='Erro ao publicar.'; }
+    btn.disabled=false; btn.textContent='🚀 PUBLICAR VAGAS';
+  }
+
+  async function carregarVagasAdmin() {
+    try {
+      const snap=await getDocs(query(collection(db,"vagas"),orderBy("data","desc")));
+      const vagas=snap.docs.map(d=>({id:d.id,...d.data()}));
+      const el=document.getElementById('adminVagasList');
+      if (!vagas.length) { el.innerHTML='<div class="loading">Nenhuma vaga.</div>'; return; }
+      el.innerHTML=vagas.map(v=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0">
+          <div><div style="font-weight:700;font-size:14px">${v.cargo}</div><div style="font-size:12px;color:#888">${v.cidade} • ${v.quantidade} vaga(s)</div></div>
+          <button onclick="excluirVaga('${v.id}')" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Barlow',sans-serif">🗑️</button>
+        </div>`).join('');
+    } catch(e){}
+  }
+
+  async function carregarPontosAdmin() {
+    try {
+      const snap=await getDocs(query(collection(db,"dicas"),orderBy("data","desc")));
+      const pontos=snap.docs.map(d=>({id:d.id,...d.data()}));
+      document.getElementById('adminTotalPontos').textContent=pontos.length+' cadastrados';
+      const el=document.getElementById('adminPontosList');
+      if (!pontos.length) { el.innerHTML='<div class="loading">Nenhum ponto.</div>'; return; }
+      el.innerHTML=pontos.map(p=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:14px">${p.nome}</div>
+            <div style="font-size:12px;color:#888">${p.cidade}/${p.estado} • por ${p.autor}</div>
+            ${p.telefone_privado?`<div style="font-size:12px;color:#3a8c2f">📱 ${p.telefone_privado}</div>`:''}
+          </div>
+          <button onclick="excluirPonto('${p.id}')" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Barlow',sans-serif;flex-shrink:0;margin-left:8px">🗑️</button>
+        </div>`).join('');
+    } catch(e){}
+  }
+
+  window.excluirVaga = async function(id) {
+    if (!confirm('Excluir esta vaga?')) return;
+    try { await deleteDoc(doc(db,"vagas",id)); await carregarVagasAdmin(); } catch(e){ alert('Erro.'); }
+  }
+
+  window.excluirPonto = async function(id) {
+    if (!confirm('Excluir este ponto?')) return;
+    try { await deleteDoc(doc(db,"dicas",id)); await carregarPontosAdmin(); await carregarDicas(); } catch(e){ alert('Erro.'); }
+  }
+
+  window.limparTodasVagas = async function() {
+    if (!confirm('Excluir TODAS as vagas?')) return;
+    try {
+      const snap=await getDocs(collection(db,"vagas"));
+      for (const d of snap.docs) await deleteDoc(doc(db,"vagas",d.id));
+      await carregarVagasAdmin();
+    } catch(e){ alert('Erro.'); }
+  }
+
   window.showTab = function(tab) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + tab).classList.add('active');
-    const idx = { feed: 0, busca: 1, nova: 2 }[tab];
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('page-'+tab).classList.add('active');
+    const idx={feed:0,busca:1,vagas:2,nova:3,admin:4}[tab];
     document.querySelectorAll('.tab-btn')[idx].classList.add('active');
-    if (tab === 'busca') filtrar();
+    if (tab==='busca') filtrar();
+    if (tab==='vagas') carregarVagas();
+    if (tab==='admin') verificarAdminLogado();
   }
 </script>
 </body>
