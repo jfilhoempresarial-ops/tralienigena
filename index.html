@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tr.Alienigena - A Voz do Motorista</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d0d0d; color: #fff; font-family: 'Barlow', sans-serif; min-height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; background: #111; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    input, textarea, select { font-family: 'Barlow', sans-serif; }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, #1a1a1a, #111);
+      border-bottom: 2px solid #f59e0b;
+      padding: 14px 20px;
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .header-title { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; line-height: 1.2; }
+    .header-title span { color: #f59e0b; }
+    .header-sub { color: #555; font-size: 10px; letter-spacing: 1px; margin-top: 2px; }
+    .header-badge { background: #f59e0b22; border: 1px solid #f59e0b44; border-radius: 20px; padding: 4px 12px; color: #f59e0b; font-size: 12px; font-weight: 700; }
+
+    /* TABS */
+    .tabs { background: #111; border-bottom: 1px solid #222; display: flex; padding: 0 20px; }
+    .tab-btn { background: transparent; border: none; border-bottom: 2px solid transparent; color: #666; padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 700; font-family: 'Barlow', sans-serif; letter-spacing: 0.5px; transition: all 0.2s; }
+    .tab-btn.active { border-bottom-color: #f59e0b; color: #f59e0b; }
+
+    /* CONTAINER */
+    .container { max-width: 700px; margin: 0 auto; padding: 20px 16px; }
+
+    /* CARD */
+    .card { background: #1a1a1a; border: 1px solid #2e2e2e; border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .card-nome { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
+    .card-local { color: #888; font-size: 12px; margin-top: 2px; }
+    .card-rodovia { color: #f59e0b; font-weight: 700; }
+    .card-autor { color: #555; font-size: 11px; margin-top: 4px; text-align: right; }
+    .card-desc { color: #bbb; font-size: 13px; line-height: 1.6; margin: 10px 0; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+    .card-data { color: #555; font-size: 11px; }
+    .btn-util { background: transparent; border: 1px solid #333; border-radius: 20px; color: #666; padding: 4px 12px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Barlow', sans-serif; transition: all 0.2s; }
+    .btn-util:hover { border-color: #f59e0b; color: #f59e0b; }
+    .btn-util.curtido { background: #f59e0b22; border-color: #f59e0b; color: #f59e0b; cursor: default; }
+
+    /* BADGES */
+    .badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .badge { border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; font-family: monospace; }
+    .preco-tag { background: #f59e0b15; border: 1px solid #f59e0b33; border-radius: 6px; padding: 5px 10px; color: #f59e0b; font-weight: 700; font-size: 14px; display: inline-block; margin-bottom: 8px; }
+
+    /* ESTRELAS */
+    .stars { display: flex; gap: 2px; }
+    .star { font-size: 18px; color: #444; cursor: pointer; user-select: none; transition: color 0.15s; }
+    .star.on { color: #f59e0b; }
+    .star.readonly { cursor: default; }
+
+    /* FORM */
+    .form-group { margin-bottom: 16px; }
+    .form-label { color: #888; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+    .form-input { background: #111; border: 1px solid #333; border-radius: 6px; color: #fff; padding: 10px 12px; font-size: 14px; width: 100%; outline: none; transition: border-color 0.2s; }
+    .form-input:focus { border-color: #f59e0b55; }
+    .form-input::placeholder { color: #444; }
+    textarea.form-input { min-height: 100px; resize: vertical; }
+    select.form-input option { background: #1a1a1a; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr 80px; gap: 10px; }
+
+    /* CATEGORIAS BOTOES */
+    .cat-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cat-btn { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: #666; padding: 6px 12px; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Barlow', sans-serif; transition: all 0.15s; }
+
+    /* BOTAO SUBMIT */
+    .btn-submit { background: linear-gradient(135deg, #f59e0b, #d97706); border: none; border-radius: 8px; color: #000; padding: 14px; font-size: 15px; font-weight: 700; font-family: 'Barlow', sans-serif; cursor: pointer; width: 100%; letter-spacing: 0.5px; transition: opacity 0.2s; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* FILTROS */
+    .filtros { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .filtros-row { display: flex; gap: 10px; }
+
+    /* ALERTS */
+    .alert-info { background: #f59e0b11; border: 1px solid #f59e0b33; border-radius: 8px; padding: 12px 14px; color: #f59e0b; font-size: 13px; margin-bottom: 16px; }
+    .alert-success { background: #10b98122; border: 1px solid #10b98155; border-radius: 8px; padding: 12px 14px; color: #10b981; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 16px; }
+    .loading { text-align: center; color: #555; padding: 40px; }
+
+    /* PAGE HIDDEN */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .resultado-count { color: #555; font-size: 12px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-title">👽 <span>Tr.Alienigena</span></div>
+    <div style="color:#fff; font-size:12px; font-family:'Barlow',sans-serif;">A Voz do Motorista</div>
+    <div class="header-sub">DICAS DOS CAMINHONEIROS • COLABORATIVO</div>
+  </div>
+  <div class="header-badge" id="totalBadge">0 dicas</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('feed')">📋 Feed</button>
+  <button class="tab-btn" onclick="showTab('busca')">🔍 Buscar</button>
+  <button class="tab-btn" onclick="showTab('nova')">➕ Adicionar</button>
+</div>
+
+<!-- FEED -->
+<div class="container">
+  <div id="page-feed" class="page active">
+    <div id="feedList"><div class="loading">Carregando dicas...</div></div>
+  </div>
+
+  <!-- BUSCA -->
+  <div id="page-busca" class="page">
+    <div class="filtros">
+      <input class="form-input" id="filtroBusca" placeholder="🔍 Nome, cidade ou rodovia..." oninput="filtrar()" />
+      <div class="filtros-row">
+        <select class="form-input" id="filtroCat" onchange="filtrar()">
+          <option value="">Todas as categorias</option>
+          <option value="diesel">⛽ Diesel Barato</option>
+          <option value="dormida">🛏️ Dormida</option>
+          <option value="banheiro">🚿 Banheiro/Chuveiro</option>
+          <option value="borracharia">🔧 Borracharia</option>
+          <option value="restaurante">🍽️ Restaurante</option>
+          <option value="estacionamento">🅿️ Estacionamento Seguro</option>
+          <option value="wifi">📶 Wi-Fi</option>
+          <option value="mecanico">🔩 Mecânico</option>
+        </select>
+        <select class="form-input" id="filtroEstado" onchange="filtrar()">
+          <option value="">Todos os estados</option>
+          <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+          <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+          <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+          <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+          <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+          <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+          <option>SP</option><option>SE</option><option>TO</option>
+        </select>
+      </div>
+    </div>
+    <div class="resultado-count" id="resultadoCount"></div>
+    <div id="buscaList"></div>
+  </div>
+
+  <!-- NOVA DICA -->
+  <div id="page-nova" class="page">
+    <div class="alert-info">💡 Compartilha o que você sabe pra ajudar os brothers na estrada!</div>
+    <div id="alertSucesso" style="display:none" class="alert-success">✅ Dica enviada! Valeu, brother!</div>
+
+    <div class="form-group">
+      <label class="form-label">NOME DO POSTO / LOCAL *</label>
+      <input class="form-input" id="fNome" placeholder="Ex: Posto Rodoviário Irmãos Silva" />
+    </div>
+    <div class="form-group">
+      <div class="form-row">
+        <div>
+          <label class="form-label">RODOVIA</label>
+          <input class="form-input" id="fRodovia" placeholder="BR-116" />
+        </div>
+        <div>
+          <label class="form-label">CIDADE *</label>
+          <input class="form-input" id="fCidade" placeholder="Cidade" />
+        </div>
+        <div>
+          <label class="form-label">UF *</label>
+          <select class="form-input" id="fEstado">
+            <option value="">UF</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">SEU APELIDO NA ESTRADA *</label>
+      <input class="form-input" id="fAutor" placeholder="Ex: Tucano_RJ" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">O QUE TEM LÁ? * (selecione todos)</label>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+    <div class="form-group" id="grupoDiesel" style="display:none">
+      <label class="form-label">PREÇO DO DIESEL (R$/L)</label>
+      <input class="form-input" id="fDiesel" placeholder="5,89" style="max-width:160px" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">SUA NOTA</label>
+      <div class="stars" id="formStars"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">DESCRIÇÃO *</label>
+      <textarea class="form-input" id="fDesc" placeholder="Conta tudo que você sabe: preços, qualidade, segurança, o que tem, o que falta..."></textarea>
+    </div>
+    <button class="btn-submit" id="btnEnviar" onclick="enviarDica()">🚛 ENVIAR DICA</button>
+  </div>
+</div>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4-eS5dLimqSewLPwwA_IT2haMV3kLD9s",
+    authDomain: "tralienigena-ee7a9.firebaseapp.com",
+    projectId: "tralienigena-ee7a9",
+    storageBucket: "tralienigena-ee7a9.firebasestorage.app",
+    messagingSenderId: "307288619335",
+    appId: "1:307288619335:web:467b6aeae99b641866b462",
+    measurementId: "G-K49FKDK046"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const CATEGORIAS = [
+    { id: "diesel", label: "⛽ Diesel Barato", color: "#f59e0b" },
+    { id: "dormida", label: "🛏️ Dormida", color: "#3b82f6" },
+    { id: "banheiro", label: "🚿 Banheiro/Chuveiro", color: "#10b981" },
+    { id: "borracharia", label: "🔧 Borracharia", color: "#ef4444" },
+    { id: "restaurante", label: "🍽️ Restaurante", color: "#8b5cf6" },
+    { id: "estacionamento", label: "🅿️ Estacionamento Seguro", color: "#06b6d4" },
+    { id: "wifi", label: "📶 Wi-Fi", color: "#ec4899" },
+    { id: "mecanico", label: "🔩 Mecânico", color: "#f97316" },
+  ];
+
+  let todasDicas = [];
+  let catsSelecionadas = [];
+  let notaForm = 5;
+  let curtidos = new Set();
+
+  // ---- INIT ----
+  window.addEventListener('DOMContentLoaded', () => {
+    buildCatGrid();
+    buildFormStars();
+    carregarDicas();
+  });
+
+  async function carregarDicas() {
+    try {
+      const q = query(collection(db, "dicas"), orderBy("data", "desc"));
+      const snap = await getDocs(q);
+      todasDicas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFeed(todasDicas);
+      document.getElementById('totalBadge').textContent = todasDicas.length + ' dicas';
+    } catch (e) {
+      document.getElementById('feedList').innerHTML = '<div class="loading">Erro ao carregar. Verifique a conexão.</div>';
+    }
+  }
+
+  function renderFeed(dicas) {
+    const el = document.getElementById('feedList');
+    if (dicas.length === 0) { el.innerHTML = '<div class="loading">Nenhuma dica ainda. Seja o primeiro!</div>'; return; }
+    el.innerHTML = dicas.map(d => cardHTML(d)).join('');
+  }
+
+  function cardHTML(d) {
+    const badges = (d.categorias || []).map(c => {
+      const cat = CATEGORIAS.find(x => x.id === c);
+      if (!cat) return '';
+      return `<span class="badge" style="background:${cat.color}22;color:${cat.color};border:1px solid ${cat.color}55">${cat.label}</span>`;
+    }).join('');
+    const stars = [1,2,3,4,5].map(s => `<span class="star readonly ${s <= d.nota ? 'on' : ''}">★</span>`).join('');
+    const preco = d.preco_diesel ? `<div class="preco-tag">⛽ R$ ${d.preco_diesel}/L</div>` : '';
+    const data = d.data ? new Date(d.data).toLocaleDateString('pt-BR') : '';
+    const jaUtil = curtidos.has(d.id);
+    return `
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-nome">${d.nome}</div>
+            <div class="card-local">${d.rodovia ? `<span class="card-rodovia">${d.rodovia} • </span>` : ''}${d.cidade}, ${d.estado}</div>
+          </div>
+          <div>
+            <div class="stars">${stars}</div>
+            <div class="card-autor">por ${d.autor}</div>
+          </div>
+        </div>
+        <div class="badges">${badges}</div>
+        ${preco}
+        <p class="card-desc">${d.descricao}</p>
+        <div class="card-footer">
+          <span class="card-data">${data}</span>
+          <button class="btn-util ${jaUtil ? 'curtido' : ''}" onclick="curtir('${d.id}', this)">👍 ${d.curtidas || 0} útil</button>
+        </div>
+      </div>`;
+  }
+
+  window.curtir = async function(id, btn) {
+    if (curtidos.has(id)) return;
+    curtidos.add(id);
+    btn.classList.add('curtido');
+    const dica = todasDicas.find(d => d.id === id);
+    if (!dica) return;
+    const novoVal = (dica.curtidas || 0) + 1;
+    dica.curtidas = novoVal;
+    btn.textContent = `👍 ${novoVal} útil`;
+    try { await updateDoc(doc(db, "dicas", id), { curtidas: novoVal }); } catch {}
+  }
+
+  // ---- BUSCA ----
+  window.filtrar = function() {
+    const q = document.getElementById('filtroBusca').value.toLowerCase();
+    const cat = document.getElementById('filtroCat').value;
+    const estado = document.getElementById('filtroEstado').value;
+    const res = todasDicas.filter(d => {
+      const txt = !q || d.nome.toLowerCase().includes(q) || d.cidade.toLowerCase().includes(q) || (d.rodovia||'').toLowerCase().includes(q);
+      const c = !cat || (d.categorias||[]).includes(cat);
+      const e = !estado || d.estado === estado;
+      return txt && c && e;
+    });
+    document.getElementById('resultadoCount').textContent = res.length + ' resultado(s)';
+    document.getElementById('buscaList').innerHTML = res.map(d => cardHTML(d)).join('');
+  }
+
+  // ---- FORM ----
+  function buildCatGrid() {
+    const grid = document.getElementById('catGrid');
+    grid.innerHTML = CATEGORIAS.map(c => `
+      <button class="cat-btn" id="cat-${c.id}" onclick="toggleCat('${c.id}','${c.color}')">${c.label}</button>
+    `).join('');
+  }
+
+  window.toggleCat = function(id, color) {
+    const btn = document.getElementById('cat-' + id);
+    if (catsSelecionadas.includes(id)) {
+      catsSelecionadas = catsSelecionadas.filter(c => c !== id);
+      btn.style.background = '#1a1a1a';
+      btn.style.borderColor = '#333';
+      btn.style.color = '#666';
+    } else {
+      catsSelecionadas.push(id);
+      btn.style.background = color + '22';
+      btn.style.borderColor = color;
+      btn.style.color = color;
+    }
+    document.getElementById('grupoDiesel').style.display = catsSelecionadas.includes('diesel') ? 'block' : 'none';
+  }
+
+  function buildFormStars() {
+    const el = document.getElementById('formStars');
+    el.innerHTML = [1,2,3,4,5].map(s =>
+      `<span class="star on" id="fstar-${s}" onclick="setNota(${s})">★</span>`
+    ).join('');
+  }
+
+  window.setNota = function(n) {
+    notaForm = n;
+    for (let i = 1; i <= 5; i++) {
+      document.getElementById('fstar-' + i).classList.toggle('on', i <= n);
+    }
+  }
+
+  window.enviarDica = async function() {
+    const nome = document.getElementById('fNome').value.trim();
+    const cidade = document.getElementById('fCidade').value.trim();
+    const estado = document.getElementById('fEstado').value;
+    const autor = document.getElementById('fAutor').value.trim();
+    const desc = document.getElementById('fDesc').value.trim();
+    if (!nome || !cidade || !estado || !autor || !desc || catsSelecionadas.length === 0) {
+      alert('Preencha: nome do posto, cidade, estado, apelido, pelo menos uma categoria e a descrição.');
+      return;
+    }
+    const btn = document.getElementById('btnEnviar');
+    btn.disabled = true; btn.textContent = 'Salvando...';
+    const nova = {
+      nome, cidade, estado, autor,
+      rodovia: document.getElementById('fRodovia').value.trim(),
+      preco_diesel: document.getElementById('fDiesel').value.trim(),
+      descricao: desc,
+      categorias: [...catsSelecionadas],
+      nota: notaForm,
+      curtidas: 0,
+      data: new Date().toISOString(),
+    };
+    try {
+      await addDoc(collection(db, "dicas"), nova);
+      document.getElementById('alertSucesso').style.display = 'block';
+      document.getElementById('fNome').value = '';
+      document.getElementById('fCidade').value = '';
+      document.getElementById('fEstado').value = '';
+      document.getElementById('fAutor').value = '';
+      document.getElementById('fRodovia').value = '';
+      document.getElementById('fDiesel').value = '';
+      document.getElementById('fDesc').value = '';
+      catsSelecionadas = [];
+      buildCatGrid();
+      notaForm = 5; buildFormStars();
+      await carregarDicas();
+      setTimeout(() => { document.getElementById('alertSucesso').style.display = 'none'; showTab('feed'); }, 2000);
+    } catch(e) {
+      alert('Erro ao salvar. Tente novamente.');
+    }
+    btn.disabled = false; btn.textContent = '🚛 ENVIAR DICA';
+  }
+
+  // ---- TABS ----
+  window.showTab = function(tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + tab).classList.add('active');
+    const idx = { feed: 0, busca: 1, nova: 2 }[tab];
+    document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+    if (tab === 'busca') filtrar();
+  }
+</script>
+</body>
+</html>
