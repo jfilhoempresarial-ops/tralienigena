@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tr.Alienigena - A Voz do Motorista</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f4f4f4;color:#1a1a1a;font-family:'Barlow',sans-serif;min-height:100vh}
+input,textarea,select,button{font-family:'Barlow',sans-serif}
+
+/* HEADER */
+.header{background:#fff;border-bottom:3px solid #2d8c3e;padding:10px 16px;position:sticky;top:0;z-index:2000;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.logo-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#1a1a1a}
+.logo-title span{color:#2d8c3e}
+.logo-voz{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;color:#2d8c3e;letter-spacing:1px}
+.header-info{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px}
+.header-tel{font-size:10px;color:#888;letter-spacing:.3px}
+.header-relogio{font-size:10px;color:#2d8c3e;font-weight:700;letter-spacing:.3px}
+.header-loc{font-size:10px;color:#1a5c26;font-weight:600}
+.btn-inicio{background:#f5f5f5;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;color:#555;white-space:nowrap}
+
+/* TELAS */
+.tela{display:none;min-height:calc(100vh - 70px)}
+.tela.ativa{display:block}
+#tela-inicio{display:block}
+
+/* HERO INÍCIO */
+.inicio-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:28px 20px 22px;text-align:center}
+.inicio-hero h1{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:6px}
+.inicio-hero p{color:#a8d5b0;font-size:13px;margin-bottom:22px}
+.btns-destaque{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:460px;margin:0 auto 14px}
+.btn-hero{background:#fff;border:none;border-radius:14px;padding:22px 10px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.btn-hero:active{transform:scale(.97)}
+.btn-hero-icon{font-size:34px;margin-bottom:8px}
+.btn-hero-label{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:#1a1a1a}
+.btn-hero-sub{font-size:11px;color:#888;margin-top:2px}
+.btns-secundarios{display:flex;gap:8px;justify-content:center;max-width:460px;margin:0 auto}
+.btn-sec{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:8px 18px;cursor:pointer;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px}
+
+.destaques{padding:18px 16px}
+.destaques h2{font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:12px}
+.av-card-mini{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee}
+.av-mini-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.av-mini-nome{font-weight:700;font-size:13px;color:#1a1a1a}
+.av-mini-tipo{font-size:10px;color:#2d8c3e;font-weight:700}
+.av-mini-stars{color:#f59e0b;font-size:12px}
+.av-mini-txt{font-size:12px;color:#555;line-height:1.4}
+.av-mini-autor{font-size:10px;color:#aaa;margin-top:4px}
+
+/* CABEÇALHO INTERNO */
+.tela-header{background:#fff;padding:12px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;position:sticky;top:70px;z-index:100}
+.btn-voltar{background:#f5f5f5;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:700;color:#555}
+.tela-titulo{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a}
+
+/* BUSCA */
+.busca-body{padding:16px}
+.busca-campo{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.busca-campo label{font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:8px}
+.servicos-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.serv-btn{background:#f5f5f5;border:2px solid #e5e5e5;border-radius:8px;padding:7px 10px;cursor:pointer;font-size:11px;font-weight:700;color:#666;transition:all .15s}
+.serv-btn.on{background:#2d8c3e15;border-color:#2d8c3e;color:#2d8c3e}
+.input-busca-serv{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none;transition:border-color .2s;margin-top:4px}
+.input-busca-serv:focus{border-color:#2d8c3e88;background:#fff}
+.autocomplete-box{background:#fff;border:1px solid #ddd;border-radius:8px;margin-top:4px;display:none;max-height:160px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.ac-item{padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5f5f5}
+.ac-item:hover{background:#f0fdf4}
+.loc-wrap{position:relative}
+.loc-input{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 44px 10px 12px;font-size:14px;width:100%;outline:none}
+.btn-gps{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:#2d8c3e;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px;color:#fff}
+.gps-status{font-size:10px;color:#2d8c3e;margin-top:3px;display:none}
+.btn-buscar-agora{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.5px;margin-top:4px}
+
+/* RESULTADOS */
+#mapa-resultados{height:220px;width:100%}
+.resultados-body{padding:14px 16px}
+.resultado-info{background:#f0fdf4;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#166534;font-weight:600}
+.prestador-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee;cursor:pointer;transition:box-shadow .2s}
+.prestador-card:active{box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.pc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.pc-nome{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:#1a1a1a}
+.pc-tipo{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;margin-top:3px}
+.pc-stars{text-align:right;flex-shrink:0}
+.pc-stars-val{color:#f59e0b;font-size:13px}
+.pc-stars-num{font-size:10px;color:#aaa;display:block}
+.pc-local{color:#888;font-size:11px;margin-top:5px}
+.pc-dist{color:#2d8c3e;font-size:11px;font-weight:700}
+.pc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.btn-wpp{background:#25d366;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px}
+.btn-rota-mini{background:#fff;color:#2d8c3e;border:1px solid #2d8c3e;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer}
+.btn-av-mini{background:#fff6e5;color:#f59e0b;border:1px solid #f59e0b55;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer}
+
+/* DETALHE */
+#mapa-detalhe{height:210px;width:100%}
+.detalhe-body{padding:16px}
+.det-nome{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.det-info-box{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
+.info-linha{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:#444;line-height:1.4}
+.info-ico{font-size:15px;flex-shrink:0}
+.btn-wpp-grande{background:#25d366;border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.5px}
+.btn-rota-grande{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;letter-spacing:.5px}
+.btn-avaliar-det{background:#fff;border:2px solid #f59e0b;border-radius:10px;color:#f59e0b;padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:16px}
+.avs-titulo{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:10px}
+.av-det-card{background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid #eee}
+.av-det-top{display:flex;justify-content:space-between;margin-bottom:5px}
+.crit-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:5px}
+.crit-item{font-size:11px;color:#666}
+
+/* CADASTRO */
+.form-body{padding:16px}
+.form-group{margin-bottom:13px}
+.form-label{color:#666;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;display:block}
+.form-input{background:#fff;border:1px solid #ddd;border-radius:8px;color:#1a1a1a;padding:10px 12px;font-size:14px;width:100%;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:#2d8c3e88}
+.form-input::placeholder{color:#bbb}
+textarea.form-input{min-height:80px;resize:vertical}
+select.form-input option{background:#fff}
+.form-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-submit{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.5px}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;color:#166534;font-size:14px;font-weight:700;text-align:center;margin-bottom:14px;display:none}
+.hero-grad{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:18px 16px}
+.hero-grad h2{font-family:'Oswald',sans-serif;font-size:19px;font-weight:700;color:#fff;margin-bottom:3px}
+.hero-grad p{color:#a8d5b0;font-size:12px}
+#mapa-cadastro{height:180px;border-radius:8px;margin-top:6px;border:1px solid #ddd}
+.busca-prest-box{position:relative}
+.busca-prest-sugestoes{background:#fff;border:1px solid #ddd;border-radius:8px;margin-top:3px;display:none;max-height:160px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.bp-item{padding:10px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5f5f5}
+.bp-item:hover{background:#f0fdf4}
+.bp-item-nome{font-weight:700}
+.bp-item-tipo{font-size:11px;color:#2d8c3e}
+
+/* AVALIAR */
+.estrelas-input{display:flex;gap:5px;margin-top:5px}
+.ei-star{font-size:28px;cursor:pointer;color:#ddd;transition:color .1s;user-select:none}
+.ei-star.on{color:#f59e0b}
+.c-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.c-nome{font-size:13px;color:#444;font-weight:600}
+.c-stars{display:flex;gap:3px}
+.c-star{font-size:20px;cursor:pointer;color:#ddd;transition:color .1s}
+.c-star.on{color:#f59e0b}
+.nao-enc{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:11px;margin-bottom:12px;font-size:12px;color:#795548}
+.btn-nao-enc{background:#ff8f00;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;color:#fff;margin-top:6px}
+
+/* ADMIN */
+.admin-body{padding:16px}
+.admin-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
+.admin-card-t{font-weight:700;color:#2d8c3e;font-size:14px;margin-bottom:10px}
+.admin-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f5f5f5;gap:10px}
+.btn-del{background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;padding:4px 9px;cursor:pointer;font-size:12px;font-weight:700;flex-shrink:0}
+
+.loading{text-align:center;color:#aaa;padding:36px;font-size:13px}
+.empty{text-align:center;color:#aaa;padding:24px;font-size:13px}
+.tag{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="logo-title">👽 <span>Tr.Alienigena</span></div>
+      <div class="logo-voz">A VOZ DO MOTORISTA</div>
+      <div class="header-info">
+        <span class="header-tel">📱 (88) 98136-3953</span>
+        <span class="header-relogio" id="hRelogio">--:--</span>
+        <span class="header-loc" id="hLoc">📍 Localizando...</span>
+      </div>
+    </div>
+    <button class="btn-inicio" onclick="irInicio()">🏠 Início</button>
+  </div>
+</div>
+
+<!-- ===== TELA INÍCIO ===== -->
+<div id="tela-inicio">
+  <div class="inicio-hero">
+    <h1>🚛 O que você precisa hoje?</h1>
+    <p>Encontre serviços, pontos de parada e muito mais na estrada</p>
+    <div class="btns-destaque">
+      <button class="btn-hero" onclick="showTela('tela-busca')">
+        <div class="btn-hero-icon">🔍</div>
+        <div class="btn-hero-label">Sou Motorista</div>
+        <div class="btn-hero-sub">Preciso de um serviço</div>
+      </button>
+      <button class="btn-hero" onclick="showTela('tela-avaliar')">
+        <div class="btn-hero-icon">⭐</div>
+        <div class="btn-hero-label">Avaliar Serviço</div>
+        <div class="btn-hero-sub">Deixe sua experiência</div>
+      </button>
+    </div>
+    <div class="btns-secundarios">
+      <button class="btn-sec" onclick="showTela('tela-cadastro')">🏪 Sou Prestador</button>
+      <button class="btn-sec" onclick="showTela('tela-admin')" style="opacity:.6;font-size:10px">🔐 Admin</button>
+    </div>
+  </div>
+  <div class="destaques">
+    <h2>⭐ Avaliações Recentes</h2>
+    <div id="lista-destaques"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- ===== TELA BUSCA ===== -->
+<div id="tela-busca" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="irInicio()">← Voltar</button>
+    <div class="tela-titulo">🔍 Buscar Serviço</div>
+  </div>
+  <div class="busca-body">
+    <div class="busca-campo">
+      <label>TIPO DE SERVIÇO (selecione um ou mais)</label>
+      <div class="servicos-grid" id="servicos-grid"></div>
+      <div style="margin-top:10px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">OU DESCREVA O QUE PRECISA</label>
+        <input class="input-busca-serv" id="busca-texto" placeholder="Ex: conserto de bomba, válvula, freio, ar condicionado..." oninput="autocompleteServico()" autocomplete="off"/>
+        <div class="autocomplete-box" id="ac-box"></div>
+      </div>
+    </div>
+    <div class="busca-campo">
+      <label>📍 ONDE VOCÊ ESTÁ?</label>
+      <div class="loc-wrap">
+        <input class="loc-input" id="busca-local" placeholder="Digite a cidade ou use o GPS..." />
+        <button class="btn-gps" onclick="usarGPS('busca')" title="Usar GPS">📡</button>
+      </div>
+      <div class="gps-status" id="gps-status-busca"></div>
+    </div>
+    <button class="btn-buscar-agora" onclick="buscarServicos()">🔍 BUSCAR AGORA</button>
+    <button onclick="verRelacaoCompleta()" style="background:#fff;border:2px solid #2d8c3e;border-radius:10px;color:#2d8c3e;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;letter-spacing:.5px">📋 VER RELAÇÃO COMPLETA</button>
+  </div>
+</div>
+
+<!-- ===== TELA RESULTADOS ===== -->
+<div id="tela-resultados" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="showTela('tela-busca')">← Voltar</button>
+    <div class="tela-titulo" id="result-titulo">Resultados</div>
+  </div>
+  <div id="mapa-resultados"></div>
+  <div class="resultados-body">
+    <div class="resultado-info" id="result-info" style="display:none"></div>
+    <div id="lista-resultados"><div class="loading">Buscando...</div></div>
+  </div>
+</div>
+
+<!-- ===== TELA DETALHE ===== -->
+<div id="tela-detalhe" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="showTela('tela-resultados')">← Voltar</button>
+    <div class="tela-titulo">Detalhes</div>
+  </div>
+  <div id="mapa-detalhe"></div>
+  <div class="detalhe-body">
+    <div class="det-nome" id="det-nome"></div>
+    <div id="det-tipo-tag" style="margin-bottom:10px"></div>
+    <div class="det-info-box" id="det-info"></div>
+    <button class="btn-wpp-grande" id="btn-wpp-grande">
+      <span style="font-size:18px">💬</span> CHAMAR NO WHATSAPP
+    </button>
+    <button class="btn-rota-grande" id="btn-rota-grande">🗺️ IR ATÉ O LOCAL</button>
+    <button class="btn-avaliar-det" onclick="abrirAvaliarDireto()">⭐ AVALIAR ESTE SERVIÇO</button>
+    <div class="avs-titulo">💬 Avaliações dos Motoristas</div>
+    <div id="lista-avs-detalhe"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- ===== TELA CADASTRO PRESTADOR ===== -->
+<div id="tela-cadastro" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="irInicio()">← Voltar</button>
+    <div class="tela-titulo">🏪 Cadastro de Prestador</div>
+  </div>
+  <div class="hero-grad">
+    <h2>Cadastre seu serviço</h2>
+    <p>Apareça para motoristas na sua região gratuitamente</p>
+  </div>
+  <div class="form-body">
+    <div class="alert-ok" id="cad-ok">✅ Prestador cadastrado com sucesso! Em breve você aparecerá nas buscas.</div>
+
+    <!-- Busca para evitar duplicidade -->
+    <div class="form-group">
+      <label class="form-label">BUSCAR SE JÁ EXISTE SEU CADASTRO</label>
+      <div class="busca-prest-box">
+        <input class="form-input" id="cad-busca" placeholder="Digite o nome do seu estabelecimento..." oninput="buscarPrestadorExistente()" autocomplete="off"/>
+        <div class="busca-prest-sugestoes" id="cad-sugestoes"></div>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-top:3px">Se já existir, você se vincula ao cadastro existente. Se não existir, criamos um novo.</div>
+    </div>
+
+    <div id="form-cadastro-novo">
+      <div class="form-group">
+        <label class="form-label">NOME DO ESTABELECIMENTO *</label>
+        <input class="form-input" id="cad-nome" placeholder="Ex: Oficina do Marquinhos" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">TIPO DE SERVIÇO *</label>
+        <select class="form-input" id="cad-tipo">
+          <option value="">Selecione...</option>
+          <option value="mecanico">🔩 Mecânico</option>
+          <option value="borracharia">🔧 Borracharia</option>
+          <option value="posto">⛽ Combustível / Posto</option>
+          <option value="guindaste">🏗️ Guincho / Guindaste</option>
+          <option value="eletricista">⚡ Elétrica Veicular</option>
+          <option value="pecas">🏪 Autopeças</option>
+          <option value="funilaria">🚗 Funilaria / Pintura</option>
+          <option value="lavajato">🚿 Lava-Jato de Caminhão</option>
+          <option value="restaurante">🍽️ Restaurante / Lanchonete</option>
+          <option value="pousada">🛏️ Pousada / Dormida</option>
+          <option value="farmacia">💊 Farmácia</option>
+          <option value="tacografo">📟 Tacógrafo</option>
+          <option value="toxicologico">🧪 Exame Toxicológico</option>
+          <option value="chapa">💪 Chapa / Ajudante</option>
+          <option value="outros">📦 Outros Serviços</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">DESCRIÇÃO DO SERVIÇO * <span style="font-weight:400;color:#aaa">(usada na busca por palavras-chave)</span></label>
+        <textarea class="form-input" id="cad-desc" placeholder="Descreva em detalhes o que você faz: marcas atendidas, tipos de serviço, diferenciais. Ex: mecânico especializado em Volvo e Scania, conserto de motor, câmbio, freio, suspensão..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">WHATSAPP (opcional)</label>
+        <input class="form-input" id="cad-wpp" placeholder="(85) 99999-9999 — para contato direto via WhatsApp" type="tel"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">INSTAGRAM (opcional)</label>
+        <input class="form-input" id="cad-ig" placeholder="@nomedoperfil" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">ENDEREÇO (opcional)</label>
+        <input class="form-input" id="cad-endereco" placeholder="Rua, número, cidade — UF" oninput="geocodificarEndereco()"/>
+        <button type="button" onclick="usarGPS('cadastro')" style="margin-top:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#2d8c3e;width:100%">📡 Usar minha localização atual</button>
+        <div class="gps-status" id="gps-status-cad" style="display:none"></div>
+        <div id="mapa-cadastro"></div>
+        <input type="hidden" id="cad-lat"/>
+        <input type="hidden" id="cad-lng"/>
+      </div>
+      <div class="form-group">
+        <div class="form-row2">
+          <div>
+            <label class="form-label">ABRE ÀS</label>
+            <input class="form-input" id="cad-abre" type="time"/>
+          </div>
+          <div>
+            <label class="form-label">FECHA ÀS</label>
+            <input class="form-input" id="cad-fecha" type="time"/>
+          </div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:#555;cursor:pointer">
+          <input type="checkbox" id="cad-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
+        </label>
+      </div>
+      <button class="btn-submit" id="btn-cadastrar" onclick="cadastrarPrestador()">✅ CADASTRAR MEU SERVIÇO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TELA AVALIAR ===== -->
+<div id="tela-avaliar" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" id="btn-voltar-av" onclick="irInicio()">← Voltar</button>
+    <div class="tela-titulo">⭐ Avaliar Serviço</div>
+  </div>
+  <div class="hero-grad">
+    <h2>Avalie um serviço</h2>
+    <p>Ajude outros motoristas com sua experiência</p>
+  </div>
+  <div class="form-body">
+    <div class="alert-ok" id="av-ok">✅ Avaliação enviada! Obrigado, brother!</div>
+
+    <div class="form-group">
+      <label class="form-label">BUSCAR ESTABELECIMENTO</label>
+      <input class="form-input" id="av-busca" placeholder="Digite o nome ou cidade..." oninput="buscarParaAvaliar()" autocomplete="off"/>
+      <div class="busca-prest-sugestoes" id="av-sugestoes"></div>
+    </div>
+
+    <div class="nao-enc">
+      <strong>Não encontrou?</strong> Sem problema — avalie assim mesmo e nós cadastramos automaticamente.
+      <br><button class="btn-nao-enc" onclick="modoManual()">📝 Avaliar serviço não cadastrado</button>
+    </div>
+
+    <div id="av-alvo-box" style="display:none">
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:12px">
+        <div style="font-weight:700;color:#166534;font-size:14px" id="av-alvo-nome"></div>
+        <div style="font-size:11px;color:#2d8c3e" id="av-alvo-tipo"></div>
+      </div>
+    </div>
+
+    <div id="av-manual-box" style="display:none">
+      <div class="form-group">
+        <label class="form-label">NOME DO ESTABELECIMENTO *</label>
+        <input class="form-input" id="av-man-nome" placeholder="Ex: Borracharia do João"/>
+      </div>
+      <div class="form-group form-row2">
+        <div>
+          <label class="form-label">TIPO</label>
+          <select class="form-input" id="av-man-tipo">
+            <option value="mecanico">🔩 Mecânico</option>
+            <option value="borracharia">🔧 Borracharia</option>
+            <option value="posto">⛽ Combustível</option>
+            <option value="guindaste">🏗️ Guincho</option>
+            <option value="eletricista">⚡ Elétrica</option>
+            <option value="pecas">🏪 Autopeças</option>
+            <option value="funilaria">🚗 Funilaria</option>
+            <option value="lavajato">🚿 Lava-Jato</option>
+            <option value="restaurante">🍽️ Restaurante</option>
+            <option value="pousada">🛏️ Pousada</option>
+            <option value="farmacia">💊 Farmácia</option>
+            <option value="tacografo">📟 Tacógrafo</option>
+            <option value="toxicologico">🧪 Toxicológico</option>
+            <option value="chapa">💪 Chapa</option>
+            <option value="outros">📦 Outros</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">CIDADE</label>
+          <input class="form-input" id="av-man-cidade" placeholder="Cidade — UF"/>
+        </div>
+      </div>
+    </div>
+
+    <div id="av-form-box" style="display:none">
+      <div class="form-group">
+        <label class="form-label">NOTA GERAL *</label>
+        <div class="estrelas-input" id="av-geral-stars"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CRITÉRIOS</label>
+        <div id="av-criterios-box"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SEU COMENTÁRIO</label>
+        <textarea class="form-input" id="av-texto" placeholder="Conte sua experiência real..."></textarea>
+      </div>
+      <div class="form-group form-row2">
+        <div>
+          <label class="form-label">SEU NOME (opcional)</label>
+          <input class="form-input" id="av-autor" placeholder="Zé da Estrada"/>
+        </div>
+        <div>
+          <label class="form-label">WHATSAPP (opcional)</label>
+          <input class="form-input" id="av-tel" placeholder="(85) 99..." type="tel"/>
+        </div>
+      </div>
+      <button class="btn-submit" id="btn-av" onclick="enviarAvaliacao()">⭐ ENVIAR AVALIAÇÃO</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TELA RELAÇÃO COMPLETA ===== -->
+<div id="tela-relacao" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="showTela('tela-busca')">← Voltar</button>
+    <div class="tela-titulo">📋 Relação Completa</div>
+  </div>
+  <div style="padding:14px 16px">
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <input class="form-input" id="rel-filtro" placeholder="🔍 Filtrar por nome, tipo ou cidade..." oninput="filtrarRelacao()" style="flex:1"/>
+      <select class="form-input" id="rel-tipo" onchange="filtrarRelacao()" style="max-width:140px">
+        <option value="">Todos os tipos</option>
+        <option value="mecanico">🔩 Mecânico</option>
+        <option value="borracharia">🔧 Borracharia</option>
+        <option value="posto">⛽ Combustível</option>
+        <option value="guindaste">🏗️ Guincho</option>
+        <option value="eletricista">⚡ Elétrica</option>
+        <option value="pecas">🏪 Autopeças</option>
+        <option value="funilaria">🚗 Funilaria</option>
+        <option value="lavajato">🚿 Lava-Jato</option>
+        <option value="restaurante">🍽️ Restaurante</option>
+        <option value="pousada">🛏️ Pousada</option>
+        <option value="farmacia">💊 Farmácia</option>
+        <option value="tacografo">📟 Tacógrafo</option>
+        <option value="toxicologico">🧪 Toxicológico</option>
+        <option value="chapa">💪 Chapa</option>
+        <option value="outros">📦 Outros</option>
+      </select>
+    </div>
+    <div id="rel-count" style="font-size:12px;color:#aaa;margin-bottom:10px"></div>
+    <div id="lista-relacao"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- ===== TELA ADMIN ===== -->
+<div id="tela-admin" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="irInicio()">← Voltar</button>
+    <div class="tela-titulo">🔐 Admin</div>
+  </div>
+  <div id="admin-login" style="padding:20px">
+    <div style="font-family:'Oswald',sans-serif;font-size:19px;font-weight:700;margin-bottom:14px">Área Restrita</div>
+    <div class="form-group">
+      <label class="form-label">SENHA</label>
+      <input class="form-input" id="admin-senha" type="password" placeholder="Digite a senha"/>
+    </div>
+    <button class="btn-submit" onclick="entrarAdmin()">ENTRAR</button>
+    <div id="admin-erro" style="display:none;color:#dc2626;font-size:13px;margin-top:8px;text-align:center">❌ Senha incorreta</div>
+  </div>
+  <div id="admin-painel" style="display:none">
+    <div class="admin-body">
+      <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:14px">📊 Painel Admin</div>
+      <div class="admin-card">
+        <div class="admin-card-t">🏪 Prestadores <span id="adm-tot-p" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div id="adm-lista-p"><div class="loading">Carregando...</div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-t">⭐ Avaliações <span id="adm-tot-a" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div id="adm-lista-a"><div class="loading">Carregando...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// Bridge: garante que funções do módulo Firebase fiquem acessíveis globalmente
+// Estas serão sobrescritas pelo módulo quando carregar
+function irInicio(){ if(window._irInicio) window._irInicio(); }
+function showTela(id){ if(window._showTela) window._showTela(id); }
+function toggleServBusca(id){ if(window._toggleServBusca) window._toggleServBusca(id); }
+function autocompleteServico(){ if(window._autocompleteServico) window._autocompleteServico(); }
+function selecionarAC(s){ if(window._selecionarAC) window._selecionarAC(s); }
+function usarGPS(ctx){ if(window._usarGPS) window._usarGPS(ctx); }
+function buscarServicos(){ if(window._buscarServicos) window._buscarServicos(); }
+function abrirDetalhe(id){ if(window._abrirDetalhe) window._abrirDetalhe(id); }
+function abrirWpp(num){ if(window._abrirWpp) window._abrirWpp(num); }
+function irAoLocal(lat,lng){ if(window._irAoLocal) window._irAoLocal(lat,lng); }
+function abrirAvaliarDireto(){ if(window._abrirAvaliarDireto) window._abrirAvaliarDireto(); }
+function abrirAvaliarPorId(id){ if(window._abrirAvaliarPorId) window._abrirAvaliarPorId(id); }
+function buscarParaAvaliar(){ if(window._buscarParaAvaliar) window._buscarParaAvaliar(); }
+function selecionarAvAlvo(id){ if(window._selecionarAvAlvo) window._selecionarAvAlvo(id); }
+function modoManual(){ if(window._modoManual) window._modoManual(); }
+function setNG(n){ if(window._setNG) window._setNG(n); }
+function setNC(c,n){ if(window._setNC) window._setNC(c,n); }
+function enviarAvaliacao(){ if(window._enviarAvaliacao) window._enviarAvaliacao(); }
+function buscarPrestadorExistente(){ if(window._buscarPrestadorExistente) window._buscarPrestadorExistente(); }
+function vincularPrestador(id){ if(window._vincularPrestador) window._vincularPrestador(id); }
+function geocodificarEndereco(){ if(window._geocodificarEndereco) window._geocodificarEndereco(); }
+function cadastrarPrestador(){ if(window._cadastrarPrestador) window._cadastrarPrestador(); }
+function entrarAdmin(){ if(window._entrarAdmin) window._entrarAdmin(); }
+function delPrestador(id){ if(window._delPrestador) window._delPrestador(id); }
+function delAvaliacao(id){ if(window._delAvaliacao) window._delAvaliacao(id); }
+function verRelacaoCompleta(){ if(window._verRelacaoCompleta) window._verRelacaoCompleta(); }
+function filtrarRelacao(){ if(window._filtrarRelacao) window._filtrarRelacao(); }
+function abrirDetalheRelacao(id){ if(window._abrirDetalheRelacao) window._abrirDetalheRelacao(id); }
+function editarPrestador(id){ if(window._editarPrestador) window._editarPrestador(id); }
+function fecharModal(){ if(window._fecharModal) window._fecharModal(); }
+function salvarEdicao(){ if(window._salvarEdicao) window._salvarEdicao(); }
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB4-eS5dLimqSewLPwwA_IT2haMV3kLD9s",
+  authDomain: "tralienigena-ee7a9.firebaseapp.com",
+  projectId: "tralienigena-ee7a9",
+  storageBucket: "tralienigena-ee7a9.firebasestorage.app",
+  messagingSenderId: "307288619335",
+  appId: "1:307288619335:web:467b6aeae99b641866b462",
+  measurementId: "G-K49FKDK046"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ─── CONSTANTES ───────────────────────────────────────────────────────────────
+const TIPOS = {
+  mecanico:    {label:"🔩 Mecânico",             color:"#ea580c"},
+  borracharia: {label:"🔧 Borracharia",           color:"#dc2626"},
+  posto:       {label:"⛽ Combustível / Posto",   color:"#16a34a"},
+  guindaste:   {label:"🏗️ Guincho / Guindaste",   color:"#c2410c"},
+  eletricista: {label:"⚡ Elétrica Veicular",     color:"#ca8a04"},
+  pecas:       {label:"🏪 Autopeças",             color:"#0891b2"},
+  funilaria:   {label:"🚗 Funilaria / Pintura",   color:"#9333ea"},
+  lavajato:    {label:"🚿 Lava-Jato",             color:"#0284c7"},
+  restaurante: {label:"🍽️ Restaurante",           color:"#d97706"},
+  pousada:     {label:"🛏️ Pousada / Dormida",     color:"#7c3aed"},
+  farmacia:    {label:"💊 Farmácia",              color:"#059669"},
+  tacografo:   {label:"📟 Tacógrafo",             color:"#0f766e"},
+  toxicologico:{label:"🧪 Exame Toxicológico",    color:"#7e22ce"},
+  chapa:       {label:"💪 Chapa / Ajudante",      color:"#0369a1"},
+  outros:      {label:"📦 Outros Serviços",       color:"#6b7280"},
+};
+
+const CRITERIOS = {
+  mecanico:    ["Qualidade","Preço","Agilidade","Honestidade","Atendimento"],
+  borracharia: ["Qualidade","Preço","Agilidade","Atendimento","Estrutura"],
+  posto:       ["Preço","Atendimento","Banheiro","Segurança","Estrutura"],
+  guindaste:   ["Agilidade","Preço","Atendimento","Equipamento","Segurança"],
+  eletricista: ["Qualidade","Preço","Agilidade","Honestidade","Atendimento"],
+  pecas:       ["Variedade","Preço","Atendimento","Qualidade","Entrega"],
+  funilaria:   ["Qualidade","Preço","Agilidade","Acabamento","Atendimento"],
+  lavajato:    ["Qualidade","Preço","Agilidade","Atendimento","Estrutura"],
+  restaurante: ["Comida","Preço","Limpeza","Atendimento","Espaço"],
+  pousada:     ["Limpeza","Segurança","Preço","Conforto","Atendimento"],
+  farmacia:    ["Variedade","Preço","Atendimento","Agilidade","Limpeza"],
+  tacografo:   ["Qualidade","Preço","Agilidade","Honestidade","Atendimento"],
+  toxicologico:["Agilidade","Preço","Atendimento","Estrutura","Confiança"],
+  chapa:       ["Força","Agilidade","Pontualidade","Atendimento","Preço"],
+  outros:      ["Qualidade","Preço","Atendimento","Agilidade","Honestidade"],
+};
+
+const SERVICOS_BUSCA = [
+  {id:"mecanico",    label:"🔩 Mecânico"},
+  {id:"borracharia", label:"🔧 Borracharia"},
+  {id:"posto",       label:"⛽ Combustível"},
+  {id:"guindaste",   label:"🏗️ Guincho"},
+  {id:"eletricista", label:"⚡ Elétrica"},
+  {id:"pecas",       label:"🏪 Autopeças"},
+  {id:"funilaria",   label:"🚗 Funilaria"},
+  {id:"lavajato",    label:"🚿 Lava-Jato"},
+  {id:"restaurante", label:"🍽️ Restaurante"},
+  {id:"pousada",     label:"🛏️ Pousada"},
+  {id:"farmacia",    label:"💊 Farmácia"},
+  {id:"tacografo",   label:"📟 Tacógrafo"},
+  {id:"toxicologico",label:"🧪 Toxicológico"},
+  {id:"chapa",       label:"💪 Chapa"},
+  {id:"outros",      label:"📦 Outros"},
+];
+
+const ADMIN_SENHA = 'Juli0Filh0';
+
+// ─── ESTADO ───────────────────────────────────────────────────────────────────
+let todosPrestadores = [];
+let prestadorAtual = null;
+let mapaRes = null, mapaCad = null, mapaDet = null;
+let marcCad = null, marcsDet = [];
+let servicosSel = [];
+let servicosCadSel = [];
+let coordsUser = null;
+let avAlvoId = null, avAlvoTipo = 'outros';
+let notaGeral = 0, notasCrit = {};
+let adminLogado = false;
+let geocodeTimer = null;
+let todasAvsCache = {};
+
+// ─── RELÓGIO + LOCALIZAÇÃO ────────────────────────────────────────────────────
+function atualizarRelogio() {
+  const agora = new Date();
+  const h = agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const d = agora.toLocaleDateString('pt-BR');
+  const el = document.getElementById('hRelogio');
+  if (el) el.textContent = `🕐 ${h} • ${d}`;
+}
+atualizarRelogio();
+setInterval(atualizarRelogio, 1000);
+
+// Localização automática no header
+navigator.geolocation && navigator.geolocation.getCurrentPosition(async pos => {
+  coordsUser = {lat: pos.coords.latitude, lng: pos.coords.longitude};
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordsUser.lat}&lon=${coordsUser.lng}&format=json`);
+    const d = await r.json();
+    if (d?.address) {
+      const cidade = d.address.city||d.address.town||d.address.village||d.address.municipality||'';
+      const uf = d.address.state_code||d.address.state||'';
+      document.getElementById('hLoc').textContent = `📍 Você está em ${cidade}${uf?', '+uf:''}`;
+      document.getElementById('busca-local').value = `${cidade}${uf?', '+uf:''}`;
+    }
+  } catch(e) {}
+}, () => { document.getElementById('hLoc').textContent = '📍 Localização não disponível'; });
+
+// ─── NAVEGAÇÃO ────────────────────────────────────────────────────────────────
+window._irInicio = function() {
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+  document.getElementById('tela-inicio').style.display = 'block';
+  carregarDestaques();
+  window.scrollTo(0,0);
+}
+
+window._showTela = function(id) {
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+  document.getElementById('tela-inicio').style.display = 'none';
+  document.getElementById(id).classList.add('ativa');
+  if (id==='tela-admin') verificarAdmin();
+  window.scrollTo(0,0);
+}
+
+// ─── TELA INÍCIO ──────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  buildServicosGrid();
+  buildCadServicosGrid();
+  carregarDestaques();
+  carregarTodosPrestadores();
+  cachearAvaliacoes();
+});
+
+async function carregarDestaques() {
+  try {
+    const snap = await getDocs(query(collection(db,'avaliacoes'), orderBy('data','desc')));
+    const avs = snap.docs.slice(0,6).map(d=>({id:d.id,...d.data()}));
+    const el = document.getElementById('lista-destaques');
+    if (!avs.length) { el.innerHTML='<div class="empty">Nenhuma avaliação ainda.</div>'; return; }
+    el.innerHTML = avs.map(av => {
+      const t = TIPOS[av.prestador_tipo]||TIPOS.outros;
+      const stars = '★'.repeat(Math.round(av.nota_geral||0))+'☆'.repeat(5-Math.round(av.nota_geral||0));
+      return `<div class="av-card-mini">
+        <div class="av-mini-top">
+          <div><div class="av-mini-nome">${av.prestador_nome||'Serviço'}</div><div class="av-mini-tipo" style="color:${t.color}">${t.label}</div></div>
+          <div class="av-mini-stars">${stars}</div>
+        </div>
+        ${av.texto?`<div class="av-mini-txt">${av.texto.substring(0,100)}${av.texto.length>100?'...':''}</div>`:''}
+        <div class="av-mini-autor">por ${av.autor||'Anônimo'} • ${av.data?new Date(av.data).toLocaleDateString('pt-BR'):''}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { document.getElementById('lista-destaques').innerHTML='<div class="empty">Erro ao carregar.</div>'; }
+}
+
+async function carregarTodosPrestadores() {
+  try {
+    const snap = await getDocs(collection(db,'prestadores'));
+    todosPrestadores = snap.docs.map(d=>({id:d.id,...d.data()}));
+  } catch(e){}
+}
+
+// ─── BUSCA SERVIÇOS ───────────────────────────────────────────────────────────
+function buildServicosGrid() {
+  document.getElementById('servicos-grid').innerHTML = SERVICOS_BUSCA.map(s=>
+    `<button class="serv-btn" id="sb-${s.id}" onclick="toggleServBusca('${s.id}')">${s.label}</button>`
+  ).join('');
+}
+
+window._toggleServBusca = function(id) {
+  const btn = document.getElementById('sb-'+id);
+  if (servicosSel.includes(id)) { servicosSel=servicosSel.filter(s=>s!==id); btn.classList.remove('on'); }
+  else { servicosSel.push(id); btn.classList.add('on'); }
+}
+
+window._autocompleteServico = function() {
+  const q = document.getElementById('busca-texto').value.toLowerCase().trim();
+  const box = document.getElementById('ac-box');
+  if (q.length < 2) { box.style.display='none'; return; }
+  const termos = ['motor','câmbio','freio','suspensão','bomba','válvula','ar condicionado','diferencial','embreagem',
+    'injeção','radiador','correia','pneu','borracha','bateria','alternador','farol','retrovisor','caçamba',
+    'baú','refrigeração','diesel','arla','óleo','filtro','escapamento','tacógrafo','toxicológico'];
+  const sugs = termos.filter(t=>t.includes(q)).slice(0,5);
+  if (!sugs.length) { box.style.display='none'; return; }
+  box.style.display='block';
+  box.innerHTML = sugs.map(s=>`<div class="ac-item" onclick="selecionarAC('${s}')">${s}</div>`).join('');
+}
+
+window._selecionarAC = function(s) {
+  document.getElementById('busca-texto').value = s;
+  document.getElementById('ac-box').style.display='none';
+}
+
+window.usarGPS = async function(ctx) {
+  const statusId = ctx==='busca'?'gps-status-busca':'gps-status-cad';
+  const el = document.getElementById(statusId);
+  el.style.display='block'; el.textContent='📡 Localizando...';
+  if (!navigator.geolocation) { el.textContent='GPS não disponível'; return; }
+  navigator.geolocation.getCurrentPosition(async pos => {
+    coordsUser = {lat:pos.coords.latitude, lng:pos.coords.longitude};
+    el.textContent='🔍 Buscando endereço...';
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordsUser.lat}&lon=${coordsUser.lng}&format=json&addressdetails=1`);
+      const d = await r.json();
+      if (d?.address) {
+        const a = d.address;
+        const rua = a.road||a.pedestrian||a.footway||a.street||'';
+        const numero = a.house_number||'';
+        const bairro = a.suburb||a.neighbourhood||a.quarter||'';
+        const cidade = a.city||a.town||a.village||a.municipality||'';
+        const uf = a.state_code||'';
+        const cep = a.postcode||'';
+        // Endereço completo para cadastro
+        let partes = [];
+        if (rua) partes.push(rua + (numero?' '+numero:''));
+        if (bairro) partes.push(bairro);
+        if (cidade) partes.push(cidade);
+        if (uf) partes.push(uf);
+        if (cep) partes.push('CEP '+cep);
+        const endCompleto = partes.join(', ');
+        const locSimples = cidade+(uf?', '+uf:'');
+        if (ctx==='busca') {
+          document.getElementById('busca-local').value = locSimples;
+          el.textContent='✅ Localização obtida!';
+        }
+        if (ctx==='cadastro') {
+          document.getElementById('cad-endereco').value = endCompleto||locSimples;
+          document.getElementById('cad-lat').value = coordsUser.lat;
+          document.getElementById('cad-lng').value = coordsUser.lng;
+          el.textContent='✅ Endereço preenchido! Confira e corrija se necessário.';
+          if (mapaCad) {
+            mapaCad.setView([coordsUser.lat,coordsUser.lng],17);
+            if (marcCad) marcCad.remove();
+            marcCad = L.marker([coordsUser.lat,coordsUser.lng]).addTo(mapaCad)
+              .bindPopup(`<strong>${rua||'Sua localização'}</strong>${numero?' '+numero:''}<br>${cidade}${uf?', '+uf:''}${cep?'<br>CEP: '+cep:''}`)
+              .openPopup();
+          }
+        }
+      }
+    } catch(e){ el.textContent='✅ Localização obtida!'; }
+  }, (err)=>{
+    const e2 = document.getElementById(statusId);
+    e2.style.display='block';
+    e2.textContent = err.code===1 ? '❌ Permissão negada. Ative o GPS nas configurações.' : '❌ Erro ao obter localização.';
+  }, {enableHighAccuracy:true, timeout:15000, maximumAge:0});
+}
+
+window.buscarServicos = async function() {
+  const texto = document.getElementById('busca-texto').value.trim().toLowerCase();
+  const localInput = document.getElementById('busca-local').value.trim();
+  if (!servicosSel.length && !texto) { alert('Selecione um tipo de serviço ou descreva o que precisa.'); return; }
+  if (!localInput && !coordsUser) { alert('Informe sua localização ou use o GPS.'); return; }
+
+  showTela('tela-resultados');
+  document.getElementById('lista-resultados').innerHTML='<div class="loading">Buscando serviços...</div>';
+  const tituloServs = servicosSel.map(s=>SERVICOS_BUSCA.find(x=>x.id===s)?.label||s).join(', ') || '"'+texto+'"';
+  document.getElementById('result-titulo').textContent = tituloServs;
+
+  // Inicializar mapa
+  if (!mapaRes) {
+    mapaRes = L.map('mapa-resultados').setView([-5.0892,-42.8019],7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaRes);
+  }
+
+  // Geocodificar local digitado
+  if (!coordsUser && localInput) {
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(localInput+', Brasil')}&format=json&limit=1`);
+      const d = await r.json();
+      if (d?.[0]) coordsUser = {lat:parseFloat(d[0].lat), lng:parseFloat(d[0].lon)};
+    } catch(e){}
+  }
+  if (coordsUser) mapaRes.setView([coordsUser.lat,coordsUser.lng],11);
+
+  // Carregar e filtrar prestadores
+  await carregarTodosPrestadores();
+  let filtrados = todosPrestadores;
+
+  // Filtro por tipo (botões)
+  if (servicosSel.length) filtrados = filtrados.filter(p=>servicosSel.includes(p.tipo));
+
+  // Filtro por texto (palavras-chave na descrição)
+  if (texto) {
+    filtrados = filtrados.filter(p => {
+      const desc = (p.descricao||'').toLowerCase();
+      const nome = (p.nome||'').toLowerCase();
+      const tipo = (p.tipo||'').toLowerCase();
+      return desc.includes(texto)||nome.includes(texto)||tipo.includes(texto);
+    });
+  }
+
+  // Calcular médias
+  const avSnap = await getDocs(collection(db,'avaliacoes'));
+  const avs = avSnap.docs.map(d=>({...d.data()}));
+  const mediasMap = {};
+  avs.forEach(av=>{ if(!mediasMap[av.prestador_id]) mediasMap[av.prestador_id]=[]; mediasMap[av.prestador_id].push(av.nota_geral||0); });
+
+  filtrados = filtrados.map(p => {
+    const notas = mediasMap[p.id]||[];
+    const media = notas.length ? notas.reduce((a,b)=>a+b,0)/notas.length : 0;
+    const dist = coordsUser && p.lat && p.lng ? calcDist(coordsUser.lat,coordsUser.lng,p.lat,p.lng) : null;
+    return {...p, media:parseFloat(media.toFixed(1)), totalAv:notas.length, dist};
+  }).sort((a,b)=>{ if(a.dist!==null&&b.dist!==null) return a.dist-b.dist; return b.media-a.media; });
+
+  const info = document.getElementById('result-info');
+  info.style.display='block';
+  info.textContent = `${filtrados.length} resultado(s) encontrado(s) ${coordsUser?'próximos a você':''}`;
+
+  renderResultados(filtrados);
+}
+
+function calcDist(lat1,lng1,lat2,lng2) {
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function renderResultados(lista) {
+  if (mapaRes) { mapaRes.eachLayer(l=>{ if(l instanceof L.Marker) mapaRes.removeLayer(l); }); }
+  const el = document.getElementById('lista-resultados');
+  if (!lista.length) { el.innerHTML='<div class="empty">Nenhum serviço encontrado nesta região.<br>Tente outra localização ou tipo de serviço.</div>'; return; }
+
+  lista.forEach(p=>{ if(p.lat&&p.lng&&mapaRes){ const t=TIPOS[p.tipo]||TIPOS.outros; L.marker([p.lat,p.lng]).addTo(mapaRes).bindPopup(`<strong>${p.nome}</strong><br>${t.label}`); } });
+
+  el.innerHTML = lista.map(p => {
+    const t = TIPOS[p.tipo]||TIPOS.outros;
+    const stars = p.media>0?('★'.repeat(Math.round(p.media))+'☆'.repeat(5-Math.round(p.media))):'☆☆☆☆☆';
+    const distStr = p.dist!==null?(p.dist<1?(p.dist*1000).toFixed(0)+'m':p.dist.toFixed(1)+'km'):'';
+    const wppNum = (p.whatsapp||'').replace(/\D/g,'');
+    return `
+      <div class="prestador-card" onclick="abrirDetalhe('${p.id}')">
+        <div class="pc-top">
+          <div>
+            <div class="pc-nome">${p.nome}</div>
+            <span class="pc-tipo tag" style="background:${t.color}18;color:${t.color};border:1px solid ${t.color}44">${t.label}</span>
+          </div>
+          <div class="pc-stars">
+            <div class="pc-stars-val">${stars}</div>
+            <span class="pc-stars-num">${p.media>0?p.media+' ('+p.totalAv+'av)':'Sem avaliação'}</span>
+          </div>
+        </div>
+        <div class="pc-local">📍 ${p.endereco||'Localização não informada'} ${distStr?'• <span class="pc-dist">'+distStr+'</span>':''}</div>
+        <div class="pc-footer">
+          ${wppNum?`<button class="btn-wpp" onclick="event.stopPropagation();abrirWpp('${wppNum}')">💬 WhatsApp</button>`:'<span></span>'}
+          <button class="btn-av-mini" onclick="event.stopPropagation();abrirAvaliarPorId('${p.id}')">⭐ Avaliar</button>
+          <button class="btn-rota-mini" onclick="event.stopPropagation();irAoLocal(${p.lat||0},${p.lng||0})">🗺️ Rota</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─── DETALHE ──────────────────────────────────────────────────────────────────
+window.abrirDetalhe = async function(id) {
+  const p = todosPrestadores.find(x=>x.id===id);
+  if (!p) return;
+  prestadorAtual = p;
+  showTela('tela-detalhe');
+  const t = TIPOS[p.tipo]||TIPOS.outros;
+  document.getElementById('det-nome').textContent = p.nome;
+  document.getElementById('det-tipo-tag').innerHTML = `<span class="tag" style="background:${t.color}18;color:${t.color};border:1px solid ${t.color}44">${t.label}</span>`;
+
+  const h = p.aberto24h?'🕐 Aberto 24 horas':(p.abre&&p.fecha?`🕐 ${p.abre}h às ${p.fecha}h`:'');
+  const wppNum = (p.whatsapp||'').replace(/\D/g,'');
+  document.getElementById('det-info').innerHTML = `
+    ${p.endereco?`<div class="info-linha"><span class="info-ico">📍</span><span>${p.endereco}</span></div>`:''}
+    ${p.whatsapp?`<div class="info-linha"><span class="info-ico">💬</span><span>${p.whatsapp}</span></div>`:''}
+    ${p.instagram?`<div class="info-linha"><span class="info-ico">📸</span><span>${p.instagram}</span></div>`:''}
+    ${h?`<div class="info-linha"><span class="info-ico">🕐</span><span>${h}</span></div>`:''}
+    ${p.descricao?`<div class="info-linha"><span class="info-ico">💬</span><span>${p.descricao}</span></div>`:''}`;
+
+  const btnWpp = document.getElementById('btn-wpp-grande');
+  if (wppNum) { btnWpp.style.display='flex'; btnWpp.onclick=()=>abrirWpp(wppNum); }
+  else { btnWpp.style.display='none'; }
+  document.getElementById('btn-rota-grande').onclick = ()=>irAoLocal(p.lat,p.lng);
+
+  if (!mapaDet) {
+    mapaDet = L.map('mapa-detalhe');
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaDet);
+  }
+  if (p.lat&&p.lng) { mapaDet.setView([p.lat,p.lng],15); L.marker([p.lat,p.lng]).addTo(mapaDet).bindPopup(p.nome).openPopup(); }
+
+  carregarAvsDetalhe(id);
+}
+
+async function carregarAvsDetalhe(prestId) {
+  const el = document.getElementById('lista-avs-detalhe');
+  el.innerHTML='<div class="loading">Carregando...</div>';
+  try {
+    const snap = await getDocs(query(collection(db,'avaliacoes'),where('prestador_id','==',prestId),orderBy('data','desc')));
+    const avs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (!avs.length) { el.innerHTML='<div class="empty">Nenhuma avaliação ainda.</div>'; return; }
+    el.innerHTML = avs.map(av=>{
+      const stars='★'.repeat(Math.round(av.nota_geral||0))+'☆'.repeat(5-Math.round(av.nota_geral||0));
+      const crits=av.criterios?Object.entries(av.criterios).map(([k,v])=>`<div class="crit-item">${k}: ${'★'.repeat(v)}</div>`).join(''):'';
+      return `<div class="av-det-card">
+        <div class="av-det-top">
+          <span style="color:#f59e0b;font-size:13px">${stars}</span>
+          <span style="font-size:10px;color:#aaa">${av.data?new Date(av.data).toLocaleDateString('pt-BR'):''}</span>
+        </div>
+        ${av.texto?`<div style="font-size:12px;color:#444;margin-bottom:4px">${av.texto}</div>`:''}
+        ${crits?`<div class="crit-grid">${crits}</div>`:''}
+        <div style="font-size:10px;color:#aaa;margin-top:5px">por ${av.autor||'Anônimo'}</div>
+      </div>`;
+    }).join('');
+  } catch(e){ el.innerHTML='<div class="empty">Erro ao carregar.</div>'; }
+}
+
+window._abrirWpp = function(num) {
+  window.open(`https://wa.me/55${num.replace(/\D/g,'')}`, '_blank');
+}
+
+window._irAoLocal = function(lat,lng) {
+  if (!lat||!lng) { alert('Localização não disponível.'); return; }
+  window.open(`https://www.openstreetmap.org/directions?to=${lat},${lng}#map=15/${lat}/${lng}`, '_blank');
+}
+
+// ─── CADASTRO PRESTADOR ───────────────────────────────────────────────────────
+function buildCadServicosGrid() {
+  setTimeout(()=>{
+    if (!mapaCad) {
+      mapaCad = L.map('mapa-cadastro').setView([-5.0892,-42.8019],5);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaCad);
+      mapaCad.on('click',e=>{
+        document.getElementById('cad-lat').value=e.latlng.lat;
+        document.getElementById('cad-lng').value=e.latlng.lng;
+        if(marcCad) marcCad.remove();
+        marcCad=L.marker([e.latlng.lat,e.latlng.lng]).addTo(mapaCad).bindPopup('Seu local').openPopup();
+      });
+    }
+  },400);
+}
+
+window.buscarPrestadorExistente = async function() {
+  const q = document.getElementById('cad-busca').value.trim().toLowerCase();
+  const sug = document.getElementById('cad-sugestoes');
+  if (q.length<2) { sug.style.display='none'; return; }
+  if (!todosPrestadores.length) await carregarTodosPrestadores();
+  const res = todosPrestadores.filter(p=>p.nome.toLowerCase().includes(q)).slice(0,5);
+  if (!res.length) { sug.style.display='none'; return; }
+  sug.style.display='block';
+  sug.innerHTML=res.map(p=>`
+    <div class="bp-item" onclick="vincularPrestador('${p.id}')">
+      <div class="bp-item-nome">${p.nome}</div>
+      <div class="bp-item-tipo">${(TIPOS[p.tipo]||TIPOS.outros).label} • ${p.endereco||''}</div>
+    </div>`).join('');
+}
+
+window._vincularPrestador = function(id) {
+  const p = todosPrestadores.find(x=>x.id===id);
+  if (!p) return;
+  document.getElementById('cad-sugestoes').style.display='none';
+  document.getElementById('cad-busca').value=p.nome;
+  document.getElementById('cad-ok').textContent='✅ Estabelecimento encontrado! Você já está vinculado a este cadastro.';
+  document.getElementById('cad-ok').style.display='block';
+  document.getElementById('form-cadastro-novo').style.display='none';
+  setTimeout(()=>document.getElementById('cad-ok').style.display='none',4000);
+}
+
+window._geocodificarEndereco = function() {
+  clearTimeout(geocodeTimer);
+  geocodeTimer = setTimeout(async()=>{
+    const end = document.getElementById('cad-endereco').value.trim();
+    if (end.length<5) return;
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(end+', Brasil')}&format=json&limit=1`);
+      const d = await r.json();
+      if (d?.[0]) {
+        const lat=parseFloat(d[0].lat), lng=parseFloat(d[0].lon);
+        document.getElementById('cad-lat').value=lat;
+        document.getElementById('cad-lng').value=lng;
+        if (mapaCad) {
+          mapaCad.setView([lat,lng],15);
+          if(marcCad) marcCad.remove();
+          marcCad=L.marker([lat,lng]).addTo(mapaCad).bindPopup('Seu local').openPopup();
+        }
+      }
+    } catch(e){}
+  },700);
+}
+
+window.cadastrarPrestador = async function() {
+  const nome=document.getElementById('cad-nome').value.trim();
+  const tipo=document.getElementById('cad-tipo').value;
+  const desc=document.getElementById('cad-desc').value.trim();
+  if (!nome||!tipo||!desc) { alert('Preencha os campos obrigatórios: Nome, Tipo e Descrição.'); return; }
+  const btn=document.getElementById('btn-cadastrar');
+  btn.disabled=true; btn.textContent='Salvando...';
+  try {
+    await addDoc(collection(db,'prestadores'),{
+      nome, tipo, descricao:desc,
+      whatsapp: document.getElementById('cad-wpp').value.trim(),
+      instagram: document.getElementById('cad-ig').value.trim(),
+      endereco: document.getElementById('cad-endereco').value.trim(),
+      lat: parseFloat(document.getElementById('cad-lat').value)||null,
+      lng: parseFloat(document.getElementById('cad-lng').value)||null,
+      abre: document.getElementById('cad-abre').value,
+      fecha: document.getElementById('cad-fecha').value,
+      aberto24h: document.getElementById('cad-24h').checked,
+      data: new Date().toISOString(),
+    });
+    document.getElementById('cad-ok').textContent='✅ Prestador cadastrado com sucesso! Em breve você aparecerá nas buscas dos motoristas.';
+    document.getElementById('cad-ok').style.display='block';
+    ['cad-nome','cad-wpp','cad-ig','cad-endereco','cad-desc','cad-abre','cad-fecha'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('cad-tipo').value='';
+    document.getElementById('cad-24h').checked=false;
+    document.getElementById('cad-busca').value='';
+    document.getElementById('form-cadastro-novo').style.display='block';
+    await carregarTodosPrestadores();
+    setTimeout(()=>document.getElementById('cad-ok').style.display='none',5000);
+  } catch(e){ alert('Erro ao cadastrar. Tente novamente.'); }
+  btn.disabled=false; btn.textContent='✅ CADASTRAR MEU SERVIÇO';
+}
+
+// ─── AVALIAÇÃO ────────────────────────────────────────────────────────────────
+window._abrirAvaliarDireto = function() {
+  if (!prestadorAtual) return;
+  showTela('tela-avaliar');
+  document.getElementById('btn-voltar-av').onclick=()=>showTela('tela-detalhe');
+  selecionarAvAlvo(prestadorAtual.id);
+  document.getElementById('av-busca').value=prestadorAtual.nome;
+}
+
+window.abrirAvaliarPorId = async function(id) {
+  showTela('tela-avaliar');
+  document.getElementById('btn-voltar-av').onclick=()=>showTela('tela-resultados');
+  if (!todosPrestadores.length) await carregarTodosPrestadores();
+  selecionarAvAlvo(id);
+  const p=todosPrestadores.find(x=>x.id===id);
+  if(p) document.getElementById('av-busca').value=p.nome;
+}
+
+window.buscarParaAvaliar = async function() {
+  const q=document.getElementById('av-busca').value.trim().toLowerCase();
+  const sug=document.getElementById('av-sugestoes');
+  if (q.length<2) { sug.style.display='none'; return; }
+  if (!todosPrestadores.length) await carregarTodosPrestadores();
+  const res=todosPrestadores.filter(p=>p.nome.toLowerCase().includes(q)||(p.endereco||'').toLowerCase().includes(q)).slice(0,6);
+  if (!res.length) { sug.style.display='none'; return; }
+  sug.style.display='block';
+  sug.innerHTML=res.map(p=>`
+    <div class="bp-item" onclick="selecionarAvAlvo('${p.id}')">
+      <div class="bp-item-nome">${p.nome}</div>
+      <div class="bp-item-tipo">${(TIPOS[p.tipo]||TIPOS.outros).label} • ${p.endereco||''}</div>
+    </div>`).join('');
+}
+
+window._selecionarAvAlvo = function(id) {
+  const p=todosPrestadores.find(x=>x.id===id);
+  if (!p) return;
+  avAlvoId=id; avAlvoTipo=p.tipo||'outros';
+  document.getElementById('av-sugestoes').style.display='none';
+  document.getElementById('av-busca').value=p.nome;
+  document.getElementById('av-alvo-box').style.display='block';
+  document.getElementById('av-alvo-nome').textContent=p.nome;
+  document.getElementById('av-alvo-tipo').textContent=(TIPOS[p.tipo]||TIPOS.outros).label;
+  document.getElementById('av-manual-box').style.display='none';
+  mostrarCriterios(p.tipo||'outros');
+}
+
+window._modoManual = function() {
+  avAlvoId=null;
+  document.getElementById('av-alvo-box').style.display='none';
+  document.getElementById('av-manual-box').style.display='block';
+  mostrarCriterios('outros');
+}
+
+function mostrarCriterios(tipo) {
+  notaGeral=0; notasCrit={};
+  const crits=CRITERIOS[tipo]||CRITERIOS.outros;
+  document.getElementById('av-geral-stars').innerHTML=[1,2,3,4,5].map(n=>
+    `<span class="ei-star" id="ag${n}" onclick="setNG(${n})">★</span>`
+  ).join('');
+  document.getElementById('av-criterios-box').innerHTML=crits.map(c=>`
+    <div class="c-row">
+      <div class="c-nome">${c}</div>
+      <div class="c-stars">${[1,2,3,4,5].map(n=>`<span class="c-star" id="cs_${c}_${n}" onclick="setNC('${c}',${n})">★</span>`).join('')}</div>
+    </div>`).join('');
+  document.getElementById('av-form-box').style.display='block';
+}
+
+window._setNG=function(n){ notaGeral=n; for(let i=1;i<=5;i++) document.getElementById('ag'+i).classList.toggle('on',i<=n); }
+window._setNC=function(c,n){ notasCrit[c]=n; for(let i=1;i<=5;i++){ const el=document.getElementById(`cs_${c}_${i}`); if(el) el.classList.toggle('on',i<=n); } }
+
+window.enviarAvaliacao = async function() {
+  if (!notaGeral) { alert('Dê pelo menos a nota geral.'); return; }
+  const btn=document.getElementById('btn-av');
+  btn.disabled=true; btn.textContent='Enviando...';
+  try {
+    let prestId=avAlvoId, prestNome='', prestTipo=avAlvoTipo;
+    if (!prestId) {
+      const nomePrest=document.getElementById('av-man-nome').value.trim();
+      const tipoPrest=document.getElementById('av-man-tipo').value;
+      const cidadePrest=document.getElementById('av-man-cidade').value.trim();
+      if (!nomePrest) { alert('Informe o nome do estabelecimento.'); btn.disabled=false; btn.textContent='⭐ ENVIAR AVALIAÇÃO'; return; }
+      // Verificar duplicidade por nome normalizado
+      const nomeNorm=nomePrest.toLowerCase().trim();
+      const existente=todosPrestadores.find(p=>p.nome.toLowerCase().trim()===nomeNorm);
+      if (existente) { prestId=existente.id; prestNome=existente.nome; prestTipo=existente.tipo||'outros'; }
+      else {
+        const ref=await addDoc(collection(db,'prestadores'),{nome:nomePrest,tipo:tipoPrest,endereco:cidadePrest,whatsapp:'',descricao:'',data:new Date().toISOString(),cadastrado_via_avaliacao:true});
+        prestId=ref.id; prestNome=nomePrest; prestTipo=tipoPrest;
+        await carregarTodosPrestadores();
+      }
+    } else {
+      const p=todosPrestadores.find(x=>x.id===prestId);
+      prestNome=p?.nome||''; prestTipo=p?.tipo||'outros';
+    }
+    await addDoc(collection(db,'avaliacoes'),{
+      prestador_id:prestId, prestador_nome:prestNome, prestador_tipo:prestTipo,
+      nota_geral:notaGeral, criterios:{...notasCrit},
+      texto:document.getElementById('av-texto').value.trim(),
+      autor:document.getElementById('av-autor').value.trim(),
+      telefone_autor:document.getElementById('av-tel').value.trim(),
+      data:new Date().toISOString(),
+    });
+    document.getElementById('av-ok').style.display='block';
+    ['av-busca','av-texto','av-autor','av-tel','av-man-nome','av-man-cidade'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('av-alvo-box').style.display='none';
+    document.getElementById('av-manual-box').style.display='none';
+    document.getElementById('av-form-box').style.display='none';
+    avAlvoId=null; notaGeral=0; notasCrit={};
+    setTimeout(()=>{ document.getElementById('av-ok').style.display='none'; irInicio(); },2500);
+  } catch(e){ alert('Erro ao enviar. Tente novamente.'); }
+  btn.disabled=false; btn.textContent='⭐ ENVIAR AVALIAÇÃO';
+}
+
+// ─── RELAÇÃO COMPLETA ─────────────────────────────────────────────────────────
+window._abrirDetalheRelacao = async function(id) {
+  // Garantir que prestadores estejam carregados
+  if (!todosPrestadores.length) await carregarTodosPrestadores();
+  // Guardar tela anterior como relação
+  await window._abrirDetalhe(id);
+  // Botão voltar vai para relação
+  document.getElementById('btn-voltar-detalhe') && (document.getElementById('btn-voltar-detalhe').onclick = ()=>window._showTela('tela-relacao'));
+}
+
+window._verRelacaoCompleta = async function() {
+  window._showTela('tela-relacao');
+  await carregarTodosPrestadores();
+  await cachearAvaliacoes();
+  renderRelacao(todosPrestadores);
+}
+
+function renderRelacao(lista) {
+  const el = document.getElementById('lista-relacao');
+
+  // Ordenar por tipo de serviço (alfabético pelo label) e depois por nome
+  const ordenada = [...lista].sort((a,b) => {
+    const tipoA = (TIPOS[a.tipo]||TIPOS.outros).label;
+    const tipoB = (TIPOS[b.tipo]||TIPOS.outros).label;
+    if (tipoA !== tipoB) return tipoA.localeCompare(tipoB, 'pt-BR');
+    return (a.nome||'').localeCompare(b.nome||'', 'pt-BR');
+  });
+
+  document.getElementById('rel-count').textContent = ordenada.length + ' prestador(es) cadastrado(s) • ordenado por tipo de serviço';
+  if (!ordenada.length) { el.innerHTML='<div class="empty">Nenhum prestador encontrado.</div>'; return; }
+
+  // Calcular médias
+  const avsCache = window._avsCache || [];
+  const mediasMap = {};
+  avsCache.forEach(av=>{ if(!mediasMap[av.prestador_id]) mediasMap[av.prestador_id]=[]; mediasMap[av.prestador_id].push(av.nota_geral||0); });
+
+  // Agrupar por tipo
+  let tipoAtual = '';
+  let html = '';
+
+  ordenada.forEach(p => {
+    const t = TIPOS[p.tipo]||TIPOS.outros;
+    const notas = mediasMap[p.id]||[];
+    const media = notas.length ? (notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(1) : null;
+    const stars = media ? '★'.repeat(Math.round(parseFloat(media)))+'☆'.repeat(5-Math.round(parseFloat(media))) : '☆☆☆☆☆';
+    const wppNum = (p.whatsapp||'').replace(/\D/g,'');
+
+    // Cabeçalho de grupo por tipo
+    if (p.tipo !== tipoAtual) {
+      tipoAtual = p.tipo;
+      html += `<div style="background:${t.color}18;border-left:4px solid ${t.color};border-radius:6px;padding:8px 12px;margin:14px 0 8px;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:${t.color}">${t.label}</div>`;
+    }
+
+    html += `
+      <div class="prestador-card" onclick="abrirDetalheRelacao('${p.id}')" style="cursor:pointer">
+        <div class="pc-top">
+          <div style="flex:1;min-width:0">
+            <div class="pc-nome">${p.nome}</div>
+            ${p.endereco?`<div class="pc-local">📍 ${p.endereco}</div>`:''}
+          </div>
+          <div class="pc-stars" style="flex-shrink:0;text-align:right">
+            <div class="pc-stars-val">${stars}</div>
+            <span class="pc-stars-num">${media?media+' ('+notas.length+'av)':'Sem avaliação'}</span>
+          </div>
+        </div>
+        ${p.descricao?`<div style="font-size:12px;color:#666;margin-top:6px;line-height:1.4">${p.descricao.substring(0,100)}${p.descricao.length>100?'...':''}</div>`:''}
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          ${wppNum?`<button class="btn-wpp" onclick="event.stopPropagation();abrirWpp('${wppNum}')">💬 WhatsApp</button>`:''}
+          <button class="btn-rota-mini" onclick="event.stopPropagation();abrirDetalheRelacao('${p.id}')">🔍 Ver detalhes</button>
+          <button class="btn-av-mini" onclick="event.stopPropagation();abrirAvaliarPorId('${p.id}')">⭐ Avaliar</button>
+        </div>
+      </div>`;
+  });
+
+  el.innerHTML = html;
+}
+
+window._filtrarRelacao = function() {
+  const q = document.getElementById('rel-filtro').value.toLowerCase().trim();
+  const tipo = document.getElementById('rel-tipo').value;
+  const res = todosPrestadores.filter(p => {
+    const matchTipo = !tipo || p.tipo === tipo;
+    const matchTexto = !q || p.nome.toLowerCase().includes(q) || (p.descricao||'').toLowerCase().includes(q) || (p.endereco||'').toLowerCase().includes(q) || (TIPOS[p.tipo]||TIPOS.outros).label.toLowerCase().includes(q);
+    return matchTipo && matchTexto;
+  });
+  renderRelacao(res);
+}
+
+// Cache de avaliações para a relação
+async function cachearAvaliacoes() {
+  try {
+    const snap = await getDocs(collection(db,'avaliacoes'));
+    window._avsCache = snap.docs.map(d=>({...d.data()}));
+  } catch(e){ window._avsCache = []; }
+}
+
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+function verificarAdmin() {
+  if (adminLogado) {
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('admin-painel').style.display='block';
+    carregarAdmPrestadores(); carregarAdmAvaliacoes();
+  }
+}
+
+window._entrarAdmin=function(){
+  if(document.getElementById('admin-senha').value===ADMIN_SENHA){
+    adminLogado=true;
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('admin-painel').style.display='block';
+    document.getElementById('admin-erro').style.display='none';
+    carregarAdmPrestadores(); carregarAdmAvaliacoes();
+  } else document.getElementById('admin-erro').style.display='block';
+}
+
+async function carregarAdmPrestadores(){
+  try{
+    const snap=await getDocs(query(collection(db,'prestadores'),orderBy('data','desc')));
+    const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('adm-tot-p').textContent='('+list.length+')';
+    document.getElementById('adm-lista-p').innerHTML=list.map(p=>`
+      <div class="admin-item">
+        <div>
+          <div style="font-weight:700;font-size:13px">${p.nome}</div>
+          <div style="font-size:11px;color:#888">${(TIPOS[p.tipo]||TIPOS.outros).label} • ${p.endereco||''}</div>
+          ${p.whatsapp?`<div style="font-size:11px;color:#25d366">💬 ${p.whatsapp}</div>`:''}
+          ${p.descricao?`<div style="font-size:11px;color:#555;margin-top:2px">${p.descricao.substring(0,60)}...</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+          <button style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;color:#2d8c3e;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:700" onclick="editarPrestador('${p.id}')">✏️ Editar</button>
+          <button class="btn-del" onclick="delPrestador('${p.id}')">🗑️ Excluir</button>
+        </div>
+      </div>`).join('')||'<div class="empty">Nenhum cadastrado.</div>';
+  }catch(e){}
+}
+
+async function carregarAdmAvaliacoes(){
+  try{
+    const snap=await getDocs(query(collection(db,'avaliacoes'),orderBy('data','desc')));
+    const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('adm-tot-a').textContent='('+list.length+')';
+    document.getElementById('adm-lista-a').innerHTML=list.map(av=>`
+      <div class="admin-item">
+        <div>
+          <div style="font-weight:700;font-size:13px">${av.prestador_nome||'—'}</div>
+          <div style="font-size:11px;color:#f59e0b">${'★'.repeat(Math.round(av.nota_geral||0))}</div>
+          ${av.texto?`<div style="font-size:11px;color:#555">${av.texto.substring(0,60)}...</div>`:''}
+          <div style="font-size:10px;color:#aaa">por ${av.autor||'Anônimo'} ${av.telefone_autor?'• '+av.telefone_autor:''}</div>
+        </div>
+        <button class="btn-del" onclick="delAvaliacao('${av.id}')">🗑️</button>
+      </div>`).join('')||'<div class="empty">Nenhuma avaliação.</div>';
+  }catch(e){}
+}
+
+window._delPrestador=async function(id){ if(!confirm('Excluir?')) return; try{await deleteDoc(doc(db,'prestadores',id)); await carregarAdmPrestadores();}catch(e){alert('Erro.');} }
+window._delAvaliacao=async function(id){ if(!confirm('Excluir?')) return; try{await deleteDoc(doc(db,'avaliacoes',id)); await carregarAdmAvaliacoes();}catch(e){alert('Erro.');} }
+
+// ─── EDIÇÃO DE PRESTADOR ──────────────────────────────────────────────────────
+window._editarPrestador = async function(id) {
+  const p = todosPrestadores.find(x=>x.id===id);
+  if (!p) {
+    // Buscar do Firebase se não estiver em cache
+    try {
+      const snap = await getDoc(doc(db,'prestadores',id));
+      if (!snap.exists()) { alert('Prestador não encontrado.'); return; }
+      Object.assign(p||{}, {id:snap.id,...snap.data()});
+    } catch(e){ alert('Erro ao carregar.'); return; }
+  }
+  document.getElementById('edit-id').value = p.id;
+  document.getElementById('edit-nome').value = p.nome||'';
+  document.getElementById('edit-tipo').value = p.tipo||'outros';
+  document.getElementById('edit-desc').value = p.descricao||'';
+  document.getElementById('edit-wpp').value = p.whatsapp||'';
+  document.getElementById('edit-ig').value = p.instagram||'';
+  document.getElementById('edit-endereco').value = p.endereco||'';
+  document.getElementById('edit-abre').value = p.abre||'';
+  document.getElementById('edit-fecha').value = p.fecha||'';
+  document.getElementById('edit-24h').checked = p.aberto24h||false;
+  document.getElementById('edit-ok').style.display='none';
+  document.getElementById('modal-edicao').style.display='block';
+  document.body.style.overflow='hidden';
+}
+
+window._fecharModal = function() {
+  document.getElementById('modal-edicao').style.display='none';
+  document.body.style.overflow='';
+}
+
+window._salvarEdicao = async function() {
+  const id = document.getElementById('edit-id').value;
+  const nome = document.getElementById('edit-nome').value.trim();
+  const tipo = document.getElementById('edit-tipo').value;
+  if (!nome||!tipo) { alert('Nome e tipo são obrigatórios.'); return; }
+  const btn = document.querySelector('#modal-edicao button[onclick="salvarEdicao()"]');
+  btn.disabled=true; btn.textContent='Salvando...';
+  try {
+    await updateDoc(doc(db,'prestadores',id), {
+      nome, tipo,
+      descricao: document.getElementById('edit-desc').value.trim(),
+      whatsapp: document.getElementById('edit-wpp').value.trim(),
+      instagram: document.getElementById('edit-ig').value.trim(),
+      endereco: document.getElementById('edit-endereco').value.trim(),
+      abre: document.getElementById('edit-abre').value,
+      fecha: document.getElementById('edit-fecha').value,
+      aberto24h: document.getElementById('edit-24h').checked,
+      atualizado: new Date().toISOString(),
+    });
+    document.getElementById('edit-ok').style.display='block';
+    await carregarTodosPrestadores();
+    await carregarAdmPrestadores();
+    setTimeout(()=>{ document.getElementById('edit-ok').style.display='none'; window._fecharModal(); }, 2000);
+  } catch(e){ alert('Erro ao salvar. Tente novamente.'); }
+  btn.disabled=false; btn.textContent='💾 SALVAR ALTERAÇÕES';
+}
+</script>
+
+<!-- MODAL EDIÇÃO ADMIN -->
+<div id="modal-edicao" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:9999;overflow-y:auto">
+  <div style="background:#fff;margin:20px 16px;border-radius:14px;overflow:hidden;max-width:600px;margin-left:auto;margin-right:auto">
+    <div style="background:linear-gradient(135deg,#1a3a1a,#2d8c3e);padding:16px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#fff">✏️ Editar Prestador</div>
+      <button onclick="fecharModal()" style="background:rgba(255,255,255,.2);border:none;border-radius:8px;color:#fff;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:700">✕ Fechar</button>
+    </div>
+    <div style="padding:16px">
+      <input type="hidden" id="edit-id"/>
+      <div class="form-group">
+        <label class="form-label">NOME *</label>
+        <input class="form-input" id="edit-nome" placeholder="Nome do estabelecimento"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">TIPO *</label>
+        <select class="form-input" id="edit-tipo">
+          <option value="mecanico">🔩 Mecânico</option>
+          <option value="borracharia">🔧 Borracharia</option>
+          <option value="posto">⛽ Combustível / Posto</option>
+          <option value="guindaste">🏗️ Guincho / Guindaste</option>
+          <option value="eletricista">⚡ Elétrica Veicular</option>
+          <option value="pecas">🏪 Autopeças</option>
+          <option value="funilaria">🚗 Funilaria / Pintura</option>
+          <option value="lavajato">🚿 Lava-Jato de Caminhão</option>
+          <option value="restaurante">🍽️ Restaurante / Lanchonete</option>
+          <option value="pousada">🛏️ Pousada / Dormida</option>
+          <option value="farmacia">💊 Farmácia</option>
+          <option value="tacografo">📟 Tacógrafo</option>
+          <option value="toxicologico">🧪 Exame Toxicológico</option>
+          <option value="chapa">💪 Chapa / Ajudante</option>
+          <option value="outros">📦 Outros Serviços</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">DESCRIÇÃO</label>
+        <textarea class="form-input" id="edit-desc" placeholder="Descrição dos serviços..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">WHATSAPP</label>
+        <input class="form-input" id="edit-wpp" placeholder="(85) 99999-9999" type="tel"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">INSTAGRAM</label>
+        <input class="form-input" id="edit-ig" placeholder="@nomedoperfil"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ENDEREÇO</label>
+        <input class="form-input" id="edit-endereco" placeholder="Rua, número, cidade — UF"/>
+      </div>
+      <div class="form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label class="form-label">ABRE ÀS</label>
+          <input class="form-input" id="edit-abre" type="time"/>
+        </div>
+        <div>
+          <label class="form-label">FECHA ÀS</label>
+          <input class="form-input" id="edit-fecha" type="time"/>
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:13px;color:#555;cursor:pointer">
+        <input type="checkbox" id="edit-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
+      </label>
+      <div id="edit-ok" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;color:#166534;font-size:13px;font-weight:700;text-align:center;margin-bottom:12px">✅ Salvo com sucesso!</div>
+      <button onclick="salvarEdicao()" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.5px">💾 SALVAR ALTERAÇÕES</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
