@@ -1,463 +1,1069 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Tr.Alienigena — A Voz do Motorista</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tr.Alienigena - A Voz do Motorista</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    :root {
-      --green:#2e7d32; --green-light:#43a047; --green-bg:#f1f8e9;
-      --green-border:#a5d6a7; --dark:#1b2018; --mid:#4a5240;
-      --muted:#8a9480; --line:#e4e8df; --bg:#f4f5f0;
-      --white:#ffffff; --danger:#c62828; --warn:#e65100;
-      --radius:12px; --shadow:0 2px 12px rgba(30,50,20,0.10);
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{background:var(--bg);color:var(--dark);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:40px;}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#f4f4f4;color:#1a1a1a;font-family:'Barlow',sans-serif;min-height:100vh}
+    input,textarea,select,button{font-family:'Barlow',sans-serif}
 
-    .header{background:var(--dark);padding:14px 18px 12px;position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:12px;box-shadow:0 3px 16px rgba(0,0,0,0.25);}
-    .header-icon{font-size:28px;line-height:1;}
-    .header-brand{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:1.5px;}
-    .header-brand span{color:#69f058;}
-    .header-tagline{font-size:10px;color:#8a9a80;letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
+    /* HEADER */
+    .header{background:#fff;border-bottom:3px solid #2d8c3e;padding:10px 16px;position:sticky;top:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+    .logo-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#1a1a1a}
+    .logo-title span{color:#2d8c3e}
+    .logo-voz{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;color:#2d8c3e;letter-spacing:1px}
+    .logo-sub{font-size:9px;color:#aaa;letter-spacing:1px}
 
-    .wrap{max-width:680px;margin:0 auto;padding:20px 14px 0;}
+    /* TELA INICIAL */
+    #tela-inicio{display:block}
+    .inicio-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:32px 20px 24px;text-align:center}
+    .inicio-hero h1{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:6px}
+    .inicio-hero p{color:#a8d5b0;font-size:14px;margin-bottom:24px}
+    .btn-hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:500px;margin:0 auto}
+    .btn-hero{background:#fff;border:none;border-radius:14px;padding:20px 12px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+    .btn-hero:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+    .btn-hero-icon{font-size:32px;margin-bottom:8px}
+    .btn-hero-label{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:#1a1a1a}
+    .btn-hero-sub{font-size:11px;color:#888;margin-top:2px}
 
-    .step{display:none;animation:fadeUp 0.3s ease;}
-    .step.active{display:block;}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    .destaques{padding:20px 16px}
+    .destaques h2{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:14px}
+    .avaliacao-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee}
+    .av-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+    .av-nome{font-weight:700;font-size:14px;color:#1a1a1a}
+    .av-tipo{font-size:11px;color:#2d8c3e;font-weight:700}
+    .av-estrelas{color:#f59e0b;font-size:14px}
+    .av-texto{font-size:13px;color:#555;line-height:1.5;margin-top:4px}
+    .av-autor{font-size:11px;color:#aaa;margin-top:6px}
 
-    .step-bar{display:flex;align-items:center;margin-bottom:20px;}
-    .step-dot{width:28px;height:28px;border-radius:50%;background:var(--line);border:2px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.3s;flex-shrink:0;font-family:'Oswald',sans-serif;}
-    .step-dot.done{background:var(--green);border-color:var(--green);color:#fff;}
-    .step-dot.active{background:var(--dark);border-color:var(--dark);color:#69f058;}
-    .step-line{flex:1;height:2px;background:var(--line);}
-    .step-line.done{background:var(--green);}
+    /* TELAS */
+    .tela{display:none;min-height:100vh}
+    .tela.ativa{display:block}
 
-    .sec-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:var(--dark);line-height:1.2;}
-    .sec-title span{color:var(--green);}
-    .sec-sub{color:var(--muted);font-size:13px;margin-top:3px;margin-bottom:16px;}
+    /* BUSCA MOTORISTA */
+    .busca-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:20px 16px}
+    .busca-hero h2{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:16px}
+    .busca-pergunta{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px}
+    .busca-pergunta label{font-size:12px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:8px}
+    .servicos-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .serv-btn{background:#f5f5f5;border:2px solid #e5e5e5;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#555;transition:all .15s}
+    .serv-btn.on{background:#2d8c3e15;border-color:#2d8c3e;color:#2d8c3e}
+    .loc-input-wrap{position:relative}
+    .loc-input{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 40px 10px 12px;font-size:14px;width:100%;outline:none}
+    .loc-btn-gps{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px}
+    .btn-buscar{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:12px;letter-spacing:.5px}
 
-    .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+    /* RESULTADOS */
+    #tela-resultados .resultado-header{background:#fff;padding:14px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px}
+    .btn-voltar{background:#f5f5f5;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:700;color:#555}
+    .resultado-titulo{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a}
+    #mapa-resultados{height:240px;width:100%}
+    .resultados-lista{padding:14px 16px}
+    .prestador-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee;cursor:pointer;transition:box-shadow .2s}
+    .prestador-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.12)}
+    .prest-header{display:flex;justify-content:space-between;align-items:flex-start}
+    .prest-nome{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a}
+    .prest-tipo{display:inline-block;background:#2d8c3e15;color:#2d8c3e;border:1px solid #2d8c3e33;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;margin-top:3px}
+    .prest-estrelas{text-align:right}
+    .estrelas-val{color:#f59e0b;font-size:14px}
+    .estrelas-num{font-size:11px;color:#aaa;display:block}
+    .prest-local{color:#888;font-size:12px;margin-top:6px}
+    .prest-tel{color:#2d8c3e;font-size:12px;font-weight:700;margin-top:3px}
+    .prest-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    .btn-rota{background:#2d8c3e;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
+    .btn-avaliar-mini{background:#fff;color:#2d8c3e;border:1px solid #2d8c3e;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
 
-    .search-wrap{position:relative;}
-    .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;z-index:2;}
-    .search-input{width:100%;border:2px solid var(--line);border-radius:10px;padding:13px 14px 13px 44px;font-size:15px;font-family:'Barlow',sans-serif;color:var(--dark);outline:none;background:var(--white);transition:border-color 0.2s,box-shadow 0.2s;}
-    .search-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(46,125,50,0.10);}
-    .search-input::placeholder{color:#bbb;}
+    /* DETALHE */
+    #tela-detalhe .detalhe-header{background:#fff;padding:14px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px}
+    #mapa-detalhe{height:220px;width:100%}
+    .detalhe-body{padding:16px}
+    .detalhe-nome{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#1a1a1a}
+    .detalhe-tipo{margin-top:4px;margin-bottom:12px}
+    .detalhe-info{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
+    .info-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;color:#444}
+    .info-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+    .btn-ir{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-bottom:12px;letter-spacing:.5px}
+    .btn-avaliar-grande{background:#fff;border:2px solid #2d8c3e;border-radius:10px;color:#2d8c3e;padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:16px}
+    .avaliacoes-section h3{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:12px}
+    .av-card{background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid #eee}
+    .av-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .criterios-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px}
+    .criterio-item{font-size:11px;color:#666}
 
-    .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;}
-    @keyframes spin{to{transform:rotate(360deg);}}
+    /* CADASTRO PRESTADOR */
+    .cadastro-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:20px 16px}
+    .cadastro-hero h2{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+    .cadastro-hero p{color:#a8d5b0;font-size:13px}
+    .form-body{padding:16px}
+    .form-group{margin-bottom:14px}
+    .form-label{color:#666;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
+    .form-input{background:#fff;border:1px solid #ddd;border-radius:8px;color:#1a1a1a;padding:10px 12px;font-size:14px;width:100%;outline:none;transition:border-color .2s}
+    .form-input:focus{border-color:#2d8c3e88}
+    .form-input::placeholder{color:#bbb}
+    textarea.form-input{min-height:80px;resize:vertical}
+    select.form-input option{background:#fff;color:#1a1a1a}
+    .form-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .cat-grid{display:flex;flex-wrap:wrap;gap:7px}
+    .cat-btn{background:#f5f5f5;border:1px solid #ddd;border-radius:6px;color:#888;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700;transition:all .15s}
+    #mapa-cadastro{height:200px;border-radius:8px;margin-top:8px;border:1px solid #ddd}
+    .btn-submit{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.5px;transition:opacity .2s}
+    .btn-submit:disabled{opacity:.5;cursor:not-allowed}
+    .alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;color:#166534;font-size:14px;font-weight:700;text-align:center;margin-bottom:14px;display:none}
 
-    .pac-box{background:var(--white);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,0.13);margin-top:6px;overflow:hidden;display:none;}
-    .pac-row{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--line);transition:background 0.15s;}
-    .pac-row:last-child{border-bottom:none;}
-    .pac-row:hover,.pac-row:active{background:var(--green-bg);}
-    .pac-emoji{font-size:22px;flex-shrink:0;width:32px;text-align:center;}
-    .pac-main{font-weight:700;font-size:14px;color:var(--dark);}
-    .pac-secondary{font-size:12px;color:var(--muted);margin-top:2px;}
-    .pac-badge{margin-left:auto;flex-shrink:0;font-size:10px;font-weight:700;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);border-radius:20px;padding:2px 8px;white-space:nowrap;}
-    .pac-loading{padding:14px;color:var(--muted);font-size:13px;text-align:center;}
+    /* AVALIAR */
+    .avaliar-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:20px 16px}
+    .avaliar-hero h2{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+    .avaliar-hero p{color:#a8d5b0;font-size:13px}
+    .estrelas-input{display:flex;gap:6px;margin-top:6px}
+    .estrela-inp{font-size:28px;cursor:pointer;color:#ddd;transition:color .1s;user-select:none}
+    .estrela-inp.on{color:#f59e0b}
+    .criterio-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .criterio-nome{font-size:13px;color:#444;font-weight:600}
+    .criterio-stars{display:flex;gap:3px}
+    .c-star{font-size:20px;cursor:pointer;color:#ddd;transition:color .1s}
+    .c-star.on{color:#f59e0b}
+    .nao-encontrou{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:#856404}
+    .btn-nao-encontrou{background:#ffc107;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;color:#000}
 
-    .btn-include{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;background:none;border:2px dashed var(--line);border-radius:10px;padding:13px;color:var(--mid);font-size:14px;font-weight:700;font-family:'Barlow',sans-serif;cursor:pointer;transition:all 0.2s;}
-    .btn-include:hover{border-color:var(--green);color:var(--green);background:var(--green-bg);}
+    .loading{text-align:center;color:#aaa;padding:40px;font-size:14px}
+    .empty{text-align:center;color:#aaa;padding:30px;font-size:14px}
 
-    .manual-box{background:#fff8f0;border:1.5px solid #ffcc80;border-radius:var(--radius);padding:16px;margin-top:10px;display:none;}
-    .manual-box.visible{display:block;animation:fadeUp 0.25s ease;}
-    .manual-title{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:var(--warn);margin-bottom:12px;}
-
-    .tipo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;}
-    .tipo-btn{background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px 6px;cursor:pointer;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--mid);text-align:center;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:5px;}
-    .tipo-btn .te{font-size:22px;}
-    .tipo-btn.on{background:var(--green-bg);border-color:var(--green);color:var(--green);}
-
-    .form-group{margin-bottom:14px;}
-    .form-label{display:block;font-size:11px;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-    .form-input{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--dark);background:var(--white);outline:none;transition:border-color 0.2s;}
-    .form-input:focus{border-color:var(--green);}
-    .form-input::placeholder{color:#ccc;}
-    select.form-input{cursor:pointer;}
-    .form-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-    .tip{font-size:11px;color:var(--muted);margin-top:4px;}
-    textarea.form-input{min-height:80px;resize:vertical;}
-
-    .local-card{background:var(--green-bg);border:1.5px solid var(--green-border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;}
-    .local-emoji{font-size:32px;flex-shrink:0;}
-    .local-info{flex:1;min-width:0;}
-    .local-nome{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--dark);line-height:1.2;}
-    .local-addr{font-size:12px;color:var(--mid);margin-top:3px;}
-    .local-tipo{display:inline-block;background:var(--green);color:#fff;font-size:11px;font-weight:700;border-radius:20px;padding:2px 10px;margin-top:6px;}
-    .local-maps-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--green);font-weight:700;text-decoration:none;margin-top:6px;}
-    .btn-trocar{background:none;border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Barlow',sans-serif;white-space:nowrap;transition:all 0.15s;flex-shrink:0;}
-    .btn-trocar:hover{border-color:var(--danger);color:var(--danger);}
-
-    .criteria-list{display:flex;flex-direction:column;gap:12px;}
-    .criteria-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--bg);border-radius:10px;border:1px solid var(--line);transition:border-color 0.2s,background 0.2s;}
-    .criteria-item.rated{border-color:var(--green-border);background:var(--green-bg);}
-    .criteria-icon{font-size:20px;flex-shrink:0;}
-    .criteria-label{font-size:14px;font-weight:600;color:var(--dark);flex:1;}
-    .stars-row{display:flex;gap:3px;}
-    .star{font-size:26px;color:#ddd;cursor:pointer;user-select:none;transition:color 0.12s,transform 0.1s;line-height:1;}
-    .star.on{color:#f9a825;}
-    .star:hover{transform:scale(1.2);}
-
-    .id-note{font-size:11px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:5px;}
-
-    .btn-primary{display:block;width:100%;background:linear-gradient(135deg,var(--green-light),var(--green));border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:700;font-family:'Barlow',sans-serif;padding:15px;cursor:pointer;letter-spacing:0.5px;transition:opacity 0.2s,transform 0.1s;text-align:center;margin-top:6px;box-shadow:0 4px 14px rgba(46,125,50,0.25);}
-    .btn-primary:hover{opacity:0.92;transform:translateY(-1px);}
-    .btn-primary:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
-
-    .alert-box{background:#fff3e0;border:1px solid #ffcc80;border-radius:8px;padding:11px 14px;font-size:13px;color:var(--warn);margin-bottom:14px;display:none;}
-
-    .success-card{background:var(--green-bg);border:2px solid var(--green);border-radius:14px;padding:32px 20px;text-align:center;}
-    .success-emoji{font-size:56px;margin-bottom:12px;}
-    .success-title{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:var(--green);margin-bottom:8px;}
-    .success-sub{color:var(--mid);font-size:14px;margin-bottom:20px;}
-
-    .osm-note{font-size:11px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:5px;}
-
-    @media(max-width:480px){.form-row2{grid-template-columns:1fr;}}
+    /* ADMIN */
+    .admin-body{padding:16px}
+    .admin-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
+    .admin-card-title{font-weight:700;color:#2d8c3e;font-size:15px;margin-bottom:10px}
+    .admin-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f5}
+    .btn-del{background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:700}
   </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <div class="header-icon">👽</div>
-  <div class="header-text">
-    <div class="header-brand">TR.<span>ALIENIGENA</span></div>
-    <div class="header-tagline">A Voz do Motorista</div>
+  <div>
+    <div class="logo-title">👽 <span>Tr.Alienigena</span></div>
+    <div class="logo-voz">A VOZ DO MOTORISTA</div>
+    <div class="logo-sub">SERVIÇOS • ESTRADA • BRASIL</div>
+  </div>
+  <button onclick="showTela('tela-inicio')" style="background:#f5f5f5;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#555">🏠 Início</button>
+</div>
+
+<!-- ======== TELA INÍCIO ======== -->
+<div id="tela-inicio">
+  <div class="inicio-hero">
+    <h1>🚛 O que você precisa hoje?</h1>
+    <p>Serviços, pontos de parada e avaliações para o caminhoneiro brasileiro</p>
+    <div class="btn-hero-grid">
+      <button class="btn-hero" onclick="showTela('tela-busca')">
+        <div class="btn-hero-icon">🔍</div>
+        <div class="btn-hero-label">Sou Motorista</div>
+        <div class="btn-hero-sub">Preciso de um serviço</div>
+      </button>
+      <button class="btn-hero" onclick="showTela('tela-cadastro')">
+        <div class="btn-hero-icon">🏪</div>
+        <div class="btn-hero-label">Sou Prestador</div>
+        <div class="btn-hero-sub">Quero me cadastrar</div>
+      </button>
+      <button class="btn-hero" onclick="showTela('tela-avaliar')">
+        <div class="btn-hero-icon">⭐</div>
+        <div class="btn-hero-label">Avaliar Serviço</div>
+        <div class="btn-hero-sub">Deixe sua experiência</div>
+      </button>
+      <button class="btn-hero" onclick="showTela('tela-admin')">
+        <div class="btn-hero-icon">🔐</div>
+        <div class="btn-hero-label">Admin</div>
+        <div class="btn-hero-sub">Área do administrador</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="destaques">
+    <h2>⭐ Avaliações Recentes</h2>
+    <div id="lista-destaques"><div class="loading">Carregando...</div></div>
   </div>
 </div>
 
-<div class="wrap">
-
-  <div class="step-bar">
-    <div class="step-dot active" id="dot1">1</div>
-    <div class="step-line" id="line1"></div>
-    <div class="step-dot" id="dot2">2</div>
-    <div class="step-line" id="line2"></div>
-    <div class="step-dot" id="dot3">3</div>
-  </div>
-
-  <!-- PASSO 1 -->
-  <div class="step active" id="step1">
-    <div class="sec-title">📍 Onde você está <span>agora?</span></div>
-    <div class="sec-sub">Busque o local que quer avaliar pelo nome, cidade ou rodovia</div>
-
-    <div class="card">
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input class="search-input" id="searchInput" placeholder="Ex: Posto Ipiranga Fortaleza, BR-116 Km 342..." autocomplete="off" />
+<!-- ======== TELA BUSCA MOTORISTA ======== -->
+<div id="tela-busca" class="tela">
+  <div class="busca-hero">
+    <h2>🔍 O que você procura?</h2>
+    <div class="busca-pergunta">
+      <label>TIPO DE SERVIÇO</label>
+      <div class="servicos-grid" id="servicos-grid"></div>
+    </div>
+    <div class="busca-pergunta">
+      <label>📍 ONDE VOCÊ ESTÁ AGORA?</label>
+      <div class="loc-input-wrap">
+        <input class="loc-input" id="busca-local" placeholder="Digite a cidade ou use o GPS..." />
+        <button class="loc-btn-gps" onclick="usarGPS()" title="Usar minha localização">📡</button>
       </div>
-      <div class="pac-box" id="pacBox"></div>
-      <div class="osm-note">🗺️ Busca via OpenStreetMap — 100% gratuito, sem cadastro</div>
-      <button class="btn-include" onclick="toggleManual()">➕ Não encontrei — incluir manualmente</button>
+      <div id="gps-status" style="font-size:11px;color:#a8d5b0;margin-top:4px;display:none"></div>
+    </div>
+    <button class="btn-buscar" onclick="buscarServicos()">🔍 BUSCAR AGORA</button>
+  </div>
+</div>
+
+<!-- ======== TELA RESULTADOS ======== -->
+<div id="tela-resultados" class="tela">
+  <div class="resultado-header">
+    <button class="btn-voltar" onclick="showTela('tela-busca')">← Voltar</button>
+    <div class="resultado-titulo" id="resultado-titulo">Resultados</div>
+  </div>
+  <div id="mapa-resultados"></div>
+  <div class="resultados-lista" id="lista-resultados">
+    <div class="loading">Buscando...</div>
+  </div>
+</div>
+
+<!-- ======== TELA DETALHE PRESTADOR ======== -->
+<div id="tela-detalhe" class="tela">
+  <div class="detalhe-header">
+    <button class="btn-voltar" id="btn-voltar-detalhe" onclick="showTela('tela-resultados')">← Voltar</button>
+    <div class="resultado-titulo">Detalhes</div>
+  </div>
+  <div id="mapa-detalhe"></div>
+  <div class="detalhe-body">
+    <div class="detalhe-nome" id="det-nome"></div>
+    <div class="detalhe-tipo" id="det-tipo"></div>
+    <div class="detalhe-info" id="det-info"></div>
+    <button class="btn-ir" id="btn-ir-local">🗺️ IR ATÉ O LOCAL</button>
+    <button class="btn-avaliar-grande" onclick="abrirAvaliarPrestador()">⭐ AVALIAR ESTE SERVIÇO</button>
+    <div class="avaliacoes-section">
+      <h3>💬 Avaliações dos Motoristas</h3>
+      <div id="lista-avaliacoes-detalhe"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TELA CADASTRO PRESTADOR ======== -->
+<div id="tela-cadastro" class="tela">
+  <div class="cadastro-hero">
+    <h2>🏪 Cadastre seu Serviço</h2>
+    <p>Apareça para milhares de motoristas na sua região</p>
+  </div>
+  <div class="form-body">
+    <div class="alert-ok" id="cadastro-ok">✅ Cadastro realizado! Em breve você aparecerá nas buscas.</div>
+
+    <div class="form-group">
+      <label class="form-label">TIPO DE SERVIÇO *</label>
+      <select class="form-input" id="cad-tipo">
+        <option value="">Selecione...</option>
+        <option value="posto">⛽ Posto de Combustível</option>
+        <option value="mecanico">🔩 Mecânico</option>
+        <option value="borracharia">🔧 Borracharia</option>
+        <option value="eletricista">⚡ Eletricista Veicular</option>
+        <option value="pecas">🏪 Loja de Peças</option>
+        <option value="funilaria">🚗 Funilaria / Pintura</option>
+        <option value="guindaste">🏗️ Guincho / Guindaste</option>
+        <option value="pousada">🛏️ Pousada / Dormida</option>
+        <option value="restaurante">🍽️ Restaurante / Lanchonete</option>
+        <option value="lavajato">🚿 Lava-Jato de Caminhão</option>
+        <option value="complexo">🏢 Complexo Rodoviário</option>
+      </select>
     </div>
 
-    <div class="manual-box" id="manualBox">
-      <div class="manual-title">✏️ Cadastrar local manualmente</div>
+    <div class="form-group">
+      <label class="form-label">NOME DO ESTABELECIMENTO *</label>
+      <input class="form-input" id="cad-nome" placeholder="Ex: Oficina do Marquinhos" />
+    </div>
 
+    <div class="form-group">
+      <label class="form-label">WHATSAPP / TELEFONE *</label>
+      <input class="form-input" id="cad-tel" placeholder="(85) 99999-9999" type="tel" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">RESPONSÁVEL</label>
+      <input class="form-input" id="cad-resp" placeholder="Nome do responsável" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ENDEREÇO COMPLETO *</label>
+      <input class="form-input" id="cad-endereco" placeholder="Rua, número, bairro, cidade — UF" oninput="geocodificarEndereco()"/>
+      <div style="font-size:11px;color:#aaa;margin-top:4px">Digite o endereço e o mapa se ajusta automaticamente</div>
+      <div id="mapa-cadastro"></div>
+      <input type="hidden" id="cad-lat" />
+      <input type="hidden" id="cad-lng" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">SERVIÇOS OFERECIDOS (selecione todos)</label>
+      <div class="cat-grid" id="cad-servicos-grid"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">HORÁRIO DE FUNCIONAMENTO</label>
+      <div class="form-row2">
+        <input class="form-input" id="cad-abre" type="time" />
+        <input class="form-input" id="cad-fecha" type="time" />
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:#555;cursor:pointer">
+        <input type="checkbox" id="cad-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">DESCRIÇÃO / DIFERENCIAIS</label>
+      <textarea class="form-input" id="cad-desc" placeholder="Conte o que você oferece, seus diferenciais, marcas que atende..."></textarea>
+    </div>
+
+    <button class="btn-submit" id="btn-cadastrar" onclick="cadastrarPrestador()">✅ CADASTRAR MEU SERVIÇO</button>
+  </div>
+</div>
+
+<!-- ======== TELA AVALIAR ======== -->
+<div id="tela-avaliar" class="tela">
+  <div class="avaliar-hero">
+    <h2>⭐ Avaliar Serviço</h2>
+    <p>Ajude outros motoristas com sua experiência</p>
+  </div>
+  <div class="form-body">
+    <div class="alert-ok" id="avaliar-ok">✅ Avaliação enviada! Obrigado, brother!</div>
+
+    <div class="form-group">
+      <label class="form-label">BUSCAR ESTABELECIMENTO</label>
+      <input class="form-input" id="av-busca" placeholder="Digite o nome ou cidade..." oninput="buscarParaAvaliar()" />
+      <div id="av-sugestoes" style="background:#fff;border:1px solid #ddd;border-radius:8px;margin-top:4px;display:none;max-height:200px;overflow-y:auto"></div>
+    </div>
+
+    <div class="nao-encontrou">
+      <strong>Não encontrou?</strong> Avalie mesmo assim e nós cadastramos o serviço com a sua avaliação.
+      <br><button class="btn-nao-encontrou" onclick="modoAvaliarManual()">📝 Avaliar serviço não cadastrado</button>
+    </div>
+
+    <div id="av-alvo" style="display:none">
       <div class="form-group">
-        <label class="form-label">TIPO DE ESTABELECIMENTO *</label>
-        <div class="tipo-grid">
-          <button class="tipo-btn" onclick="selecionarTipo(this,'posto')"><span class="te">⛽</span>Posto</button>
-          <button class="tipo-btn" onclick="selecionarTipo(this,'borracharia')"><span class="te">🔧</span>Borracharia</button>
-          <button class="tipo-btn" onclick="selecionarTipo(this,'restaurante')"><span class="te">🍽️</span>Restaurante</button>
-          <button class="tipo-btn" onclick="selecionarTipo(this,'pousada')"><span class="te">🛏️</span>Pousada</button>
-          <button class="tipo-btn" onclick="selecionarTipo(this,'mecanico')"><span class="te">🔩</span>Mecânico</button>
-          <button class="tipo-btn" onclick="selecionarTipo(this,'convenio')"><span class="te">🏪</span>Conveniência</button>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:12px">
+          <div style="font-weight:700;color:#166534" id="av-alvo-nome"></div>
+          <div style="font-size:12px;color:#2d8c3e" id="av-alvo-tipo"></div>
         </div>
       </div>
+    </div>
 
+    <!-- Cadastro manual se não encontrar -->
+    <div id="av-manual" style="display:none">
       <div class="form-group">
         <label class="form-label">NOME DO ESTABELECIMENTO *</label>
-        <input class="form-input" id="mNome" placeholder="Ex: Posto do Zé, Borracharia Rápida..." />
+        <input class="form-input" id="av-man-nome" placeholder="Ex: Borracharia do João" />
       </div>
-
       <div class="form-group">
-        <label class="form-label">ENDEREÇO / LOCALIZAÇÃO *</label>
-        <div class="search-wrap">
-          <span class="search-icon" style="font-size:15px">📌</span>
-          <input class="form-input" id="mEndereco" placeholder="Cidade, rodovia e km, ou endereço..." style="padding-left:36px" autocomplete="off" />
-        </div>
-        <div class="pac-box" id="pacBoxEnd"></div>
-        <div class="tip">🗺️ O campo sugere endereços automaticamente</div>
+        <label class="form-label">TIPO DE SERVIÇO</label>
+        <select class="form-input" id="av-man-tipo">
+          <option value="outro">Outro</option>
+          <option value="posto">⛽ Posto de Combustível</option>
+          <option value="mecanico">🔩 Mecânico</option>
+          <option value="borracharia">🔧 Borracharia</option>
+          <option value="eletricista">⚡ Eletricista Veicular</option>
+          <option value="pecas">🏪 Loja de Peças</option>
+          <option value="funilaria">🚗 Funilaria / Pintura</option>
+          <option value="guindaste">🏗️ Guincho / Guindaste</option>
+          <option value="pousada">🛏️ Pousada / Dormida</option>
+          <option value="restaurante">🍽️ Restaurante</option>
+          <option value="lavajato">🚿 Lava-Jato</option>
+        </select>
       </div>
+      <div class="form-group">
+        <label class="form-label">CIDADE</label>
+        <input class="form-input" id="av-man-cidade" placeholder="Cidade — UF" />
+      </div>
+    </div>
 
-      <div class="form-row2" style="margin-bottom:14px">
-        <div>
-          <label class="form-label">CIDADE</label>
-          <input class="form-input" id="mCidade" placeholder="Cidade" />
-        </div>
-        <div>
-          <label class="form-label">ESTADO</label>
-          <select class="form-input" id="mEstado">
-            <option value="">UF</option>
-            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
-            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
-            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
-            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
-            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
-            <option>SP</option><option>SE</option><option>TO</option>
-          </select>
+    <!-- Critérios de avaliação -->
+    <div id="av-criterios" style="display:none">
+      <div class="form-group">
+        <label class="form-label">NOTA GERAL *</label>
+        <div class="estrelas-input" id="av-geral-stars"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CRITÉRIOS ESPECÍFICOS</label>
+        <div id="criterios-especificos"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SEU COMENTÁRIO</label>
+        <textarea class="form-input" id="av-texto" placeholder="Conte sua experiência: o que foi bom, o que poderia melhorar..."></textarea>
+      </div>
+      <div class="form-group">
+        <div class="form-row2">
+          <div>
+            <label class="form-label">SEU NOME (opcional)</label>
+            <input class="form-input" id="av-autor" placeholder="Ex: Zé da Estrada" />
+          </div>
+          <div>
+            <label class="form-label">WHATSAPP (opcional)</label>
+            <input class="form-input" id="av-tel" placeholder="(85) 99999..." type="tel" />
+          </div>
         </div>
       </div>
-
-      <button class="btn-primary" onclick="confirmarManual()">✅ Confirmar este local</button>
+      <button class="btn-submit" id="btn-avaliar" onclick="enviarAvaliacao()">⭐ ENVIAR AVALIAÇÃO</button>
     </div>
   </div>
+</div>
 
-  <!-- PASSO 2 -->
-  <div class="step" id="step2">
-    <div class="card" style="margin-bottom:16px">
-      <div class="local-card">
-        <div class="local-emoji" id="localEmoji">📍</div>
-        <div class="local-info">
-          <div class="local-nome" id="localNome">—</div>
-          <div class="local-addr" id="localAddr">—</div>
-          <div class="local-tipo" id="localTipo">—</div>
-          <a class="local-maps-link" id="localMapsLink" href="#" target="_blank" style="display:none">🗺️ Ver no mapa</a>
-        </div>
-        <button class="btn-trocar" onclick="voltarStep1()">↩ Trocar</button>
-      </div>
+<!-- ======== TELA ADMIN ======== -->
+<div id="tela-admin" class="tela">
+  <div id="admin-login-wrap" style="padding:20px">
+    <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;margin-bottom:16px">🔐 Admin</div>
+    <div class="form-group">
+      <label class="form-label">SENHA</label>
+      <input class="form-input" id="admin-senha" type="password" placeholder="Digite a senha" />
     </div>
-
-    <div class="sec-title">⭐ <span>Avalie</span> este local</div>
-    <div class="sec-sub">Toque nas estrelas — 1 fraco, 5 excelente</div>
-
-    <div class="card">
-      <div class="criteria-list" id="criteriaList"></div>
-    </div>
-
-    <div class="card">
-      <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;margin-bottom:10px">
-        💬 Comentário <span style="color:var(--muted);font-size:13px;font-family:'Barlow',sans-serif;font-weight:400">(opcional)</span>
-      </div>
-      <textarea class="form-input" id="fComentario" placeholder="Conta tudo: qualidade, atendimento, segurança, preços, o que tem, o que falta..."></textarea>
-    </div>
-
-    <div class="card">
-      <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;margin-bottom:12px">🧑 Quem avaliou</div>
-      <div class="form-row2">
-        <div class="form-group" style="margin-bottom:0">
-          <label class="form-label">SEU NOME</label>
-          <input class="form-input" id="fNome" placeholder="Ex: João Silva" />
-        </div>
-        <div class="form-group" style="margin-bottom:0">
-          <label class="form-label">SEU WHATSAPP</label>
-          <input class="form-input" id="fWhats" placeholder="(85) 99999-9999" type="tel" />
-        </div>
-      </div>
-      <div class="id-note">🔒 WhatsApp privado — só o admin vê. Na avaliação aparece só o seu nome.</div>
-    </div>
-
-    <div class="alert-box" id="alertErr">⚠️ Avalie pelo menos um critério antes de enviar.</div>
-    <button class="btn-primary" id="btnEnviar" onclick="enviarAvaliacao()">🚛 PUBLICAR AVALIAÇÃO</button>
+    <button class="btn-submit" onclick="entrarAdmin()">ENTRAR</button>
+    <div id="admin-erro" style="display:none;color:#dc2626;font-size:13px;margin-top:10px;text-align:center">❌ Senha incorreta</div>
   </div>
-
-  <!-- PASSO 3 -->
-  <div class="step" id="step3">
-    <div class="success-card">
-      <div class="success-emoji">🎉</div>
-      <div class="success-title">Avaliação publicada!</div>
-      <div class="success-sub">Valeu, brother! Sua avaliação vai ajudar outros motoristas na estrada. ✊🚛</div>
-      <button class="btn-primary" style="max-width:280px;margin:0 auto" onclick="novaAvaliacao()">➕ Avaliar outro local</button>
+  <div id="admin-panel" style="display:none">
+    <div class="admin-body">
+      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;margin-bottom:14px">📊 Painel Admin</div>
+      <div class="admin-card">
+        <div class="admin-card-title">🏪 Prestadores Cadastrados <span id="admin-total-prest" style="color:#888;font-size:13px;font-weight:400"></span></div>
+        <div id="admin-lista-prest"><div class="loading">Carregando...</div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">⭐ Avaliações Recebidas <span id="admin-total-av" style="color:#888;font-size:13px;font-weight:400"></span></div>
+        <div id="admin-lista-av"><div class="loading">Carregando...</div></div>
+      </div>
     </div>
   </div>
-
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB4-eS5dLimqSewLPwwA_IT2haMV3kLD9s",
-    authDomain: "tralienigena-ee7a9.firebaseapp.com",
-    projectId: "tralienigena-ee7a9",
-    storageBucket: "tralienigena-ee7a9.firebasestorage.app",
-    messagingSenderId: "307288619335",
-    appId: "1:307288619335:web:467b6aeae99b641866b462"
-  };
-  const app = initializeApp(firebaseConfig);
-  window._db = getFirestore(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyB4-eS5dLimqSewLPwwA_IT2haMV3kLD9s",
+  authDomain: "tralienigena-ee7a9.firebaseapp.com",
+  projectId: "tralienigena-ee7a9",
+  storageBucket: "tralienigena-ee7a9.firebasestorage.app",
+  messagingSenderId: "307288619335",
+  appId: "1:307288619335:web:467b6aeae99b641866b462",
+  measurementId: "G-K49FKDK046"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  /* CRITÉRIOS */
-  const CRITERIOS = {
-    posto:      [{id:'combustivel',icon:'⛽',label:'Qualidade do Combustível'},{id:'preco',icon:'💰',label:'Preço Justo'},{id:'banheiro',icon:'🚿',label:'Banheiro / Chuveiro'},{id:'atendimento',icon:'😊',label:'Atendimento'},{id:'seguranca',icon:'🔒',label:'Segurança / Iluminação'}],
-    borracharia:[{id:'qualidade',icon:'🔧',label:'Qualidade do Serviço'},{id:'preco',icon:'💰',label:'Preço Justo'},{id:'rapidez',icon:'⚡',label:'Rapidez no Atendimento'},{id:'atendimento',icon:'😊',label:'Atendimento'},{id:'estrutura',icon:'🏗️',label:'Espaço para Caminhão'}],
-    restaurante:[{id:'comida',icon:'🍽️',label:'Qualidade da Comida'},{id:'preco',icon:'💰',label:'Preço Justo'},{id:'limpeza',icon:'🧹',label:'Limpeza'},{id:'atendimento',icon:'😊',label:'Atendimento'},{id:'estacionamento',icon:'🅿️',label:'Estacionamento para Caminhão'}],
-    pousada:    [{id:'conforto',icon:'🛏️',label:'Conforto / Descanso'},{id:'seguranca',icon:'🔒',label:'Segurança'},{id:'banheiro',icon:'🚿',label:'Banheiro / Chuveiro'},{id:'atendimento',icon:'😊',label:'Atendimento'},{id:'preco',icon:'💰',label:'Preço Justo'}],
-    mecanico:   [{id:'qualidade',icon:'🔩',label:'Qualidade do Serviço'},{id:'preco',icon:'💰',label:'Preço Justo'},{id:'rapidez',icon:'⚡',label:'Rapidez'},{id:'honestidade',icon:'🤝',label:'Honestidade'},{id:'estrutura',icon:'🏗️',label:'Equipamentos / Estrutura'}],
-    convenio:   [{id:'variedade',icon:'🏪',label:'Variedade de Produtos'},{id:'preco',icon:'💰',label:'Preço Justo'},{id:'limpeza',icon:'🧹',label:'Limpeza'},{id:'atendimento',icon:'😊',label:'Atendimento'},{id:'localizacao',icon:'📍',label:'Localização / Acesso'}],
-    outro:      [{id:'qualidade',icon:'⭐',label:'Qualidade Geral'},{id:'atendimento',icon:'😊',label:'Atendimento'},{id:'preco',icon:'💰',label:'Preço Justo'},{id:'limpeza',icon:'🧹',label:'Limpeza / Organização'},{id:'recomenda',icon:'👍',label:'Recomendaria a outros'}],
-  };
-  const TIPO_LABELS = {posto:'⛽ Posto de Combustível',borracharia:'🔧 Borracharia',restaurante:'🍽️ Restaurante',pousada:'🛏️ Pousada / Apoio',mecanico:'🔩 Mecânico',convenio:'🏪 Conveniência',outro:'📍 Estabelecimento'};
-  const TIPO_EMOJIS = {posto:'⛽',borracharia:'🔧',restaurante:'🍽️',pousada:'🛏️',mecanico:'🔩',convenio:'🏪',outro:'📍'};
-  const ESTADOS_MAP = {'Acre':'AC','Alagoas':'AL','Amapá':'AP','Amazonas':'AM','Bahia':'BA','Ceará':'CE','Distrito Federal':'DF','Espírito Santo':'ES','Goiás':'GO','Maranhão':'MA','Mato Grosso':'MT','Mato Grosso do Sul':'MS','Minas Gerais':'MG','Pará':'PA','Paraíba':'PB','Paraná':'PR','Pernambuco':'PE','Piauí':'PI','Rio de Janeiro':'RJ','Rio Grande do Norte':'RN','Rio Grande do Sul':'RS','Rondônia':'RO','Roraima':'RR','Santa Catarina':'SC','São Paulo':'SP','Sergipe':'SE','Tocantins':'TO'};
+// ---- CONSTANTES ----
+const TIPOS = {
+  posto:      {label:"⛽ Posto de Combustível", color:"#16a34a"},
+  mecanico:   {label:"🔩 Mecânico",             color:"#ea580c"},
+  borracharia:{label:"🔧 Borracharia",           color:"#dc2626"},
+  eletricista:{label:"⚡ Eletricista Veicular",  color:"#ca8a04"},
+  pecas:      {label:"🏪 Loja de Peças",         color:"#0891b2"},
+  funilaria:  {label:"🚗 Funilaria / Pintura",   color:"#9333ea"},
+  guindaste:  {label:"🏗️ Guincho / Guindaste",   color:"#c2410c"},
+  pousada:    {label:"🛏️ Pousada / Dormida",     color:"#7c3aed"},
+  restaurante:{label:"🍽️ Restaurante",           color:"#d97706"},
+  lavajato:   {label:"🚿 Lava-Jato",             color:"#0284c7"},
+  complexo:   {label:"🏢 Complexo Rodoviário",   color:"#0f766e"},
+  outro:      {label:"📍 Serviço",               color:"#6b7280"},
+};
 
-  function detectarTipo(cat='', nome='') {
-    const c=cat.toLowerCase(), n=nome.toLowerCase();
-    if(c.includes('fuel')||c.includes('petrol')||n.includes('posto')||n.includes('petrobras')||n.includes('ipiranga')||n.includes('shell')||n.includes('ale ')||n.includes('raizen')) return 'posto';
-    if(c.includes('tyres')||c.includes('tyre')||c.includes('car_repair')||n.includes('borracharia')||n.includes('pneu')) return 'borracharia';
-    if(c.includes('restaurant')||c.includes('fast_food')||c.includes('cafe')||n.includes('restaurante')||n.includes('lanchonete')||n.includes('churrasco')) return 'restaurante';
-    if(c.includes('hotel')||c.includes('motel')||c.includes('hostel')||c.includes('lodging')||n.includes('pousada')||n.includes('hotel')||n.includes('motel')) return 'pousada';
-    if(c.includes('mechanic')||n.includes('mecânico')||n.includes('mecanic')||n.includes('oficina')) return 'mecanico';
-    if(c.includes('convenience')||c.includes('supermarket')||n.includes('conveniência')||n.includes('mercado')||n.includes('loja')) return 'convenio';
-    return 'outro';
+const CRITERIOS = {
+  posto:      ["Preço","Atendimento","Banheiro","Segurança","Estrutura"],
+  mecanico:   ["Qualidade","Preço","Agilidade","Honestidade","Atendimento"],
+  borracharia:["Qualidade","Preço","Agilidade","Atendimento","Estrutura"],
+  eletricista:["Qualidade","Preço","Agilidade","Honestidade","Atendimento"],
+  pecas:      ["Variedade","Preço","Atendimento","Qualidade","Entrega"],
+  funilaria:  ["Qualidade","Preço","Agilidade","Acabamento","Atendimento"],
+  guindaste:  ["Agilidade","Preço","Atendimento","Equipamento","Segurança"],
+  pousada:    ["Limpeza","Segurança","Preço","Conforto","Atendimento"],
+  restaurante:["Comida","Preço","Limpeza","Atendimento","Espaço"],
+  lavajato:   ["Qualidade","Preço","Agilidade","Atendimento","Estrutura"],
+  complexo:   ["Estrutura","Preço","Segurança","Atendimento","Limpeza"],
+  outro:      ["Qualidade","Preço","Atendimento","Agilidade","Honestidade"],
+};
+
+const SERVICOS_BUSCA = [
+  {id:"posto",     label:"⛽ Combustível"},
+  {id:"mecanico",  label:"🔩 Mecânico"},
+  {id:"borracharia",label:"🔧 Borracharia"},
+  {id:"eletricista",label:"⚡ Eletricista"},
+  {id:"pecas",     label:"🏪 Peças"},
+  {id:"funilaria", label:"🚗 Funilaria"},
+  {id:"guindaste", label:"🏗️ Guincho"},
+  {id:"pousada",   label:"🛏️ Pousada"},
+  {id:"restaurante",label:"🍽️ Restaurante"},
+  {id:"lavajato",  label:"🚿 Lava-Jato"},
+  {id:"complexo",  label:"🏢 Complexo"},
+];
+
+const SERVICOS_TODOS = [
+  "⛽ Abastecimento/Diesel","🧴 ARLA 32","🛏️ Dormida","🚿 Banheiro/Chuveiro",
+  "🍽️ Alimentação","🔧 Borracharia","🔩 Mecânico","⚡ Eletricista Veicular",
+  "🏪 Loja de Peças","🚗 Funilaria/Pintura","🏗️ Guincho/Guindaste",
+  "🅿️ Estacionamento Seguro","📶 Wi-Fi Grátis","💊 Farmácia","🏦 Banco/Caixa 24h"
+];
+
+const ADMIN_SENHA = 'tralienigena2024';
+
+// ---- ESTADO ----
+let todosPresatdores = [];
+let prestadorAtual = null;
+let mapaResultados = null, mapaCadastro = null, mapaDetalhe = null;
+let marcadorCadastro = null, marcadoresResultados = [];
+let servicosBuscaSelecionados = [];
+let servicosCadSelecionados = [];
+let coordsUsuario = null;
+let avAlvoId = null, avAlvoTipo = 'outro';
+let notaGeral = 0;
+let notasCriterios = {};
+let adminLogado = false;
+let geocodeTimer = null;
+
+// ---- INIT ----
+window.addEventListener('DOMContentLoaded', () => {
+  buildServicosGrid();
+  buildCadServicosGrid();
+  carregarDestaques();
+});
+
+// ---- NAVEGAÇÃO ----
+window.showTela = function(id) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById('tela-inicio').style.display = 'none';
+  const el = document.getElementById(id);
+  if (id === 'tela-inicio') {
+    document.getElementById('tela-inicio').style.display = 'block';
+    carregarDestaques();
+  } else {
+    el.classList.add('ativa');
   }
+  if (id === 'tela-admin') verificarAdmin();
+  window.scrollTo(0,0);
+}
 
-  let localAtual=null, notasCriterios={}, tipoManualSelecionado=null;
-  let searchTimer=null, endTimer=null;
-
-  /* STEPS */
-  function irStep(n) {
-    document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
-    document.getElementById('step'+n).classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-    for(let i=1;i<=3;i++){const d=document.getElementById('dot'+i);d.classList.remove('active','done');if(i<n)d.classList.add('done');else if(i===n)d.classList.add('active');}
-    for(let i=1;i<=2;i++)document.getElementById('line'+i).classList.toggle('done',i<n);
-  }
-
-  window.voltarStep1=function(){localAtual=null;notasCriterios={};document.getElementById('searchInput').value='';document.getElementById('pacBox').style.display='none';irStep(1);};
-  window.novaAvaliacao=function(){localAtual=null;notasCriterios={};tipoManualSelecionado=null;['searchInput','fComentario','fNome','fWhats','mNome','mEndereco','mCidade'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('mEstado').value='';document.getElementById('pacBox').style.display='none';document.getElementById('pacBoxEnd').style.display='none';document.getElementById('manualBox').classList.remove('visible');document.getElementById('alertErr').style.display='none';document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.remove('on'));irStep(1);};
-
-  /* NOMINATIM BUSCA PRINCIPAL */
-  async function buscarNominatim(val, boxId, onSelect) {
-    const box=document.getElementById(boxId);
-    if(!val||val.length<3){box.style.display='none';return;}
-    box.innerHTML=`<div class="pac-loading"><span class="spinner"></span> Buscando...</div>`;
-    box.style.display='block';
-    try {
-      const res=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=7&countrycodes=br&accept-language=pt-BR`,{headers:{'User-Agent':'TrAlienigena-App/1.0'}});
-      const data=await res.json();
-      box.innerHTML='';
-      if(!data.length){box.innerHTML=`<div class="pac-loading">Nenhum resultado. Tente outro termo ou use "Incluir manualmente".</div>`;return;}
-      data.forEach(item=>{
-        const nome=item.name||item.display_name.split(',')[0];
-        const cidade=item.address?.city||item.address?.town||item.address?.village||'';
-        const uf=ESTADOS_MAP[item.address?.state]||item.address?.state?.substring(0,2)||'';
-        const endCurto=[cidade,uf].filter(Boolean).join(', ');
-        const cat=(item.category||'')+(item.type||'');
-        const tipo=detectarTipo(cat,nome);
-        const row=document.createElement('div');
-        row.className='pac-row';
-        row.innerHTML=`<span class="pac-emoji">${TIPO_EMOJIS[tipo]}</span><div style="flex:1;min-width:0"><div class="pac-main">${nome}</div><div class="pac-secondary">${endCurto||item.display_name.split(',').slice(1,3).join(',').trim()}</div></div><span class="pac-badge">${TIPO_LABELS[tipo].replace(/^..\s/,'')}</span>`;
-        row.onclick=()=>{
-          box.style.display='none';
-          onSelect({nome,endereco:endCurto||item.display_name.split(',').slice(0,3).join(',').trim(),tipo,cidade,uf,lat:item.lat,lon:item.lon,mapsUrl:`https://www.openstreetmap.org/?mlat=${item.lat}&mlon=${item.lon}#map=17/${item.lat}/${item.lon}`});
-        };
-        box.appendChild(row);
-      });
-    } catch(e){box.innerHTML=`<div class="pac-loading">⚠️ Erro na busca. Verifique sua conexão.</div>`;}
-  }
-
-  document.getElementById('searchInput').addEventListener('input',function(){
-    clearTimeout(searchTimer);
-    const val=this.value.trim();
-    searchTimer=setTimeout(()=>buscarNominatim(val,'pacBox',result=>{
-      document.getElementById('searchInput').value=result.nome;
-      localAtual={nome:result.nome,endereco:result.endereco,tipo:result.tipo,mapsUrl:result.mapsUrl};
-      mostrarLocalEIrStep2();
-    }),500);
-  });
-
-  document.getElementById('mEndereco').addEventListener('input',function(){
-    clearTimeout(endTimer);
-    const val=this.value.trim();
-    endTimer=setTimeout(()=>buscarNominatim(val,'pacBoxEnd',result=>{
-      document.getElementById('mEndereco').value=result.nome;
-      if(result.cidade)document.getElementById('mCidade').value=result.cidade;
-      if(result.uf)document.getElementById('mEstado').value=result.uf;
-      document.getElementById('pacBoxEnd').style.display='none';
-    }),500);
-  });
-
-  /* MANUAL */
-  window.toggleManual=function(){
-    const box=document.getElementById('manualBox');
-    box.classList.toggle('visible');
-    if(box.classList.contains('visible'))setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'start'}),100);
-  };
-  window.selecionarTipo=function(btn,tipo){
-    tipoManualSelecionado=tipo;
-    document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on');
-  };
-  window.confirmarManual=function(){
-    const nome=document.getElementById('mNome').value.trim();
-    const end=document.getElementById('mEndereco').value.trim();
-    const cid=document.getElementById('mCidade').value.trim();
-    const uf=document.getElementById('mEstado').value;
-    if(!tipoManualSelecionado){alert('Selecione o tipo de estabelecimento.');return;}
-    if(!nome){alert('Informe o nome do estabelecimento.');return;}
-    if(!end&&!cid){alert('Informe pelo menos o endereço ou cidade.');return;}
-    localAtual={nome,endereco:[end,cid,uf].filter(Boolean).join(', '),tipo:tipoManualSelecionado,mapsUrl:null};
-    document.getElementById('manualBox').classList.remove('visible');
-    mostrarLocalEIrStep2();
-  };
-
-  /* STEP 2 */
-  function mostrarLocalEIrStep2(){
-    const l=localAtual;
-    document.getElementById('localEmoji').textContent=TIPO_EMOJIS[l.tipo]||'📍';
-    document.getElementById('localNome').textContent=l.nome;
-    document.getElementById('localAddr').textContent=l.endereco||'';
-    document.getElementById('localTipo').textContent=TIPO_LABELS[l.tipo]||'📍 Estabelecimento';
-    const link=document.getElementById('localMapsLink');
-    if(l.mapsUrl){link.href=l.mapsUrl;link.style.display='inline-flex';}else{link.style.display='none';}
-    buildCriterios(l.tipo);
-    irStep(2);
-  }
-
-  function buildCriterios(tipo){
-    notasCriterios={};
-    const lista=CRITERIOS[tipo]||CRITERIOS['outro'];
-    document.getElementById('criteriaList').innerHTML=lista.map(c=>`
-      <div class="criteria-item" id="citem-${c.id}">
-        <span class="criteria-icon">${c.icon}</span>
-        <div class="criteria-label">${c.label}</div>
-        <div class="stars-row">
-          ${[1,2,3,4,5].map(s=>`<span class="star" data-c="${c.id}" data-v="${s}" onclick="setNota('${c.id}',${s})" onmouseover="hoverStar('${c.id}',${s})" onmouseout="unhoverStar('${c.id}')">★</span>`).join('')}
+// ---- TELA INÍCIO ----
+async function carregarDestaques() {
+  try {
+    const snap = await getDocs(query(collection(db,'avaliacoes'), orderBy('data','desc')));
+    const avs = snap.docs.slice(0,5).map(d => ({id:d.id,...d.data()}));
+    const el = document.getElementById('lista-destaques');
+    if (!avs.length) { el.innerHTML = '<div class="empty">Nenhuma avaliação ainda. Seja o primeiro!</div>'; return; }
+    el.innerHTML = avs.map(av => `
+      <div class="avaliacao-card">
+        <div class="av-header">
+          <div>
+            <div class="av-nome">${av.prestador_nome || 'Serviço avaliado'}</div>
+            <div class="av-tipo">${(TIPOS[av.prestador_tipo]||TIPOS.outro).label}</div>
+          </div>
+          <div class="av-estrelas">${'★'.repeat(Math.round(av.nota_geral||0))}${'☆'.repeat(5-Math.round(av.nota_geral||0))}</div>
         </div>
+        ${av.texto ? `<div class="av-texto">${av.texto}</div>` : ''}
+        <div class="av-autor">por ${av.autor||'Motorista anônimo'} • ${av.data ? new Date(av.data).toLocaleDateString('pt-BR') : ''}</div>
       </div>`).join('');
+  } catch(e) {
+    document.getElementById('lista-destaques').innerHTML = '<div class="empty">Erro ao carregar.</div>';
+  }
+}
+
+// ---- BUSCA MOTORISTA ----
+function buildServicosGrid() {
+  document.getElementById('servicos-grid').innerHTML = SERVICOS_BUSCA.map(s =>
+    `<button class="serv-btn" id="sb-${s.id}" onclick="toggleServicoBusca('${s.id}')">${s.label}</button>`
+  ).join('');
+}
+
+window.toggleServicoBusca = function(id) {
+  const btn = document.getElementById('sb-'+id);
+  if (servicosBuscaSelecionados.includes(id)) {
+    servicosBuscaSelecionados = servicosBuscaSelecionados.filter(s=>s!==id);
+    btn.classList.remove('on');
+  } else {
+    servicosBuscaSelecionados.push(id);
+    btn.classList.add('on');
+  }
+}
+
+window.usarGPS = async function() {
+  const status = document.getElementById('gps-status');
+  status.style.display = 'block';
+  status.textContent = '📡 Localizando...';
+  if (!navigator.geolocation) { status.textContent = 'GPS não disponível'; return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    coordsUsuario = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    status.textContent = '✅ Localização obtida!';
+    document.getElementById('busca-local').value = `${coordsUsuario.lat.toFixed(4)}, ${coordsUsuario.lng.toFixed(4)}`;
+    reverseGeocode(coordsUsuario.lat, coordsUsuario.lng);
+  }, () => { status.textContent = '❌ Não foi possível obter localização'; });
+}
+
+async function reverseGeocode(lat, lng) {
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+    const d = await r.json();
+    if (d && d.address) {
+      const cidade = d.address.city || d.address.town || d.address.village || '';
+      const estado = d.address.state || '';
+      document.getElementById('busca-local').value = `${cidade}, ${estado}`;
+    }
+  } catch(e){}
+}
+
+window.buscarServicos = async function() {
+  if (!servicosBuscaSelecionados.length) { alert('Selecione pelo menos um tipo de serviço.'); return; }
+  const localInput = document.getElementById('busca-local').value.trim();
+  if (!localInput && !coordsUsuario) { alert('Informe sua localização ou use o GPS.'); return; }
+
+  showTela('tela-resultados');
+  document.getElementById('lista-resultados').innerHTML = '<div class="loading">Buscando serviços...</div>';
+  document.getElementById('resultado-titulo').textContent = servicosBuscaSelecionados.map(s => SERVICOS_BUSCA.find(x=>x.id===s)?.label||s).join(', ');
+
+  // Inicializar mapa resultados
+  if (!mapaResultados) {
+    mapaResultados = L.map('mapa-resultados').setView([-5.0892, -42.8019], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(mapaResultados);
   }
 
-  window.setNota=function(cid,val){notasCriterios[cid]=val;paintStars(cid,val);document.getElementById('citem-'+cid).classList.add('rated');document.getElementById('alertErr').style.display='none';};
-  window.hoverStar=(cid,val)=>paintStars(cid,val);
-  window.unhoverStar=(cid)=>paintStars(cid,notasCriterios[cid]||0);
-  function paintStars(cid,val){document.querySelectorAll(`[data-c="${cid}"]`).forEach(s=>s.classList.toggle('on',parseInt(s.dataset.v)<=val));}
+  // Geocodificar localização digitada
+  if (!coordsUsuario && localInput) {
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(localInput)},Brasil&format=json&limit=1`);
+      const d = await r.json();
+      if (d && d[0]) coordsUsuario = { lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon) };
+    } catch(e){}
+  }
 
-  /* ENVIAR */
-  window.enviarAvaliacao=async function(){
-    if(!Object.keys(notasCriterios).length){document.getElementById('alertErr').style.display='block';document.getElementById('criteriaList').scrollIntoView({behavior:'smooth'});return;}
-    const btn=document.getElementById('btnEnviar');
-    btn.disabled=true;btn.textContent='Enviando...';
-    try{
-      const vals=Object.values(notasCriterios);
-      const media=Math.round((vals.reduce((a,b)=>a+b,0)/vals.length)*10)/10;
-      await addDoc(collection(window._db,'avaliacoes'),{
-        local_nome:localAtual.nome,local_endereco:localAtual.endereco,local_tipo:localAtual.tipo,
-        local_mapsUrl:localAtual.mapsUrl||'',notas:{...notasCriterios},nota_media:media,
-        comentario:document.getElementById('fComentario').value.trim(),
-        autor_nome:document.getElementById('fNome').value.trim()||'Anônimo',
-        autor_whats_privado:document.getElementById('fWhats').value.trim(),
-        data:new Date().toISOString(),
-      });
-      irStep(3);
-    }catch(e){alert('Erro ao enviar. Verifique sua conexão e tente novamente.');}
-    btn.disabled=false;btn.textContent='🚛 PUBLICAR AVALIAÇÃO';
-  };
+  if (coordsUsuario) mapaResultados.setView([coordsUsuario.lat, coordsUsuario.lng], 11);
 
-  /* FECHAR DROPDOWNS */
-  document.addEventListener('click',e=>{
-    if(!e.target.closest('#searchInput')&&!e.target.closest('#pacBox'))document.getElementById('pacBox').style.display='none';
-    if(!e.target.closest('#mEndereco')&&!e.target.closest('#pacBoxEnd'))document.getElementById('pacBoxEnd').style.display='none';
+  // Buscar prestadores
+  try {
+    const snap = await getDocs(collection(db,'prestadores'));
+    todosPresatdores = snap.docs.map(d => ({id:d.id,...d.data()}));
+
+    // Calcular médias de avaliação
+    const avSnap = await getDocs(collection(db,'avaliacoes'));
+    const avs = avSnap.docs.map(d => ({...d.data()}));
+    const mediasMap = {};
+    avs.forEach(av => {
+      if (!mediasMap[av.prestador_id]) mediasMap[av.prestador_id] = [];
+      mediasMap[av.prestador_id].push(av.nota_geral||0);
+    });
+
+    let filtrados = todosPresatdores.filter(p => servicosBuscaSelecionados.includes(p.tipo));
+
+    // Calcular distância e média
+    filtrados = filtrados.map(p => {
+      const notas = mediasMap[p.id] || [];
+      const media = notas.length ? notas.reduce((a,b)=>a+b,0)/notas.length : 0;
+      let dist = null;
+      if (coordsUsuario && p.lat && p.lng) {
+        dist = calcDistancia(coordsUsuario.lat, coordsUsuario.lng, p.lat, p.lng);
+      }
+      return {...p, media: parseFloat(media.toFixed(1)), total_av: notas.length, distancia: dist};
+    });
+
+    // Ordenar: mais próximos primeiro, depois melhor nota
+    filtrados.sort((a,b) => {
+      if (a.distancia !== null && b.distancia !== null) return a.distancia - b.distancia;
+      return b.media - a.media;
+    });
+
+    renderResultados(filtrados);
+  } catch(e) {
+    document.getElementById('lista-resultados').innerHTML = '<div class="empty">Erro ao buscar. Tente novamente.</div>';
+  }
+}
+
+function calcDistancia(lat1,lng1,lat2,lng2) {
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function renderResultados(lista) {
+  marcadoresResultados.forEach(m => m.remove());
+  marcadoresResultados = [];
+  const el = document.getElementById('lista-resultados');
+  if (!lista.length) { el.innerHTML = '<div class="empty">Nenhum serviço encontrado nessa região.<br>Tente outra cidade ou tipo de serviço.</div>'; return; }
+
+  lista.forEach(p => {
+    if (p.lat && p.lng && mapaResultados) {
+      const tipo = TIPOS[p.tipo]||TIPOS.outro;
+      const m = L.marker([p.lat,p.lng]).addTo(mapaResultados).bindPopup(`<strong>${p.nome}</strong><br>${tipo.label}`);
+      marcadoresResultados.push(m);
+    }
   });
+
+  el.innerHTML = lista.map(p => {
+    const tipo = TIPOS[p.tipo]||TIPOS.outro;
+    const estrelas = p.media > 0 ? ('★'.repeat(Math.round(p.media))+'☆'.repeat(5-Math.round(p.media))) : '☆☆☆☆☆';
+    const distStr = p.distancia !== null ? `${p.distancia < 1 ? (p.distancia*1000).toFixed(0)+'m' : p.distancia.toFixed(1)+'km'} de você` : '';
+    return `
+      <div class="prestador-card" onclick="abrirDetalhe('${p.id}')">
+        <div class="prest-header">
+          <div>
+            <div class="prest-nome">${p.nome}</div>
+            <span class="prest-tipo" style="color:${tipo.color};background:${tipo.color}15;border-color:${tipo.color}33">${tipo.label}</span>
+          </div>
+          <div class="prest-estrelas">
+            <div class="estrelas-val">${estrelas}</div>
+            <span class="estrelas-num">${p.media>0?p.media+' ('+p.total_av+')':(p.total_av?p.total_av+' av.':'Sem avaliação')}</span>
+          </div>
+        </div>
+        <div class="prest-local">📍 ${p.endereco||''} ${distStr ? '• '+distStr : ''}</div>
+        ${p.telefone ? `<div class="prest-tel">📱 ${p.telefone}</div>` : ''}
+        <div class="prest-footer">
+          <button class="btn-avaliar-mini" onclick="event.stopPropagation();abrirAvaliarDireto('${p.id}')">⭐ Avaliar</button>
+          <button class="btn-rota" onclick="event.stopPropagation();irAoLocal(${p.lat||0},${p.lng||0},'${p.nome}')">🗺️ Ir até lá</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ---- DETALHE ----
+window.abrirDetalhe = async function(id) {
+  const p = todosPresatdores.find(x=>x.id===id);
+  if (!p) return;
+  prestadorAtual = p;
+  showTela('tela-detalhe');
+
+  const tipo = TIPOS[p.tipo]||TIPOS.outro;
+  document.getElementById('det-nome').textContent = p.nome;
+  document.getElementById('det-tipo').innerHTML = `<span class="prest-tipo" style="color:${tipo.color};background:${tipo.color}15;border-color:${tipo.color}33">${tipo.label}</span>`;
+
+  const h = p.aberto24h ? '🕐 Aberto 24 horas' : (p.abre && p.fecha ? `🕐 ${p.abre}h às ${p.fecha}h` : '');
+  document.getElementById('det-info').innerHTML = `
+    ${p.endereco ? `<div class="info-row"><span class="info-icon">📍</span><span>${p.endereco}</span></div>` : ''}
+    ${p.telefone ? `<div class="info-row"><span class="info-icon">📱</span><a href="tel:${p.telefone}" style="color:#2d8c3e;font-weight:700">${p.telefone}</a></div>` : ''}
+    ${h ? `<div class="info-row"><span class="info-icon">🕐</span><span>${h}</span></div>` : ''}
+    ${p.descricao ? `<div class="info-row"><span class="info-icon">💬</span><span>${p.descricao}</span></div>` : ''}
+    ${p.servicos && p.servicos.length ? `<div class="info-row"><span class="info-icon">✅</span><span>${p.servicos.join(' • ')}</span></div>` : ''}`;
+
+  document.getElementById('btn-ir-local').onclick = () => irAoLocal(p.lat, p.lng, p.nome);
+
+  // Mapa detalhe
+  if (!mapaDetalhe) {
+    mapaDetalhe = L.map('mapa-detalhe');
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaDetalhe);
+  }
+  if (p.lat && p.lng) {
+    mapaDetalhe.setView([p.lat,p.lng],15);
+    L.marker([p.lat,p.lng]).addTo(mapaDetalhe).bindPopup(p.nome).openPopup();
+  }
+
+  // Avaliações
+  carregarAvaliacoesDetalhe(id);
+}
+
+async function carregarAvaliacoesDetalhe(prestId) {
+  const el = document.getElementById('lista-avaliacoes-detalhe');
+  el.innerHTML = '<div class="loading">Carregando avaliações...</div>';
+  try {
+    const snap = await getDocs(query(collection(db,'avaliacoes'), where('prestador_id','==',prestId), orderBy('data','desc')));
+    const avs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (!avs.length) { el.innerHTML = '<div class="empty">Nenhuma avaliação ainda.</div>'; return; }
+    el.innerHTML = avs.map(av => {
+      const estrelas = '★'.repeat(Math.round(av.nota_geral||0))+'☆'.repeat(5-Math.round(av.nota_geral||0));
+      const criteriosHTML = av.criterios ? Object.entries(av.criterios).map(([k,v])=>`<div class="criterio-item">${k}: ${'★'.repeat(v)}</div>`).join('') : '';
+      return `
+        <div class="av-card">
+          <div class="av-card-header">
+            <span style="font-size:14px;color:#f59e0b">${estrelas}</span>
+            <span style="font-size:11px;color:#aaa">${av.data?new Date(av.data).toLocaleDateString('pt-BR'):''}</span>
+          </div>
+          ${av.texto?`<div style="font-size:13px;color:#444;margin-bottom:6px">${av.texto}</div>`:''}
+          ${criteriosHTML?`<div class="criterios-grid">${criteriosHTML}</div>`:''}
+          <div style="font-size:11px;color:#aaa;margin-top:6px">por ${av.autor||'Anônimo'}</div>
+        </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div class="empty">Erro ao carregar avaliações.</div>'; }
+}
+
+window.irAoLocal = function(lat, lng, nome) {
+  if (!lat || !lng) { alert('Localização não disponível para este prestador.'); return; }
+  const url = `https://www.openstreetmap.org/directions?from=&to=${lat},${lng}&route=car#map=15/${lat}/${lng}`;
+  window.open(url, '_blank');
+}
+
+// ---- CADASTRO PRESTADOR ----
+function buildCadServicosGrid() {
+  document.getElementById('cad-servicos-grid').innerHTML = SERVICOS_TODOS.map(s =>
+    `<button type="button" class="cat-btn" id="cs-${btoa(s)}" onclick="toggleCadServ('${s}')">${s}</button>`
+  ).join('');
+
+  // Inicializar mapa cadastro
+  setTimeout(() => {
+    if (!mapaCadastro) {
+      mapaCadastro = L.map('mapa-cadastro').setView([-5.0892,-42.8019],6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaCadastro);
+      mapaCadastro.on('click', function(e) {
+        const {lat,lng} = e.latlng;
+        document.getElementById('cad-lat').value = lat;
+        document.getElementById('cad-lng').value = lng;
+        if (marcadorCadastro) marcadorCadastro.remove();
+        marcadorCadastro = L.marker([lat,lng]).addTo(mapaCadastro).bindPopup('Seu local').openPopup();
+      });
+    }
+  }, 300);
+}
+
+window.toggleCadServ = function(s) {
+  const key = btoa(s);
+  const btn = document.getElementById('cs-'+key);
+  if (servicosCadSelecionados.includes(s)) {
+    servicosCadSelecionados = servicosCadSelecionados.filter(x=>x!==s);
+    btn.style.cssText='';
+  } else {
+    servicosCadSelecionados.push(s);
+    btn.style.cssText='background:#2d8c3e15;border-color:#2d8c3e;color:#2d8c3e';
+  }
+}
+
+window.geocodificarEndereco = function() {
+  clearTimeout(geocodeTimer);
+  geocodeTimer = setTimeout(async () => {
+    const end = document.getElementById('cad-endereco').value.trim();
+    if (end.length < 5) return;
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(end)},Brasil&format=json&limit=1`);
+      const d = await r.json();
+      if (d && d[0]) {
+        const lat = parseFloat(d[0].lat), lng = parseFloat(d[0].lon);
+        document.getElementById('cad-lat').value = lat;
+        document.getElementById('cad-lng').value = lng;
+        if (mapaCadastro) {
+          mapaCadastro.setView([lat,lng],15);
+          if (marcadorCadastro) marcadorCadastro.remove();
+          marcadorCadastro = L.marker([lat,lng]).addTo(mapaCadastro).bindPopup('Seu local').openPopup();
+        }
+      }
+    } catch(e){}
+  }, 800);
+}
+
+window.cadastrarPrestador = async function() {
+  const nome = document.getElementById('cad-nome').value.trim();
+  const tipo = document.getElementById('cad-tipo').value;
+  const tel = document.getElementById('cad-tel').value.trim();
+  const end = document.getElementById('cad-endereco').value.trim();
+  if (!nome||!tipo||!tel||!end) { alert('Preencha nome, tipo, telefone e endereço.'); return; }
+  const btn = document.getElementById('btn-cadastrar');
+  btn.disabled=true; btn.textContent='Salvando...';
+  try {
+    await addDoc(collection(db,'prestadores'), {
+      nome, tipo,
+      telefone: tel,
+      responsavel: document.getElementById('cad-resp').value.trim(),
+      endereco: end,
+      lat: parseFloat(document.getElementById('cad-lat').value)||null,
+      lng: parseFloat(document.getElementById('cad-lng').value)||null,
+      servicos: [...servicosCadSelecionados],
+      abre: document.getElementById('cad-abre').value,
+      fecha: document.getElementById('cad-fecha').value,
+      aberto24h: document.getElementById('cad-24h').checked,
+      descricao: document.getElementById('cad-desc').value.trim(),
+      data: new Date().toISOString(),
+    });
+    document.getElementById('cadastro-ok').style.display='block';
+    ['cad-nome','cad-tel','cad-resp','cad-endereco','cad-desc','cad-abre','cad-fecha'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('cad-tipo').value='';
+    document.getElementById('cad-24h').checked=false;
+    servicosCadSelecionados=[]; buildCadServicosGrid();
+    setTimeout(()=>document.getElementById('cadastro-ok').style.display='none',4000);
+  } catch(e){ alert('Erro ao cadastrar. Tente novamente.'); }
+  btn.disabled=false; btn.textContent='✅ CADASTRAR MEU SERVIÇO';
+}
+
+// ---- AVALIAÇÃO ----
+let prestadoresParaAv = [];
+
+window.buscarParaAvaliar = async function() {
+  const q = document.getElementById('av-busca').value.trim().toLowerCase();
+  const sug = document.getElementById('av-sugestoes');
+  if (q.length < 2) { sug.style.display='none'; return; }
+  if (!prestadoresParaAv.length) {
+    const snap = await getDocs(collection(db,'prestadores'));
+    prestadoresParaAv = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }
+  const res = prestadoresParaAv.filter(p=>p.nome.toLowerCase().includes(q)||(p.endereco||'').toLowerCase().includes(q));
+  if (!res.length) { sug.style.display='none'; return; }
+  sug.style.display='block';
+  sug.innerHTML = res.slice(0,6).map(p=>`
+    <div onclick="selecionarParaAvaliar('${p.id}')" style="padding:10px 12px;cursor:pointer;border-bottom:1px solid #f5f5f5;font-size:13px">
+      <strong>${p.nome}</strong><br><span style="color:#888;font-size:11px">${(TIPOS[p.tipo]||TIPOS.outro).label} • ${p.endereco||''}</span>
+    </div>`).join('');
+}
+
+window.selecionarParaAvaliar = function(id) {
+  const p = prestadoresParaAv.find(x=>x.id===id);
+  if (!p) return;
+  avAlvoId = id; avAlvoTipo = p.tipo||'outro';
+  document.getElementById('av-sugestoes').style.display='none';
+  document.getElementById('av-busca').value = p.nome;
+  document.getElementById('av-alvo').style.display='block';
+  document.getElementById('av-alvo-nome').textContent = p.nome;
+  document.getElementById('av-alvo-tipo').textContent = (TIPOS[p.tipo]||TIPOS.outro).label;
+  document.getElementById('av-manual').style.display='none';
+  mostrarCriterios(p.tipo||'outro');
+}
+
+window.modoAvaliarManual = function() {
+  avAlvoId = null;
+  document.getElementById('av-alvo').style.display='none';
+  document.getElementById('av-manual').style.display='block';
+  mostrarCriterios('outro');
+}
+
+window.abrirAvaliarPrestador = function() {
+  if (!prestadorAtual) return;
+  showTela('tela-avaliar');
+  selecionarParaAvaliar(prestadorAtual.id);
+  document.getElementById('av-busca').value = prestadorAtual.nome;
+}
+
+window.abrirAvaliarDireto = function(id) {
+  showTela('tela-avaliar');
+  if (!prestadoresParaAv.length) {
+    getDocs(collection(db,'prestadores')).then(snap=>{
+      prestadoresParaAv = snap.docs.map(d=>({id:d.id,...d.data()}));
+      selecionarParaAvaliar(id);
+    });
+  } else { selecionarParaAvaliar(id); }
+}
+
+function mostrarCriterios(tipo) {
+  notaGeral=0; notasCriterios={};
+  const crits = CRITERIOS[tipo]||CRITERIOS.outro;
+  document.getElementById('av-geral-stars').innerHTML = [1,2,3,4,5].map(n=>
+    `<span class="estrela-inp" id="ag-${n}" onclick="setNotaGeral(${n})">★</span>`
+  ).join('');
+  document.getElementById('criterios-especificos').innerHTML = crits.map(c=>`
+    <div class="criterio-row">
+      <div class="criterio-nome">${c}</div>
+      <div class="criterio-stars">${[1,2,3,4,5].map(n=>`<span class="c-star" id="cs-${c}-${n}" onclick="setNotaCriterio('${c}',${n})">★</span>`).join('')}</div>
+    </div>`).join('');
+  document.getElementById('av-criterios').style.display='block';
+}
+
+window.setNotaGeral = function(n) {
+  notaGeral=n;
+  for(let i=1;i<=5;i++) document.getElementById('ag-'+i).classList.toggle('on',i<=n);
+}
+
+window.setNotaCriterio = function(crit,n) {
+  notasCriterios[crit]=n;
+  for(let i=1;i<=5;i++) {
+    const el=document.getElementById(`cs-${crit}-${i}`);
+    if(el) el.classList.toggle('on',i<=n);
+  }
+}
+
+window.enviarAvaliacao = async function() {
+  if (!notaGeral) { alert('Dê pelo menos a nota geral (estrelas).'); return; }
+  const btn = document.getElementById('btn-avaliar');
+  btn.disabled=true; btn.textContent='Enviando...';
+  try {
+    let prestId=avAlvoId, prestNome='', prestTipo=avAlvoTipo;
+    if (!prestId) {
+      // Cadastrar prestador manual
+      const nomePrest = document.getElementById('av-man-nome').value.trim();
+      const tipoPrest = document.getElementById('av-man-tipo').value;
+      const cidadePrest = document.getElementById('av-man-cidade').value.trim();
+      if (!nomePrest) { alert('Informe o nome do estabelecimento.'); btn.disabled=false; btn.textContent='⭐ ENVIAR AVALIAÇÃO'; return; }
+      const docRef = await addDoc(collection(db,'prestadores'), {
+        nome:nomePrest, tipo:tipoPrest, endereco:cidadePrest, telefone:'', servicos:[], data:new Date().toISOString(), cadastrado_por_avaliacao:true
+      });
+      prestId=docRef.id; prestNome=nomePrest; prestTipo=tipoPrest;
+    } else {
+      const p=prestadoresParaAv.find(x=>x.id===prestId);
+      prestNome=p?.nome||''; prestTipo=p?.tipo||'outro';
+    }
+    await addDoc(collection(db,'avaliacoes'), {
+      prestador_id: prestId,
+      prestador_nome: prestNome,
+      prestador_tipo: prestTipo,
+      nota_geral: notaGeral,
+      criterios: {...notasCriterios},
+      texto: document.getElementById('av-texto').value.trim(),
+      autor: document.getElementById('av-autor').value.trim(),
+      telefone_autor: document.getElementById('av-tel').value.trim(),
+      data: new Date().toISOString(),
+    });
+    document.getElementById('avaliar-ok').style.display='block';
+    document.getElementById('av-busca').value='';
+    document.getElementById('av-texto').value='';
+    document.getElementById('av-autor').value='';
+    document.getElementById('av-tel').value='';
+    document.getElementById('av-alvo').style.display='none';
+    document.getElementById('av-manual').style.display='none';
+    document.getElementById('av-criterios').style.display='none';
+    document.getElementById('av-sugestoes').style.display='none';
+    avAlvoId=null; notaGeral=0; notasCriterios={};
+    setTimeout(()=>{document.getElementById('avaliar-ok').style.display='none';showTela('tela-inicio');},2500);
+  } catch(e){ alert('Erro ao enviar. Tente novamente.'); }
+  btn.disabled=false; btn.textContent='⭐ ENVIAR AVALIAÇÃO';
+}
+
+// ---- ADMIN ----
+function verificarAdmin() {
+  if (adminLogado) {
+    document.getElementById('admin-login-wrap').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    carregarAdminPrestadores();
+    carregarAdminAvaliacoes();
+  }
+}
+
+window.entrarAdmin = function() {
+  if (document.getElementById('admin-senha').value===ADMIN_SENHA) {
+    adminLogado=true;
+    document.getElementById('admin-login-wrap').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    document.getElementById('admin-erro').style.display='none';
+    carregarAdminPrestadores();
+    carregarAdminAvaliacoes();
+  } else document.getElementById('admin-erro').style.display='block';
+}
+
+async function carregarAdminPrestadores() {
+  try {
+    const snap=await getDocs(query(collection(db,'prestadores'),orderBy('data','desc')));
+    const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('admin-total-prest').textContent='('+list.length+')';
+    document.getElementById('admin-lista-prest').innerHTML = list.map(p=>`
+      <div class="admin-item">
+        <div>
+          <div style="font-weight:700;font-size:14px">${p.nome}</div>
+          <div style="font-size:12px;color:#888">${(TIPOS[p.tipo]||TIPOS.outro).label} • ${p.endereco||''}</div>
+          ${p.telefone?`<div style="font-size:12px;color:#2d8c3e">📱 ${p.telefone}</div>`:''}
+        </div>
+        <button class="btn-del" onclick="excluirPrestador('${p.id}')">🗑️</button>
+      </div>`).join('') || '<div class="empty">Nenhum cadastrado.</div>';
+  } catch(e){}
+}
+
+async function carregarAdminAvaliacoes() {
+  try {
+    const snap=await getDocs(query(collection(db,'avaliacoes'),orderBy('data','desc')));
+    const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('admin-total-av').textContent='('+list.length+')';
+    document.getElementById('admin-lista-av').innerHTML = list.map(av=>`
+      <div class="admin-item">
+        <div>
+          <div style="font-weight:700;font-size:14px">${av.prestador_nome||'Serviço'}</div>
+          <div style="font-size:12px;color:#f59e0b">${'★'.repeat(Math.round(av.nota_geral||0))}</div>
+          ${av.texto?`<div style="font-size:12px;color:#555">${av.texto.substring(0,60)}...</div>`:''}
+          <div style="font-size:11px;color:#aaa">por ${av.autor||'Anônimo'} ${av.telefone_autor?'• 📱'+av.telefone_autor:''}</div>
+        </div>
+        <button class="btn-del" onclick="excluirAvaliacao('${av.id}')">🗑️</button>
+      </div>`).join('') || '<div class="empty">Nenhuma avaliação.</div>';
+  } catch(e){}
+}
+
+window.excluirPrestador = async function(id) {
+  if (!confirm('Excluir este prestador?')) return;
+  try { await deleteDoc(doc(db,'prestadores',id)); await carregarAdminPrestadores(); } catch(e){ alert('Erro.'); }
+}
+
+window.excluirAvaliacao = async function(id) {
+  if (!confirm('Excluir esta avaliação?')) return;
+  try { await deleteDoc(doc(db,'avaliacoes',id)); await carregarAdminAvaliacoes(); } catch(e){ alert('Erro.'); }
+}
 </script>
 </body>
 </html>
