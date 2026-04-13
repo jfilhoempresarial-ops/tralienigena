@@ -149,9 +149,18 @@
   <div>
     <div class="logo-title">👽 <span>Tr.Alienigena</span></div>
     <div class="logo-voz">A VOZ DO MOTORISTA</div>
-    <div class="logo-sub">SERVIÇOS • ESTRADA • BRASIL</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap">
+      <span style="font-size:10px;color:#aaa;letter-spacing:.5px">📱 (88) 98136-3953</span>
+      <span style="font-size:10px;color:#2d8c3e;font-weight:700;letter-spacing:.5px" id="relogio-header">--:-- • --/--/----</span>
+    </div>
   </div>
-  <button onclick="showTela('tela-inicio')" style="background:#f5f5f5;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#555">🏠 Início</button>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+    <button onclick="showTela('tela-inicio')" style="background:#f5f5f5;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:700;color:#555">🏠 Início</button>
+    <div style="display:flex;gap:6px">
+      <button onclick="showTela('tela-cadastro')" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:9px;font-weight:700;color:#2d8c3e">🏪 Prestador</button>
+      <button onclick="showTela('tela-admin')" style="background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:9px;font-weight:700;color:#888">🔐 Admin</button>
+    </div>
+  </div>
 </div>
 
 <!-- ======== TELA INÍCIO ======== -->
@@ -159,27 +168,23 @@
   <div class="inicio-hero">
     <h1>🚛 O que você precisa hoje?</h1>
     <p>Serviços, pontos de parada e avaliações para o caminhoneiro brasileiro</p>
-    <div class="btn-hero-grid">
-      <button class="btn-hero" onclick="showTela('tela-busca')">
-        <div class="btn-hero-icon">🔍</div>
-        <div class="btn-hero-label">Sou Motorista</div>
+    <!-- Botões principais em destaque -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 auto 16px">
+      <button class="btn-hero" onclick="showTela('tela-busca')" style="padding:24px 12px">
+        <div class="btn-hero-icon" style="font-size:38px">🔍</div>
+        <div class="btn-hero-label" style="font-size:16px">Sou Motorista</div>
         <div class="btn-hero-sub">Preciso de um serviço</div>
       </button>
-      <button class="btn-hero" onclick="showTela('tela-cadastro')">
-        <div class="btn-hero-icon">🏪</div>
-        <div class="btn-hero-label">Sou Prestador</div>
-        <div class="btn-hero-sub">Quero me cadastrar</div>
-      </button>
-      <button class="btn-hero" onclick="showTela('tela-avaliar')">
-        <div class="btn-hero-icon">⭐</div>
-        <div class="btn-hero-label">Avaliar Serviço</div>
+      <button class="btn-hero" onclick="showTela('tela-avaliar')" style="padding:24px 12px">
+        <div class="btn-hero-icon" style="font-size:38px">⭐</div>
+        <div class="btn-hero-label" style="font-size:16px">Avaliar Serviço</div>
         <div class="btn-hero-sub">Deixe sua experiência</div>
       </button>
-      <button class="btn-hero" onclick="showTela('tela-admin')">
-        <div class="btn-hero-icon">🔐</div>
-        <div class="btn-hero-label">Admin</div>
-        <div class="btn-hero-sub">Área do administrador</div>
-      </button>
+    </div>
+    <!-- Botões secundários pequenos -->
+    <div style="display:flex;gap:10px;justify-content:center;max-width:500px;margin:0 auto">
+      <button onclick="showTela('tela-cadastro')" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px">🏪 Sou Prestador</button>
+      <button onclick="showTela('tela-admin')" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:.5px">🔐 Admin</button>
     </div>
   </div>
 
@@ -264,7 +269,7 @@
         <option value="pousada">🛏️ Pousada / Dormida</option>
         <option value="restaurante">🍽️ Restaurante / Lanchonete</option>
         <option value="lavajato">🚿 Lava-Jato de Caminhão</option>
-        <option value="complexo">🏢 Complexo Rodoviário</option>
+        <option value="outros">📦 Outros Serviços</option>
       </select>
     </div>
 
@@ -366,6 +371,9 @@
           <option value="pousada">🛏️ Pousada / Dormida</option>
           <option value="restaurante">🍽️ Restaurante</option>
           <option value="lavajato">🚿 Lava-Jato</option>
+          <option value="chapa">💪 Chapa / Ajudante</option>
+          <option value="farmacia">💊 Farmácia</option>
+          <option value="outros">📦 Outros Serviços</option>
         </select>
       </div>
       <div class="form-group">
@@ -459,7 +467,9 @@ const TIPOS = {
   pousada:    {label:"🛏️ Pousada / Dormida",     color:"#7c3aed"},
   restaurante:{label:"🍽️ Restaurante",           color:"#d97706"},
   lavajato:   {label:"🚿 Lava-Jato",             color:"#0284c7"},
-  complexo:   {label:"🏢 Complexo Rodoviário",   color:"#0f766e"},
+  chapa:      {label:"💪 Chapa / Ajudante",      color:"#0f766e"},
+  farmacia:   {label:"💊 Farmácia",              color:"#059669"},
+  outros:     {label:"📦 Outros Serviços",       color:"#6b7280"},
   outro:      {label:"📍 Serviço",               color:"#6b7280"},
 };
 
@@ -474,22 +484,26 @@ const CRITERIOS = {
   pousada:    ["Limpeza","Segurança","Preço","Conforto","Atendimento"],
   restaurante:["Comida","Preço","Limpeza","Atendimento","Espaço"],
   lavajato:   ["Qualidade","Preço","Agilidade","Atendimento","Estrutura"],
-  complexo:   ["Estrutura","Preço","Segurança","Atendimento","Limpeza"],
+  chapa:      ["Força","Agilidade","Pontualidade","Atendimento","Preço"],
+  farmacia:   ["Variedade","Preço","Atendimento","Agilidade","Limpeza"],
+  outros:     ["Qualidade","Preço","Atendimento","Agilidade","Honestidade"],
   outro:      ["Qualidade","Preço","Atendimento","Agilidade","Honestidade"],
 };
 
 const SERVICOS_BUSCA = [
-  {id:"posto",     label:"⛽ Combustível"},
-  {id:"mecanico",  label:"🔩 Mecânico"},
+  {id:"posto",      label:"⛽ Combustível"},
+  {id:"mecanico",   label:"🔩 Mecânico"},
   {id:"borracharia",label:"🔧 Borracharia"},
   {id:"eletricista",label:"⚡ Eletricista"},
-  {id:"pecas",     label:"🏪 Peças"},
-  {id:"funilaria", label:"🚗 Funilaria"},
-  {id:"guindaste", label:"🏗️ Guincho"},
-  {id:"pousada",   label:"🛏️ Pousada"},
+  {id:"pecas",      label:"🏪 Peças"},
+  {id:"funilaria",  label:"🚗 Funilaria"},
+  {id:"guindaste",  label:"🏗️ Guincho"},
+  {id:"pousada",    label:"🛏️ Pousada"},
   {id:"restaurante",label:"🍽️ Restaurante"},
-  {id:"lavajato",  label:"🚿 Lava-Jato"},
-  {id:"complexo",  label:"🏢 Complexo"},
+  {id:"lavajato",   label:"🚿 Lava-Jato"},
+  {id:"chapa",      label:"💪 Chapa/Ajudante"},
+  {id:"farmacia",   label:"💊 Farmácia"},
+  {id:"outros",     label:"📦 Outros"},
 ];
 
 const SERVICOS_TODOS = [
@@ -514,6 +528,17 @@ let notaGeral = 0;
 let notasCriterios = {};
 let adminLogado = false;
 let geocodeTimer = null;
+
+// ---- RELÓGIO ----
+function atualizarRelogio() {
+  const agora = new Date();
+  const hora = agora.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const data = agora.toLocaleDateString('pt-BR');
+  const el = document.getElementById('relogio-header');
+  if (el) el.textContent = hora + ' • ' + data;
+}
+atualizarRelogio();
+setInterval(atualizarRelogio, 1000);
 
 // ---- INIT ----
 window.addEventListener('DOMContentLoaded', () => {
