@@ -1,1094 +1,332 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tr.Alienigena - A Voz do Motorista</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#f4f4f4;color:#1a1a1a;font-family:'Barlow',sans-serif;min-height:100vh}
-    input,textarea,select,button{font-family:'Barlow',sans-serif}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tr.Alienigena - A Voz do Motorista</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f4f4f4;color:#1a1a1a;font-family:'Barlow',sans-serif;min-height:100vh}
+input,textarea,select,button{font-family:'Barlow',sans-serif}
 
-    /* HEADER */
-    .header{background:#fff;border-bottom:3px solid #2d8c3e;padding:10px 16px;position:sticky;top:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-    .logo-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#1a1a1a}
-    .logo-title span{color:#2d8c3e}
-    .logo-voz{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;color:#2d8c3e;letter-spacing:1px}
-    .logo-sub{font-size:9px;color:#aaa;letter-spacing:1px}
+/* HEADER */
+.header{background:#fff;border-bottom:3px solid #2d8c3e;padding:10px 16px;position:sticky;top:0;z-index:2000;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.logo-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#1a1a1a}
+.logo-title span{color:#2d8c3e}
+.logo-voz{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;color:#2d8c3e;letter-spacing:1px}
+.header-info{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px}
+.header-tel{font-size:10px;color:#888;letter-spacing:.3px}
+.header-relogio{font-size:10px;color:#2d8c3e;font-weight:700;letter-spacing:.3px}
+.header-loc{font-size:10px;color:#1a5c26;font-weight:600}
+.btn-inicio{background:#f5f5f5;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;color:#555;white-space:nowrap}
 
-    /* TELA INICIAL */
-    #tela-inicio{display:block}
-    .inicio-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:32px 20px 24px;text-align:center}
-    .inicio-hero h1{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:6px}
-    .inicio-hero p{color:#a8d5b0;font-size:14px;margin-bottom:24px}
-    .btn-hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:500px;margin:0 auto}
-    .btn-hero{background:#fff;border:none;border-radius:14px;padding:20px 12px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 16px rgba(0,0,0,.15)}
-    .btn-hero:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
-    .btn-hero-icon{font-size:32px;margin-bottom:8px}
-    .btn-hero-label{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:#1a1a1a}
-    .btn-hero-sub{font-size:11px;color:#888;margin-top:2px}
+/* TELAS */
+.tela{display:none;min-height:calc(100vh - 70px)}
+.tela.ativa{display:block}
+#tela-inicio{display:block}
 
-    .destaques{padding:20px 16px}
-    .destaques h2{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:14px}
-    .avaliacao-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee}
-    .av-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-    .av-nome{font-weight:700;font-size:14px;color:#1a1a1a}
-    .av-tipo{font-size:11px;color:#2d8c3e;font-weight:700}
-    .av-estrelas{color:#f59e0b;font-size:14px}
-    .av-texto{font-size:13px;color:#555;line-height:1.5;margin-top:4px}
-    .av-autor{font-size:11px;color:#aaa;margin-top:6px}
+/* HERO INÍCIO */
+.inicio-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:28px 20px 22px;text-align:center}
+.inicio-hero h1{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:6px}
+.inicio-hero p{color:#a8d5b0;font-size:13px;margin-bottom:22px}
+.btns-destaque{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:460px;margin:0 auto 14px}
+.btn-hero{background:#fff;border:none;border-radius:14px;padding:22px 10px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.btn-hero:active{transform:scale(.97)}
+.btn-hero-icon{font-size:34px;margin-bottom:8px}
+.btn-hero-label{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:#1a1a1a}
+.btn-hero-sub{font-size:11px;color:#888;margin-top:2px}
+.btns-secundarios{display:flex;gap:8px;justify-content:center;max-width:460px;margin:0 auto}
+.btn-sec{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:8px 18px;cursor:pointer;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px}
 
-    /* TELAS */
-    .tela{display:none;min-height:100vh}
-    .tela.ativa{display:block}
+.destaques{padding:18px 16px}
+.destaques h2{font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:12px}
+.av-card-mini{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee}
+.av-mini-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.av-mini-nome{font-weight:700;font-size:13px;color:#1a1a1a}
+.av-mini-tipo{font-size:10px;color:#2d8c3e;font-weight:700}
+.av-mini-stars{color:#f59e0b;font-size:12px}
+.av-mini-txt{font-size:12px;color:#555;line-height:1.4}
+.av-mini-autor{font-size:10px;color:#aaa;margin-top:4px}
 
-    /* BUSCA MOTORISTA */
-    .busca-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:20px 16px}
-    .busca-hero h2{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:16px}
-    .busca-pergunta{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px}
-    .busca-pergunta label{font-size:12px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:8px}
-    .servicos-grid{display:flex;flex-wrap:wrap;gap:8px}
-    .serv-btn{background:#f5f5f5;border:2px solid #e5e5e5;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#555;transition:all .15s}
-    .serv-btn.on{background:#2d8c3e15;border-color:#2d8c3e;color:#2d8c3e}
-    .loc-input-wrap{position:relative}
-    .loc-input{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 40px 10px 12px;font-size:14px;width:100%;outline:none}
-    .loc-btn-gps{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px}
-    .btn-buscar{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:12px;letter-spacing:.5px}
+/* CABEÇALHO INTERNO */
+.tela-header{background:#fff;padding:12px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;position:sticky;top:70px;z-index:100}
+.btn-voltar{background:#f5f5f5;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:700;color:#555}
+.tela-titulo{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a}
 
-    /* RESULTADOS */
-    #tela-resultados .resultado-header{background:#fff;padding:14px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px}
-    .btn-voltar{background:#f5f5f5;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:700;color:#555}
-    .resultado-titulo{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a}
-    #mapa-resultados{height:240px;width:100%}
-    .resultados-lista{padding:14px 16px}
-    .prestador-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee;cursor:pointer;transition:box-shadow .2s}
-    .prestador-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.12)}
-    .prest-header{display:flex;justify-content:space-between;align-items:flex-start}
-    .prest-nome{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a}
-    .prest-tipo{display:inline-block;background:#2d8c3e15;color:#2d8c3e;border:1px solid #2d8c3e33;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;margin-top:3px}
-    .prest-estrelas{text-align:right}
-    .estrelas-val{color:#f59e0b;font-size:14px}
-    .estrelas-num{font-size:11px;color:#aaa;display:block}
-    .prest-local{color:#888;font-size:12px;margin-top:6px}
-    .prest-tel{color:#2d8c3e;font-size:12px;font-weight:700;margin-top:3px}
-    .prest-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
-    .btn-rota{background:#2d8c3e;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
-    .btn-avaliar-mini{background:#fff;color:#2d8c3e;border:1px solid #2d8c3e;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
+/* BUSCA */
+.busca-body{padding:16px}
+.busca-campo{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.busca-campo label{font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:8px}
+.servicos-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.serv-btn{background:#f5f5f5;border:2px solid #e5e5e5;border-radius:8px;padding:7px 10px;cursor:pointer;font-size:11px;font-weight:700;color:#666;transition:all .15s}
+.serv-btn.on{background:#2d8c3e15;border-color:#2d8c3e;color:#2d8c3e}
+.input-busca-serv{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none;transition:border-color .2s;margin-top:4px}
+.input-busca-serv:focus{border-color:#2d8c3e88;background:#fff}
+.autocomplete-box{background:#fff;border:1px solid #ddd;border-radius:8px;margin-top:4px;display:none;max-height:160px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.ac-item{padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5f5f5}
+.ac-item:hover{background:#f0fdf4}
+.loc-wrap{position:relative}
+.loc-input{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 44px 10px 12px;font-size:14px;width:100%;outline:none}
+.btn-gps{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:#2d8c3e;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px;color:#fff}
+.gps-status{font-size:10px;color:#2d8c3e;margin-top:3px;display:none}
+.btn-buscar-agora{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.5px;margin-top:4px}
 
-    /* DETALHE */
-    #tela-detalhe .detalhe-header{background:#fff;padding:14px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px}
-    #mapa-detalhe{height:220px;width:100%}
-    .detalhe-body{padding:16px}
-    .detalhe-nome{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#1a1a1a}
-    .detalhe-tipo{margin-top:4px;margin-bottom:12px}
-    .detalhe-info{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
-    .info-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;color:#444}
-    .info-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-    .btn-ir{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-bottom:12px;letter-spacing:.5px}
-    .btn-avaliar-grande{background:#fff;border:2px solid #2d8c3e;border-radius:10px;color:#2d8c3e;padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:16px}
-    .avaliacoes-section h3{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:12px}
-    .av-card{background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid #eee}
-    .av-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-    .criterios-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px}
-    .criterio-item{font-size:11px;color:#666}
+/* RESULTADOS */
+#mapa-resultados{height:220px;width:100%}
+.resultados-body{padding:14px 16px}
+.resultado-info{background:#f0fdf4;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#166534;font-weight:600}
+.prestador-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee;cursor:pointer;transition:box-shadow .2s}
+.prestador-card:active{box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.pc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.pc-nome{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:#1a1a1a}
+.pc-tipo{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;margin-top:3px}
+.pc-stars{text-align:right;flex-shrink:0}
+.pc-stars-val{color:#f59e0b;font-size:13px}
+.pc-stars-num{font-size:10px;color:#aaa;display:block}
+.pc-local{color:#888;font-size:11px;margin-top:5px}
+.pc-dist{color:#2d8c3e;font-size:11px;font-weight:700}
+.pc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.btn-wpp{background:#25d366;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px}
+.btn-rota-mini{background:#fff;color:#2d8c3e;border:1px solid #2d8c3e;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer}
+.btn-av-mini{background:#fff6e5;color:#f59e0b;border:1px solid #f59e0b55;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer}
 
-    /* CADASTRO PRESTADOR */
-    .cadastro-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:20px 16px}
-    .cadastro-hero h2{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
-    .cadastro-hero p{color:#a8d5b0;font-size:13px}
-    .form-body{padding:16px}
-    .form-group{margin-bottom:14px}
-    .form-label{color:#666;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
-    .form-input{background:#fff;border:1px solid #ddd;border-radius:8px;color:#1a1a1a;padding:10px 12px;font-size:14px;width:100%;outline:none;transition:border-color .2s}
-    .form-input:focus{border-color:#2d8c3e88}
-    .form-input::placeholder{color:#bbb}
-    textarea.form-input{min-height:80px;resize:vertical}
-    select.form-input option{background:#fff;color:#1a1a1a}
-    .form-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .cat-grid{display:flex;flex-wrap:wrap;gap:7px}
-    .cat-btn{background:#f5f5f5;border:1px solid #ddd;border-radius:6px;color:#888;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700;transition:all .15s}
-    #mapa-cadastro{height:200px;border-radius:8px;margin-top:8px;border:1px solid #ddd}
-    .btn-submit{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.5px;transition:opacity .2s}
-    .btn-submit:disabled{opacity:.5;cursor:not-allowed}
-    .alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;color:#166534;font-size:14px;font-weight:700;text-align:center;margin-bottom:14px;display:none}
+/* DETALHE */
+#mapa-detalhe{height:210px;width:100%}
+.detalhe-body{padding:16px}
+.det-nome{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.det-info-box{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
+.info-linha{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;color:#444;line-height:1.4}
+.info-ico{font-size:15px;flex-shrink:0}
+.btn-wpp-grande{background:#25d366;border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.5px}
+.btn-rota-grande{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;letter-spacing:.5px}
+.btn-avaliar-det{background:#fff;border:2px solid #f59e0b;border-radius:10px;color:#f59e0b;padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:16px}
+.avs-titulo{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:10px}
+.av-det-card{background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid #eee}
+.av-det-top{display:flex;justify-content:space-between;margin-bottom:5px}
+.crit-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:5px}
+.crit-item{font-size:11px;color:#666}
 
-    /* AVALIAR */
-    .avaliar-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:20px 16px}
-    .avaliar-hero h2{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
-    .avaliar-hero p{color:#a8d5b0;font-size:13px}
-    .estrelas-input{display:flex;gap:6px;margin-top:6px}
-    .estrela-inp{font-size:28px;cursor:pointer;color:#ddd;transition:color .1s;user-select:none}
-    .estrela-inp.on{color:#f59e0b}
-    .criterio-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-    .criterio-nome{font-size:13px;color:#444;font-weight:600}
-    .criterio-stars{display:flex;gap:3px}
-    .c-star{font-size:20px;cursor:pointer;color:#ddd;transition:color .1s}
-    .c-star.on{color:#f59e0b}
-    .nao-encontrou{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:#856404}
-    .btn-nao-encontrou{background:#ffc107;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;color:#000}
+/* CADASTRO */
+.form-body{padding:16px}
+.form-group{margin-bottom:13px}
+.form-label{color:#666;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;display:block}
+.form-input{background:#fff;border:1px solid #ddd;border-radius:8px;color:#1a1a1a;padding:10px 12px;font-size:14px;width:100%;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:#2d8c3e88}
+.form-input::placeholder{color:#bbb}
+textarea.form-input{min-height:80px;resize:vertical}
+select.form-input option{background:#fff}
+.form-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-submit{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.5px}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;color:#166534;font-size:14px;font-weight:700;text-align:center;margin-bottom:14px;display:none}
+.hero-grad{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:18px 16px}
+.hero-grad h2{font-family:'Oswald',sans-serif;font-size:19px;font-weight:700;color:#fff;margin-bottom:3px}
+.hero-grad p{color:#a8d5b0;font-size:12px}
+#mapa-cadastro{height:180px;border-radius:8px;margin-top:6px;border:1px solid #ddd}
+.busca-prest-box{position:relative}
+.busca-prest-sugestoes{background:#fff;border:1px solid #ddd;border-radius:8px;margin-top:3px;display:none;max-height:160px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.bp-item{padding:10px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5f5f5}
+.bp-item:hover{background:#f0fdf4}
+.bp-item-nome{font-weight:700}
+.bp-item-tipo{font-size:11px;color:#2d8c3e}
 
-    .loading{text-align:center;color:#aaa;padding:40px;font-size:14px}
-    .empty{text-align:center;color:#aaa;padding:30px;font-size:14px}
+/* AVALIAR */
+.estrelas-input{display:flex;gap:5px;margin-top:5px}
+.ei-star{font-size:28px;cursor:pointer;color:#ddd;transition:color .1s;user-select:none}
+.ei-star.on{color:#f59e0b}
+.c-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.c-nome{font-size:13px;color:#444;font-weight:600}
+.c-stars{display:flex;gap:3px}
+.c-star{font-size:20px;cursor:pointer;color:#ddd;transition:color .1s}
+.c-star.on{color:#f59e0b}
+.nao-enc{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:11px;margin-bottom:12px;font-size:12px;color:#795548}
+.btn-nao-enc{background:#ff8f00;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;color:#fff;margin-top:6px}
 
-    /* ADMIN */
-    .admin-body{padding:16px}
-    .admin-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
-    .admin-card-title{font-weight:700;color:#2d8c3e;font-size:15px;margin-bottom:10px}
-    .admin-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f5}
-    .btn-del{background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:700}
-  </style>
+/* ADMIN */
+.admin-body{padding:16px}
+.admin-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
+.admin-card-t{font-weight:700;color:#2d8c3e;font-size:14px;margin-bottom:10px}
+.admin-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f5f5f5;gap:10px}
+.btn-del{background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;padding:4px 9px;cursor:pointer;font-size:12px;font-weight:700;flex-shrink:0}
+
+.loading{text-align:center;color:#aaa;padding:36px;font-size:13px}
+.empty{text-align:center;color:#aaa;padding:24px;font-size:13px}
+.tag{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700}
+</style>
 </head>
 <body>
 
 <!-- HEADER -->
 <div class="header">
-  <div>
-    <div class="logo-title">👽 <span>Tr.Alienigena</span></div>
-    <div class="logo-voz">A VOZ DO MOTORISTA</div>
-    <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap">
-      <span style="font-size:10px;color:#aaa;letter-spacing:.5px">📱 (88) 98136-3953</span>
-      <span style="font-size:10px;color:#2d8c3e;font-weight:700;letter-spacing:.5px" id="relogio-header">--:-- • --/--/----</span>
+  <div class="header-top">
+    <div>
+      <div class="logo-title">👽 <span>Tr.Alienigena</span></div>
+      <div class="logo-voz">A VOZ DO MOTORISTA</div>
+      <div class="header-info">
+        <span class="header-tel">📱 (88) 98136-3953</span>
+        <span class="header-relogio" id="hRelogio">--:--</span>
+        <span class="header-loc" id="hLoc">📍 Localizando...</span>
+      </div>
     </div>
-  </div>
-  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-    <button onclick="showTela('tela-inicio')" style="background:#f5f5f5;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:700;color:#555">🏠 Início</button>
-    <div style="display:flex;gap:6px">
-      <button onclick="showTela('tela-cadastro')" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:9px;font-weight:700;color:#2d8c3e">🏪 Prestador</button>
-      <button onclick="showTela('tela-admin')" style="background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:9px;font-weight:700;color:#888">🔐 Admin</button>
-    </div>
+    <button class="btn-inicio" onclick="irInicio()">🏠 Início</button>
   </div>
 </div>
 
-<!-- ======== TELA INÍCIO ======== -->
+<!-- ===== TELA INÍCIO ===== -->
 <div id="tela-inicio">
   <div class="inicio-hero">
     <h1>🚛 O que você precisa hoje?</h1>
-    <p>Serviços, pontos de parada e avaliações para o caminhoneiro brasileiro</p>
-    <!-- Botões principais em destaque -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 auto 16px">
-      <button class="btn-hero" onclick="showTela('tela-busca')" style="padding:24px 12px">
-        <div class="btn-hero-icon" style="font-size:38px">🔍</div>
-        <div class="btn-hero-label" style="font-size:16px">Sou Motorista</div>
+    <p>Encontre serviços, pontos de parada e muito mais na estrada</p>
+    <div class="btns-destaque">
+      <button class="btn-hero" onclick="showTela('tela-busca')">
+        <div class="btn-hero-icon">🔍</div>
+        <div class="btn-hero-label">Sou Motorista</div>
         <div class="btn-hero-sub">Preciso de um serviço</div>
       </button>
-      <button class="btn-hero" onclick="showTela('tela-avaliar')" style="padding:24px 12px">
-        <div class="btn-hero-icon" style="font-size:38px">⭐</div>
-        <div class="btn-hero-label" style="font-size:16px">Avaliar Serviço</div>
+      <button class="btn-hero" onclick="showTela('tela-avaliar')">
+        <div class="btn-hero-icon">⭐</div>
+        <div class="btn-hero-label">Avaliar Serviço</div>
         <div class="btn-hero-sub">Deixe sua experiência</div>
       </button>
     </div>
-    <!-- Botões secundários pequenos -->
-    <div style="display:flex;gap:10px;justify-content:center;max-width:500px;margin:0 auto">
-      <button onclick="showTela('tela-cadastro')" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px">🏪 Sou Prestador</button>
-      <button onclick="showTela('tela-admin')" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:.5px">🔐 Admin</button>
+    <div class="btns-secundarios">
+      <button class="btn-sec" onclick="showTela('tela-cadastro')">🏪 Sou Prestador</button>
+      <button class="btn-sec" onclick="showTela('tela-admin')" style="opacity:.6;font-size:10px">🔐 Admin</button>
     </div>
   </div>
-
   <div class="destaques">
     <h2>⭐ Avaliações Recentes</h2>
     <div id="lista-destaques"><div class="loading">Carregando...</div></div>
   </div>
 </div>
 
-<!-- ======== TELA BUSCA MOTORISTA ======== -->
+<!-- ===== TELA BUSCA ===== -->
 <div id="tela-busca" class="tela">
-  <div class="busca-hero">
-    <h2>🔍 O que você procura?</h2>
-    <div class="busca-pergunta">
-      <label>TIPO DE SERVIÇO</label>
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="irInicio()">← Voltar</button>
+    <div class="tela-titulo">🔍 Buscar Serviço</div>
+  </div>
+  <div class="busca-body">
+    <div class="busca-campo">
+      <label>TIPO DE SERVIÇO (selecione um ou mais)</label>
       <div class="servicos-grid" id="servicos-grid"></div>
-    </div>
-    <div class="busca-pergunta">
-      <label>📍 ONDE VOCÊ ESTÁ AGORA?</label>
-      <div class="loc-input-wrap">
-        <input class="loc-input" id="busca-local" placeholder="Digite a cidade ou use o GPS..." />
-        <button class="loc-btn-gps" onclick="usarGPS()" title="Usar minha localização">📡</button>
+      <div style="margin-top:10px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">OU DESCREVA O QUE PRECISA</label>
+        <input class="input-busca-serv" id="busca-texto" placeholder="Ex: conserto de bomba, válvula, freio, ar condicionado..." oninput="autocompleteServico()" autocomplete="off"/>
+        <div class="autocomplete-box" id="ac-box"></div>
       </div>
-      <div id="gps-status" style="font-size:11px;color:#a8d5b0;margin-top:4px;display:none"></div>
     </div>
-    <button class="btn-buscar" onclick="buscarServicos()">🔍 BUSCAR AGORA</button>
+    <div class="busca-campo">
+      <label>📍 ONDE VOCÊ ESTÁ?</label>
+      <div class="loc-wrap">
+        <input class="loc-input" id="busca-local" placeholder="Digite a cidade ou use o GPS..." />
+        <button class="btn-gps" onclick="usarGPS('busca')" title="Usar GPS">📡</button>
+      </div>
+      <div class="gps-status" id="gps-status-busca"></div>
+    </div>
+    <button class="btn-buscar-agora" onclick="buscarServicos()">🔍 BUSCAR AGORA</button>
   </div>
 </div>
 
-<!-- ======== TELA RESULTADOS ======== -->
+<!-- ===== TELA RESULTADOS ===== -->
 <div id="tela-resultados" class="tela">
-  <div class="resultado-header">
+  <div class="tela-header">
     <button class="btn-voltar" onclick="showTela('tela-busca')">← Voltar</button>
-    <div class="resultado-titulo" id="resultado-titulo">Resultados</div>
+    <div class="tela-titulo" id="result-titulo">Resultados</div>
   </div>
   <div id="mapa-resultados"></div>
-  <div class="resultados-lista" id="lista-resultados">
-    <div class="loading">Buscando...</div>
+  <div class="resultados-body">
+    <div class="resultado-info" id="result-info" style="display:none"></div>
+    <div id="lista-resultados"><div class="loading">Buscando...</div></div>
   </div>
 </div>
 
-<!-- ======== TELA DETALHE PRESTADOR ======== -->
+<!-- ===== TELA DETALHE ===== -->
 <div id="tela-detalhe" class="tela">
-  <div class="detalhe-header">
-    <button class="btn-voltar" id="btn-voltar-detalhe" onclick="showTela('tela-resultados')">← Voltar</button>
-    <div class="resultado-titulo">Detalhes</div>
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="showTela('tela-resultados')">← Voltar</button>
+    <div class="tela-titulo">Detalhes</div>
   </div>
   <div id="mapa-detalhe"></div>
   <div class="detalhe-body">
-    <div class="detalhe-nome" id="det-nome"></div>
-    <div class="detalhe-tipo" id="det-tipo"></div>
-    <div class="detalhe-info" id="det-info"></div>
-    <button class="btn-ir" id="btn-ir-local">🗺️ IR ATÉ O LOCAL</button>
-    <button class="btn-avaliar-grande" onclick="abrirAvaliarPrestador()">⭐ AVALIAR ESTE SERVIÇO</button>
-    <div class="avaliacoes-section">
-      <h3>💬 Avaliações dos Motoristas</h3>
-      <div id="lista-avaliacoes-detalhe"></div>
-    </div>
+    <div class="det-nome" id="det-nome"></div>
+    <div id="det-tipo-tag" style="margin-bottom:10px"></div>
+    <div class="det-info-box" id="det-info"></div>
+    <button class="btn-wpp-grande" id="btn-wpp-grande">
+      <span style="font-size:18px">💬</span> CHAMAR NO WHATSAPP
+    </button>
+    <button class="btn-rota-grande" id="btn-rota-grande">🗺️ IR ATÉ O LOCAL</button>
+    <button class="btn-avaliar-det" onclick="abrirAvaliarDireto()">⭐ AVALIAR ESTE SERVIÇO</button>
+    <div class="avs-titulo">💬 Avaliações dos Motoristas</div>
+    <div id="lista-avs-detalhe"><div class="loading">Carregando...</div></div>
   </div>
 </div>
 
-<!-- ======== TELA CADASTRO PRESTADOR ======== -->
+<!-- ===== TELA CADASTRO PRESTADOR ===== -->
 <div id="tela-cadastro" class="tela">
-  <div class="cadastro-hero">
-    <h2>🏪 Cadastre seu Serviço</h2>
-    <p>Apareça para milhares de motoristas na sua região</p>
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="irInicio()">← Voltar</button>
+    <div class="tela-titulo">🏪 Cadastro de Prestador</div>
+  </div>
+  <div class="hero-grad">
+    <h2>Cadastre seu serviço</h2>
+    <p>Apareça para motoristas na sua região gratuitamente</p>
   </div>
   <div class="form-body">
-    <div class="alert-ok" id="cadastro-ok">✅ Cadastro realizado! Em breve você aparecerá nas buscas.</div>
+    <div class="alert-ok" id="cad-ok">✅ Prestador cadastrado com sucesso! Em breve você aparecerá nas buscas.</div>
 
+    <!-- Busca para evitar duplicidade -->
     <div class="form-group">
-      <label class="form-label">TIPO DE SERVIÇO *</label>
-      <select class="form-input" id="cad-tipo">
-        <option value="">Selecione...</option>
-        <option value="posto">⛽ Posto de Combustível</option>
-        <option value="mecanico">🔩 Mecânico</option>
-        <option value="borracharia">🔧 Borracharia</option>
-        <option value="eletricista">⚡ Eletricista Veicular</option>
-        <option value="pecas">🏪 Loja de Peças</option>
-        <option value="funilaria">🚗 Funilaria / Pintura</option>
-        <option value="guindaste">🏗️ Guincho / Guindaste</option>
-        <option value="pousada">🛏️ Pousada / Dormida</option>
-        <option value="restaurante">🍽️ Restaurante / Lanchonete</option>
-        <option value="lavajato">🚿 Lava-Jato de Caminhão</option>
-        <option value="outros">📦 Outros Serviços</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">NOME DO ESTABELECIMENTO *</label>
-      <input class="form-input" id="cad-nome" placeholder="Ex: Oficina do Marquinhos" />
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">WHATSAPP / TELEFONE *</label>
-      <input class="form-input" id="cad-tel" placeholder="(85) 99999-9999" type="tel" />
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">RESPONSÁVEL</label>
-      <input class="form-input" id="cad-resp" placeholder="Nome do responsável" />
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">ENDEREÇO COMPLETO *</label>
-      <input class="form-input" id="cad-endereco" placeholder="Rua, número, bairro, cidade — UF" oninput="geocodificarEndereco()"/>
-      <div style="font-size:11px;color:#aaa;margin-top:4px">Digite o endereço e o mapa se ajusta automaticamente</div>
-      <div id="mapa-cadastro"></div>
-      <input type="hidden" id="cad-lat" />
-      <input type="hidden" id="cad-lng" />
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">SERVIÇOS OFERECIDOS (selecione todos)</label>
-      <div class="cat-grid" id="cad-servicos-grid"></div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">HORÁRIO DE FUNCIONAMENTO</label>
-      <div class="form-row2">
-        <input class="form-input" id="cad-abre" type="time" />
-        <input class="form-input" id="cad-fecha" type="time" />
+      <label class="form-label">BUSCAR SE JÁ EXISTE SEU CADASTRO</label>
+      <div class="busca-prest-box">
+        <input class="form-input" id="cad-busca" placeholder="Digite o nome do seu estabelecimento..." oninput="buscarPrestadorExistente()" autocomplete="off"/>
+        <div class="busca-prest-sugestoes" id="cad-sugestoes"></div>
       </div>
-      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:#555;cursor:pointer">
-        <input type="checkbox" id="cad-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
-      </label>
+      <div style="font-size:11px;color:#aaa;margin-top:3px">Se já existir, você se vincula ao cadastro existente. Se não existir, criamos um novo.</div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">DESCRIÇÃO / DIFERENCIAIS</label>
-      <textarea class="form-input" id="cad-desc" placeholder="Conte o que você oferece, seus diferenciais, marcas que atende..."></textarea>
-    </div>
-
-    <button class="btn-submit" id="btn-cadastrar" onclick="cadastrarPrestador()">✅ CADASTRAR MEU SERVIÇO</button>
-  </div>
-</div>
-
-<!-- ======== TELA AVALIAR ======== -->
-<div id="tela-avaliar" class="tela">
-  <div class="avaliar-hero">
-    <h2>⭐ Avaliar Serviço</h2>
-    <p>Ajude outros motoristas com sua experiência</p>
-  </div>
-  <div class="form-body">
-    <div class="alert-ok" id="avaliar-ok">✅ Avaliação enviada! Obrigado, brother!</div>
-
-    <div class="form-group">
-      <label class="form-label">BUSCAR ESTABELECIMENTO</label>
-      <input class="form-input" id="av-busca" placeholder="Digite o nome ou cidade..." oninput="buscarParaAvaliar()" />
-      <div id="av-sugestoes" style="background:#fff;border:1px solid #ddd;border-radius:8px;margin-top:4px;display:none;max-height:200px;overflow-y:auto"></div>
-    </div>
-
-    <div class="nao-encontrou">
-      <strong>Não encontrou?</strong> Avalie mesmo assim e nós cadastramos o serviço com a sua avaliação.
-      <br><button class="btn-nao-encontrou" onclick="modoAvaliarManual()">📝 Avaliar serviço não cadastrado</button>
-    </div>
-
-    <div id="av-alvo" style="display:none">
-      <div class="form-group">
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:12px">
-          <div style="font-weight:700;color:#166534" id="av-alvo-nome"></div>
-          <div style="font-size:12px;color:#2d8c3e" id="av-alvo-tipo"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cadastro manual se não encontrar -->
-    <div id="av-manual" style="display:none">
+    <div id="form-cadastro-novo">
       <div class="form-group">
         <label class="form-label">NOME DO ESTABELECIMENTO *</label>
-        <input class="form-input" id="av-man-nome" placeholder="Ex: Borracharia do João" />
+        <input class="form-input" id="cad-nome" placeholder="Ex: Oficina do Marquinhos" />
       </div>
       <div class="form-group">
-        <label class="form-label">TIPO DE SERVIÇO</label>
-        <select class="form-input" id="av-man-tipo">
-          <option value="outro">Outro</option>
-          <option value="posto">⛽ Posto de Combustível</option>
+        <label class="form-label">TIPO DE SERVIÇO *</label>
+        <select class="form-input" id="cad-tipo">
+          <option value="">Selecione...</option>
           <option value="mecanico">🔩 Mecânico</option>
           <option value="borracharia">🔧 Borracharia</option>
-          <option value="eletricista">⚡ Eletricista Veicular</option>
-          <option value="pecas">🏪 Loja de Peças</option>
-          <option value="funilaria">🚗 Funilaria / Pintura</option>
+          <option value="posto">⛽ Combustível / Posto</option>
           <option value="guindaste">🏗️ Guincho / Guindaste</option>
+          <option value="eletricista">⚡ Elétrica Veicular</option>
+          <option value="pecas">🏪 Autopeças</option>
+          <option value="funilaria">🚗 Funilaria / Pintura</option>
+          <option value="lavajato">🚿 Lava-Jato de Caminhão</option>
+          <option value="restaurante">🍽️ Restaurante / Lanchonete</option>
           <option value="pousada">🛏️ Pousada / Dormida</option>
-          <option value="restaurante">🍽️ Restaurante</option>
-          <option value="lavajato">🚿 Lava-Jato</option>
-          <option value="chapa">💪 Chapa / Ajudante</option>
           <option value="farmacia">💊 Farmácia</option>
+          <option value="tacografo">📟 Tacógrafo</option>
+          <option value="toxicologico">🧪 Exame Toxicológico</option>
+          <option value="chapa">💪 Chapa / Ajudante</option>
           <option value="outros">📦 Outros Serviços</option>
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">CIDADE</label>
-        <input class="form-input" id="av-man-cidade" placeholder="Cidade — UF" />
-      </div>
-    </div>
-
-    <!-- Critérios de avaliação -->
-    <div id="av-criterios" style="display:none">
-      <div class="form-group">
-        <label class="form-label">NOTA GERAL *</label>
-        <div class="estrelas-input" id="av-geral-stars"></div>
+        <label class="form-label">DESCRIÇÃO DO SERVIÇO * <span style="font-weight:400;color:#aaa">(usada na busca por palavras-chave)</span></label>
+        <textarea class="form-input" id="cad-desc" placeholder="Descreva em detalhes o que você faz: marcas atendidas, tipos de serviço, diferenciais. Ex: mecânico especializado em Volvo e Scania, conserto de motor, câmbio, freio, suspensão..."></textarea>
       </div>
       <div class="form-group">
-        <label class="form-label">CRITÉRIOS ESPECÍFICOS</label>
-        <div id="criterios-especificos"></div>
+        <label class="form-label">WHATSAPP (opcional)</label>
+        <input class="form-input" id="cad-wpp" placeholder="(85) 99999-9999 — para contato direto via WhatsApp" type="tel"/>
       </div>
       <div class="form-group">
-        <label class="form-label">SEU COMENTÁRIO</label>
-        <textarea class="form-input" id="av-texto" placeholder="Conte sua experiência: o que foi bom, o que poderia melhorar..."></textarea>
+        <label class="form-label">INSTAGRAM (opcional)</label>
+        <input class="form-input" id="cad-ig" placeholder="@nomedoperfil" />
       </div>
       <div class="form-group">
-        <div class="form-row2">
-          <div>
-            <label class="form-label">SEU NOME (opcional)</label>
-            <input class="form-input" id="av-autor" placeholder="Ex: Zé da Estrada" />
-          </div>
-          <div>
-            <label class="form-label">WHATSAPP (opcional)</label>
-            <input class="form-input" id="av-tel" placeholder="(85) 99999..." type="tel" />
-          </div>
-        </div>
-      </div>
-      <button class="btn-submit" id="btn-avaliar" onclick="enviarAvaliacao()">⭐ ENVIAR AVALIAÇÃO</button>
-    </div>
-  </div>
-</div>
-
-<!-- ======== TELA ADMIN ======== -->
-<div id="tela-admin" class="tela">
-  <div id="admin-login-wrap" style="padding:20px">
-    <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;margin-bottom:16px">🔐 Admin</div>
-    <div class="form-group">
-      <label class="form-label">SENHA</label>
-      <input class="form-input" id="admin-senha" type="password" placeholder="Digite a senha" />
-    </div>
-    <button class="btn-submit" onclick="entrarAdmin()">ENTRAR</button>
-    <div id="admin-erro" style="display:none;color:#dc2626;font-size:13px;margin-top:10px;text-align:center">❌ Senha incorreta</div>
-  </div>
-  <div id="admin-panel" style="display:none">
-    <div class="admin-body">
-      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;margin-bottom:14px">📊 Painel Admin</div>
-      <div class="admin-card">
-        <div class="admin-card-title">🏪 Prestadores Cadastrados <span id="admin-total-prest" style="color:#888;font-size:13px;font-weight:400"></span></div>
-        <div id="admin-lista-prest"><div class="loading">Carregando...</div></div>
-      </div>
-      <div class="admin-card">
-        <div class="admin-card-title">⭐ Avaliações Recebidas <span id="admin-total-av" style="color:#888;font-size:13px;font-weight:400"></span></div>
-        <div id="admin-lista-av"><div class="loading">Carregando...</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB4-eS5dLimqSewLPwwA_IT2haMV3kLD9s",
-  authDomain: "tralienigena-ee7a9.firebaseapp.com",
-  projectId: "tralienigena-ee7a9",
-  storageBucket: "tralienigena-ee7a9.firebasestorage.app",
-  messagingSenderId: "307288619335",
-  appId: "1:307288619335:web:467b6aeae99b641866b462",
-  measurementId: "G-K49FKDK046"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// ---- CONSTANTES ----
-const TIPOS = {
-  posto:      {label:"⛽ Posto de Combustível", color:"#16a34a"},
-  mecanico:   {label:"🔩 Mecânico",             color:"#ea580c"},
-  borracharia:{label:"🔧 Borracharia",           color:"#dc2626"},
-  eletricista:{label:"⚡ Eletricista Veicular",  color:"#ca8a04"},
-  pecas:      {label:"🏪 Loja de Peças",         color:"#0891b2"},
-  funilaria:  {label:"🚗 Funilaria / Pintura",   color:"#9333ea"},
-  guindaste:  {label:"🏗️ Guincho / Guindaste",   color:"#c2410c"},
-  pousada:    {label:"🛏️ Pousada / Dormida",     color:"#7c3aed"},
-  restaurante:{label:"🍽️ Restaurante",           color:"#d97706"},
-  lavajato:   {label:"🚿 Lava-Jato",             color:"#0284c7"},
-  chapa:      {label:"💪 Chapa / Ajudante",      color:"#0f766e"},
-  farmacia:   {label:"💊 Farmácia",              color:"#059669"},
-  outros:     {label:"📦 Outros Serviços",       color:"#6b7280"},
-  outro:      {label:"📍 Serviço",               color:"#6b7280"},
-};
-
-const CRITERIOS = {
-  posto:      ["Preço","Atendimento","Banheiro","Segurança","Estrutura"],
-  mecanico:   ["Qualidade","Preço","Agilidade","Honestidade","Atendimento"],
-  borracharia:["Qualidade","Preço","Agilidade","Atendimento","Estrutura"],
-  eletricista:["Qualidade","Preço","Agilidade","Honestidade","Atendimento"],
-  pecas:      ["Variedade","Preço","Atendimento","Qualidade","Entrega"],
-  funilaria:  ["Qualidade","Preço","Agilidade","Acabamento","Atendimento"],
-  guindaste:  ["Agilidade","Preço","Atendimento","Equipamento","Segurança"],
-  pousada:    ["Limpeza","Segurança","Preço","Conforto","Atendimento"],
-  restaurante:["Comida","Preço","Limpeza","Atendimento","Espaço"],
-  lavajato:   ["Qualidade","Preço","Agilidade","Atendimento","Estrutura"],
-  chapa:      ["Força","Agilidade","Pontualidade","Atendimento","Preço"],
-  farmacia:   ["Variedade","Preço","Atendimento","Agilidade","Limpeza"],
-  outros:     ["Qualidade","Preço","Atendimento","Agilidade","Honestidade"],
-  outro:      ["Qualidade","Preço","Atendimento","Agilidade","Honestidade"],
-};
-
-const SERVICOS_BUSCA = [
-  {id:"posto",      label:"⛽ Combustível"},
-  {id:"mecanico",   label:"🔩 Mecânico"},
-  {id:"borracharia",label:"🔧 Borracharia"},
-  {id:"eletricista",label:"⚡ Eletricista"},
-  {id:"pecas",      label:"🏪 Peças"},
-  {id:"funilaria",  label:"🚗 Funilaria"},
-  {id:"guindaste",  label:"🏗️ Guincho"},
-  {id:"pousada",    label:"🛏️ Pousada"},
-  {id:"restaurante",label:"🍽️ Restaurante"},
-  {id:"lavajato",   label:"🚿 Lava-Jato"},
-  {id:"chapa",      label:"💪 Chapa/Ajudante"},
-  {id:"farmacia",   label:"💊 Farmácia"},
-  {id:"outros",     label:"📦 Outros"},
-];
-
-const SERVICOS_TODOS = [
-  "⛽ Abastecimento/Diesel","🧴 ARLA 32","🛏️ Dormida","🚿 Banheiro/Chuveiro",
-  "🍽️ Alimentação","🔧 Borracharia","🔩 Mecânico","⚡ Eletricista Veicular",
-  "🏪 Loja de Peças","🚗 Funilaria/Pintura","🏗️ Guincho/Guindaste",
-  "🅿️ Estacionamento Seguro","📶 Wi-Fi Grátis","💊 Farmácia","🏦 Banco/Caixa 24h"
-];
-
-const ADMIN_SENHA = 'tralienigena2024';
-
-// ---- ESTADO ----
-let todosPresatdores = [];
-let prestadorAtual = null;
-let mapaResultados = null, mapaCadastro = null, mapaDetalhe = null;
-let marcadorCadastro = null, marcadoresResultados = [];
-let servicosBuscaSelecionados = [];
-let servicosCadSelecionados = [];
-let coordsUsuario = null;
-let avAlvoId = null, avAlvoTipo = 'outro';
-let notaGeral = 0;
-let notasCriterios = {};
-let adminLogado = false;
-let geocodeTimer = null;
-
-// ---- RELÓGIO ----
-function atualizarRelogio() {
-  const agora = new Date();
-  const hora = agora.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const data = agora.toLocaleDateString('pt-BR');
-  const el = document.getElementById('relogio-header');
-  if (el) el.textContent = hora + ' • ' + data;
-}
-atualizarRelogio();
-setInterval(atualizarRelogio, 1000);
-
-// ---- INIT ----
-window.addEventListener('DOMContentLoaded', () => {
-  buildServicosGrid();
-  buildCadServicosGrid();
-  carregarDestaques();
-});
-
-// ---- NAVEGAÇÃO ----
-window.showTela = function(id) {
-  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
-  document.getElementById('tela-inicio').style.display = 'none';
-  const el = document.getElementById(id);
-  if (id === 'tela-inicio') {
-    document.getElementById('tela-inicio').style.display = 'block';
-    carregarDestaques();
-  } else {
-    el.classList.add('ativa');
-  }
-  if (id === 'tela-admin') verificarAdmin();
-  window.scrollTo(0,0);
-}
-
-// ---- TELA INÍCIO ----
-async function carregarDestaques() {
-  try {
-    const snap = await getDocs(query(collection(db,'avaliacoes'), orderBy('data','desc')));
-    const avs = snap.docs.slice(0,5).map(d => ({id:d.id,...d.data()}));
-    const el = document.getElementById('lista-destaques');
-    if (!avs.length) { el.innerHTML = '<div class="empty">Nenhuma avaliação ainda. Seja o primeiro!</div>'; return; }
-    el.innerHTML = avs.map(av => `
-      <div class="avaliacao-card">
-        <div class="av-header">
-          <div>
-            <div class="av-nome">${av.prestador_nome || 'Serviço avaliado'}</div>
-            <div class="av-tipo">${(TIPOS[av.prestador_tipo]||TIPOS.outro).label}</div>
-          </div>
-          <div class="av-estrelas">${'★'.repeat(Math.round(av.nota_geral||0))}${'☆'.repeat(5-Math.round(av.nota_geral||0))}</div>
-        </div>
-        ${av.texto ? `<div class="av-texto">${av.texto}</div>` : ''}
-        <div class="av-autor">por ${av.autor||'Motorista anônimo'} • ${av.data ? new Date(av.data).toLocaleDateString('pt-BR') : ''}</div>
-      </div>`).join('');
-  } catch(e) {
-    document.getElementById('lista-destaques').innerHTML = '<div class="empty">Erro ao carregar.</div>';
-  }
-}
-
-// ---- BUSCA MOTORISTA ----
-function buildServicosGrid() {
-  document.getElementById('servicos-grid').innerHTML = SERVICOS_BUSCA.map(s =>
-    `<button class="serv-btn" id="sb-${s.id}" onclick="toggleServicoBusca('${s.id}')">${s.label}</button>`
-  ).join('');
-}
-
-window.toggleServicoBusca = function(id) {
-  const btn = document.getElementById('sb-'+id);
-  if (servicosBuscaSelecionados.includes(id)) {
-    servicosBuscaSelecionados = servicosBuscaSelecionados.filter(s=>s!==id);
-    btn.classList.remove('on');
-  } else {
-    servicosBuscaSelecionados.push(id);
-    btn.classList.add('on');
-  }
-}
-
-window.usarGPS = async function() {
-  const status = document.getElementById('gps-status');
-  status.style.display = 'block';
-  status.textContent = '📡 Localizando...';
-  if (!navigator.geolocation) { status.textContent = 'GPS não disponível'; return; }
-  navigator.geolocation.getCurrentPosition(pos => {
-    coordsUsuario = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-    status.textContent = '✅ Localização obtida!';
-    document.getElementById('busca-local').value = `${coordsUsuario.lat.toFixed(4)}, ${coordsUsuario.lng.toFixed(4)}`;
-    reverseGeocode(coordsUsuario.lat, coordsUsuario.lng);
-  }, () => { status.textContent = '❌ Não foi possível obter localização'; });
-}
-
-async function reverseGeocode(lat, lng) {
-  try {
-    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
-    const d = await r.json();
-    if (d && d.address) {
-      const cidade = d.address.city || d.address.town || d.address.village || '';
-      const estado = d.address.state || '';
-      document.getElementById('busca-local').value = `${cidade}, ${estado}`;
-    }
-  } catch(e){}
-}
-
-window.buscarServicos = async function() {
-  if (!servicosBuscaSelecionados.length) { alert('Selecione pelo menos um tipo de serviço.'); return; }
-  const localInput = document.getElementById('busca-local').value.trim();
-  if (!localInput && !coordsUsuario) { alert('Informe sua localização ou use o GPS.'); return; }
-
-  showTela('tela-resultados');
-  document.getElementById('lista-resultados').innerHTML = '<div class="loading">Buscando serviços...</div>';
-  document.getElementById('resultado-titulo').textContent = servicosBuscaSelecionados.map(s => SERVICOS_BUSCA.find(x=>x.id===s)?.label||s).join(', ');
-
-  // Inicializar mapa resultados
-  if (!mapaResultados) {
-    mapaResultados = L.map('mapa-resultados').setView([-5.0892, -42.8019], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(mapaResultados);
-  }
-
-  // Geocodificar localização digitada
-  if (!coordsUsuario && localInput) {
-    try {
-      const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(localInput)},Brasil&format=json&limit=1`);
-      const d = await r.json();
-      if (d && d[0]) coordsUsuario = { lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon) };
-    } catch(e){}
-  }
-
-  if (coordsUsuario) mapaResultados.setView([coordsUsuario.lat, coordsUsuario.lng], 11);
-
-  // Buscar prestadores
-  try {
-    const snap = await getDocs(collection(db,'prestadores'));
-    todosPresatdores = snap.docs.map(d => ({id:d.id,...d.data()}));
-
-    // Calcular médias de avaliação
-    const avSnap = await getDocs(collection(db,'avaliacoes'));
-    const avs = avSnap.docs.map(d => ({...d.data()}));
-    const mediasMap = {};
-    avs.forEach(av => {
-      if (!mediasMap[av.prestador_id]) mediasMap[av.prestador_id] = [];
-      mediasMap[av.prestador_id].push(av.nota_geral||0);
-    });
-
-    let filtrados = todosPresatdores.filter(p => servicosBuscaSelecionados.includes(p.tipo));
-
-    // Calcular distância e média
-    filtrados = filtrados.map(p => {
-      const notas = mediasMap[p.id] || [];
-      const media = notas.length ? notas.reduce((a,b)=>a+b,0)/notas.length : 0;
-      let dist = null;
-      if (coordsUsuario && p.lat && p.lng) {
-        dist = calcDistancia(coordsUsuario.lat, coordsUsuario.lng, p.lat, p.lng);
-      }
-      return {...p, media: parseFloat(media.toFixed(1)), total_av: notas.length, distancia: dist};
-    });
-
-    // Ordenar: mais próximos primeiro, depois melhor nota
-    filtrados.sort((a,b) => {
-      if (a.distancia !== null && b.distancia !== null) return a.distancia - b.distancia;
-      return b.media - a.media;
-    });
-
-    renderResultados(filtrados);
-  } catch(e) {
-    document.getElementById('lista-resultados').innerHTML = '<div class="empty">Erro ao buscar. Tente novamente.</div>';
-  }
-}
-
-function calcDistancia(lat1,lng1,lat2,lng2) {
-  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lng2-lng1)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-
-function renderResultados(lista) {
-  marcadoresResultados.forEach(m => m.remove());
-  marcadoresResultados = [];
-  const el = document.getElementById('lista-resultados');
-  if (!lista.length) { el.innerHTML = '<div class="empty">Nenhum serviço encontrado nessa região.<br>Tente outra cidade ou tipo de serviço.</div>'; return; }
-
-  lista.forEach(p => {
-    if (p.lat && p.lng && mapaResultados) {
-      const tipo = TIPOS[p.tipo]||TIPOS.outro;
-      const m = L.marker([p.lat,p.lng]).addTo(mapaResultados).bindPopup(`<strong>${p.nome}</strong><br>${tipo.label}`);
-      marcadoresResultados.push(m);
-    }
-  });
-
-  el.innerHTML = lista.map(p => {
-    const tipo = TIPOS[p.tipo]||TIPOS.outro;
-    const estrelas = p.media > 0 ? ('★'.repeat(Math.round(p.media))+'☆'.repeat(5-Math.round(p.media))) : '☆☆☆☆☆';
-    const distStr = p.distancia !== null ? `${p.distancia < 1 ? (p.distancia*1000).toFixed(0)+'m' : p.distancia.toFixed(1)+'km'} de você` : '';
-    return `
-      <div class="prestador-card" onclick="abrirDetalhe('${p.id}')">
-        <div class="prest-header">
-          <div>
-            <div class="prest-nome">${p.nome}</div>
-            <span class="prest-tipo" style="color:${tipo.color};background:${tipo.color}15;border-color:${tipo.color}33">${tipo.label}</span>
-          </div>
-          <div class="prest-estrelas">
-            <div class="estrelas-val">${estrelas}</div>
-            <span class="estrelas-num">${p.media>0?p.media+' ('+p.total_av+')':(p.total_av?p.total_av+' av.':'Sem avaliação')}</span>
-          </div>
-        </div>
-        <div class="prest-local">📍 ${p.endereco||''} ${distStr ? '• '+distStr : ''}</div>
-        ${p.telefone ? `<div class="prest-tel">📱 ${p.telefone}</div>` : ''}
-        <div class="prest-footer">
-          <button class="btn-avaliar-mini" onclick="event.stopPropagation();abrirAvaliarDireto('${p.id}')">⭐ Avaliar</button>
-          <button class="btn-rota" onclick="event.stopPropagation();irAoLocal(${p.lat||0},${p.lng||0},'${p.nome}')">🗺️ Ir até lá</button>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-// ---- DETALHE ----
-window.abrirDetalhe = async function(id) {
-  const p = todosPresatdores.find(x=>x.id===id);
-  if (!p) return;
-  prestadorAtual = p;
-  showTela('tela-detalhe');
-
-  const tipo = TIPOS[p.tipo]||TIPOS.outro;
-  document.getElementById('det-nome').textContent = p.nome;
-  document.getElementById('det-tipo').innerHTML = `<span class="prest-tipo" style="color:${tipo.color};background:${tipo.color}15;border-color:${tipo.color}33">${tipo.label}</span>`;
-
-  const h = p.aberto24h ? '🕐 Aberto 24 horas' : (p.abre && p.fecha ? `🕐 ${p.abre}h às ${p.fecha}h` : '');
-  document.getElementById('det-info').innerHTML = `
-    ${p.endereco ? `<div class="info-row"><span class="info-icon">📍</span><span>${p.endereco}</span></div>` : ''}
-    ${p.telefone ? `<div class="info-row"><span class="info-icon">📱</span><a href="tel:${p.telefone}" style="color:#2d8c3e;font-weight:700">${p.telefone}</a></div>` : ''}
-    ${h ? `<div class="info-row"><span class="info-icon">🕐</span><span>${h}</span></div>` : ''}
-    ${p.descricao ? `<div class="info-row"><span class="info-icon">💬</span><span>${p.descricao}</span></div>` : ''}
-    ${p.servicos && p.servicos.length ? `<div class="info-row"><span class="info-icon">✅</span><span>${p.servicos.join(' • ')}</span></div>` : ''}`;
-
-  document.getElementById('btn-ir-local').onclick = () => irAoLocal(p.lat, p.lng, p.nome);
-
-  // Mapa detalhe
-  if (!mapaDetalhe) {
-    mapaDetalhe = L.map('mapa-detalhe');
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaDetalhe);
-  }
-  if (p.lat && p.lng) {
-    mapaDetalhe.setView([p.lat,p.lng],15);
-    L.marker([p.lat,p.lng]).addTo(mapaDetalhe).bindPopup(p.nome).openPopup();
-  }
-
-  // Avaliações
-  carregarAvaliacoesDetalhe(id);
-}
-
-async function carregarAvaliacoesDetalhe(prestId) {
-  const el = document.getElementById('lista-avaliacoes-detalhe');
-  el.innerHTML = '<div class="loading">Carregando avaliações...</div>';
-  try {
-    const snap = await getDocs(query(collection(db,'avaliacoes'), where('prestador_id','==',prestId), orderBy('data','desc')));
-    const avs = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if (!avs.length) { el.innerHTML = '<div class="empty">Nenhuma avaliação ainda.</div>'; return; }
-    el.innerHTML = avs.map(av => {
-      const estrelas = '★'.repeat(Math.round(av.nota_geral||0))+'☆'.repeat(5-Math.round(av.nota_geral||0));
-      const criteriosHTML = av.criterios ? Object.entries(av.criterios).map(([k,v])=>`<div class="criterio-item">${k}: ${'★'.repeat(v)}</div>`).join('') : '';
-      return `
-        <div class="av-card">
-          <div class="av-card-header">
-            <span style="font-size:14px;color:#f59e0b">${estrelas}</span>
-            <span style="font-size:11px;color:#aaa">${av.data?new Date(av.data).toLocaleDateString('pt-BR'):''}</span>
-          </div>
-          ${av.texto?`<div style="font-size:13px;color:#444;margin-bottom:6px">${av.texto}</div>`:''}
-          ${criteriosHTML?`<div class="criterios-grid">${criteriosHTML}</div>`:''}
-          <div style="font-size:11px;color:#aaa;margin-top:6px">por ${av.autor||'Anônimo'}</div>
-        </div>`;
-    }).join('');
-  } catch(e) { el.innerHTML = '<div class="empty">Erro ao carregar avaliações.</div>'; }
-}
-
-window.irAoLocal = function(lat, lng, nome) {
-  if (!lat || !lng) { alert('Localização não disponível para este prestador.'); return; }
-  const url = `https://www.openstreetmap.org/directions?from=&to=${lat},${lng}&route=car#map=15/${lat}/${lng}`;
-  window.open(url, '_blank');
-}
-
-// ---- CADASTRO PRESTADOR ----
-function buildCadServicosGrid() {
-  document.getElementById('cad-servicos-grid').innerHTML = SERVICOS_TODOS.map(s =>
-    `<button type="button" class="cat-btn" id="cs-${btoa(s)}" onclick="toggleCadServ('${s}')">${s}</button>`
-  ).join('');
-
-  // Inicializar mapa cadastro
-  setTimeout(() => {
-    if (!mapaCadastro) {
-      mapaCadastro = L.map('mapa-cadastro').setView([-5.0892,-42.8019],6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaCadastro);
-      mapaCadastro.on('click', function(e) {
-        const {lat,lng} = e.latlng;
-        document.getElementById('cad-lat').value = lat;
-        document.getElementById('cad-lng').value = lng;
-        if (marcadorCadastro) marcadorCadastro.remove();
-        marcadorCadastro = L.marker([lat,lng]).addTo(mapaCadastro).bindPopup('Seu local').openPopup();
-      });
-    }
-  }, 300);
-}
-
-window.toggleCadServ = function(s) {
-  const key = btoa(s);
-  const btn = document.getElementById('cs-'+key);
-  if (servicosCadSelecionados.includes(s)) {
-    servicosCadSelecionados = servicosCadSelecionados.filter(x=>x!==s);
-    btn.style.cssText='';
-  } else {
-    servicosCadSelecionados.push(s);
-    btn.style.cssText='background:#2d8c3e15;border-color:#2d8c3e;color:#2d8c3e';
-  }
-}
-
-window.geocodificarEndereco = function() {
-  clearTimeout(geocodeTimer);
-  geocodeTimer = setTimeout(async () => {
-    const end = document.getElementById('cad-endereco').value.trim();
-    if (end.length < 5) return;
-    try {
-      const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(end)},Brasil&format=json&limit=1`);
-      const d = await r.json();
-      if (d && d[0]) {
-        const lat = parseFloat(d[0].lat), lng = parseFloat(d[0].lon);
-        document.getElementById('cad-lat').value = lat;
-        document.getElementById('cad-lng').value = lng;
-        if (mapaCadastro) {
-          mapaCadastro.setView([lat,lng],15);
-          if (marcadorCadastro) marcadorCadastro.remove();
-          marcadorCadastro = L.marker([lat,lng]).addTo(mapaCadastro).bindPopup('Seu local').openPopup();
-        }
-      }
-    } catch(e){}
-  }, 800);
-}
-
-window.cadastrarPrestador = async function() {
-  const nome = document.getElementById('cad-nome').value.trim();
-  const tipo = document.getElementById('cad-tipo').value;
-  const tel = document.getElementById('cad-tel').value.trim();
-  const end = document.getElementById('cad-endereco').value.trim();
-  if (!nome||!tipo||!tel||!end) { alert('Preencha nome, tipo, telefone e endereço.'); return; }
-  const btn = document.getElementById('btn-cadastrar');
-  btn.disabled=true; btn.textContent='Salvando...';
-  try {
-    await addDoc(collection(db,'prestadores'), {
-      nome, tipo,
-      telefone: tel,
-      responsavel: document.getElementById('cad-resp').value.trim(),
-      endereco: end,
-      lat: parseFloat(document.getElementById('cad-lat').value)||null,
-      lng: parseFloat(document.getElementById('cad-lng').value)||null,
-      servicos: [...servicosCadSelecionados],
-      abre: document.getElementById('cad-abre').value,
-      fecha: document.getElementById('cad-fecha').value,
-      aberto24h: document.getElementById('cad-24h').checked,
-      descricao: document.getElementById('cad-desc').value.trim(),
-      data: new Date().toISOString(),
-    });
-    document.getElementById('cadastro-ok').style.display='block';
-    ['cad-nome','cad-tel','cad-resp','cad-endereco','cad-desc','cad-abre','cad-fecha'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('cad-tipo').value='';
-    document.getElementById('cad-24h').checked=false;
-    servicosCadSelecionados=[]; buildCadServicosGrid();
-    setTimeout(()=>document.getElementById('cadastro-ok').style.display='none',4000);
-  } catch(e){ alert('Erro ao cadastrar. Tente novamente.'); }
-  btn.disabled=false; btn.textContent='✅ CADASTRAR MEU SERVIÇO';
-}
-
-// ---- AVALIAÇÃO ----
-let prestadoresParaAv = [];
-
-window.buscarParaAvaliar = async function() {
-  const q = document.getElementById('av-busca').value.trim().toLowerCase();
-  const sug = document.getElementById('av-sugestoes');
-  if (q.length < 2) { sug.style.display='none'; return; }
-  if (!prestadoresParaAv.length) {
-    const snap = await getDocs(collection(db,'prestadores'));
-    prestadoresParaAv = snap.docs.map(d=>({id:d.id,...d.data()}));
-  }
-  const res = prestadoresParaAv.filter(p=>p.nome.toLowerCase().includes(q)||(p.endereco||'').toLowerCase().includes(q));
-  if (!res.length) { sug.style.display='none'; return; }
-  sug.style.display='block';
-  sug.innerHTML = res.slice(0,6).map(p=>`
-    <div onclick="selecionarParaAvaliar('${p.id}')" style="padding:10px 12px;cursor:pointer;border-bottom:1px solid #f5f5f5;font-size:13px">
-      <strong>${p.nome}</strong><br><span style="color:#888;font-size:11px">${(TIPOS[p.tipo]||TIPOS.outro).label} • ${p.endereco||''}</span>
-    </div>`).join('');
-}
-
-window.selecionarParaAvaliar = function(id) {
-  const p = prestadoresParaAv.find(x=>x.id===id);
-  if (!p) return;
-  avAlvoId = id; avAlvoTipo = p.tipo||'outro';
-  document.getElementById('av-sugestoes').style.display='none';
-  document.getElementById('av-busca').value = p.nome;
-  document.getElementById('av-alvo').style.display='block';
-  document.getElementById('av-alvo-nome').textContent = p.nome;
-  document.getElementById('av-alvo-tipo').textContent = (TIPOS[p.tipo]||TIPOS.outro).label;
-  document.getElementById('av-manual').style.display='none';
-  mostrarCriterios(p.tipo||'outro');
-}
-
-window.modoAvaliarManual = function() {
-  avAlvoId = null;
-  document.getElementById('av-alvo').style.display='none';
-  document.getElementById('av-manual').style.display='block';
-  mostrarCriterios('outro');
-}
-
-window.abrirAvaliarPrestador = function() {
-  if (!prestadorAtual) return;
-  showTela('tela-avaliar');
-  selecionarParaAvaliar(prestadorAtual.id);
-  document.getElementById('av-busca').value = prestadorAtual.nome;
-}
-
-window.abrirAvaliarDireto = function(id) {
-  showTela('tela-avaliar');
-  if (!prestadoresParaAv.length) {
-    getDocs(collection(db,'prestadores')).then(snap=>{
-      prestadoresParaAv = snap.docs.map(d=>({id:d.id,...d.data()}));
-      selecionarParaAvaliar(id);
-    });
-  } else { selecionarParaAvaliar(id); }
-}
-
-function mostrarCriterios(tipo) {
-  notaGeral=0; notasCriterios={};
-  const crits = CRITERIOS[tipo]||CRITERIOS.outro;
-  document.getElementById('av-geral-stars').innerHTML = [1,2,3,4,5].map(n=>
-    `<span class="estrela-inp" id="ag-${n}" onclick="setNotaGeral(${n})">★</span>`
-  ).join('');
-  document.getElementById('criterios-especificos').innerHTML = crits.map(c=>`
-    <div class="criterio-row">
-      <div class="criterio-nome">${c}</div>
-      <div class="criterio-stars">${[1,2,3,4,5].map(n=>`<span class="c-star" id="cs-${c}-${n}" onclick="setNotaCriterio('${c}',${n})">★</span>`).join('')}</div>
-    </div>`).join('');
-  document.getElementById('av-criterios').style.display='block';
-}
-
-window.setNotaGeral = function(n) {
-  notaGeral=n;
-  for(let i=1;i<=5;i++) document.getElementById('ag-'+i).classList.toggle('on',i<=n);
-}
-
-window.setNotaCriterio = function(crit,n) {
-  notasCriterios[crit]=n;
-  for(let i=1;i<=5;i++) {
-    const el=document.getElementById(`cs-${crit}-${i}`);
-    if(el) el.classList.toggle('on',i<=n);
-  }
-}
-
-window.enviarAvaliacao = async function() {
-  if (!notaGeral) { alert('Dê pelo menos a nota geral (estrelas).'); return; }
-  const btn = document.getElementById('btn-avaliar');
-  btn.disabled=true; btn.textContent='Enviando...';
-  try {
-    let prestId=avAlvoId, prestNome='', prestTipo=avAlvoTipo;
-    if (!prestId) {
-      // Cadastrar prestador manual
-      const nomePrest = document.getElementById('av-man-nome').value.trim();
-      const tipoPrest = document.getElementById('av-man-tipo').value;
-      const cidadePrest = document.getElementById('av-man-cidade').value.trim();
-      if (!nomePrest) { alert('Informe o nome do estabelecimento.'); btn.disabled=false; btn.textContent='⭐ ENVIAR AVALIAÇÃO'; return; }
-      const docRef = await addDoc(collection(db,'prestadores'), {
-        nome:nomePrest, tipo:tipoPrest, endereco:cidadePrest, telefone:'', servicos:[], data:new Date().toISOString(), cadastrado_por_avaliacao:true
-      });
-      prestId=docRef.id; prestNome=nomePrest; prestTipo=tipoPrest;
-    } else {
-      const p=prestadoresParaAv.find(x=>x.id===prestId);
-      prestNome=p?.nome||''; prestTipo=p?.tipo||'outro';
-    }
-    await addDoc(collection(db,'avaliacoes'), {
-      prestador_id: prestId,
-      prestador_nome: prestNome,
-      prestador_tipo: prestTipo,
-      nota_geral: notaGeral,
-      criterios: {...notasCriterios},
-      texto: document.getElementById('av-texto').value.trim(),
-      autor: document.getElementById('av-autor').value.trim(),
-      telefone_autor: document.getElementById('av-tel').value.trim(),
-      data: new Date().toISOString(),
-    });
-    document.getElementById('avaliar-ok').style.display='block';
-    document.getElementById('av-busca').value='';
-    document.getElementById('av-texto').value='';
-    document.getElementById('av-autor').value='';
-    document.getElementById('av-tel').value='';
-    document.getElementById('av-alvo').style.display='none';
-    document.getElementById('av-manual').style.display='none';
-    document.getElementById('av-criterios').style.display='none';
-    document.getElementById('av-sugestoes').style.display='none';
-    avAlvoId=null; notaGeral=0; notasCriterios={};
-    setTimeout(()=>{document.getElementById('avaliar-ok').style.display='none';showTela('tela-inicio');},2500);
-  } catch(e){ alert('Erro ao enviar. Tente novamente.'); }
-  btn.disabled=false; btn.textContent='⭐ ENVIAR AVALIAÇÃO';
-}
-
-// ---- ADMIN ----
-function verificarAdmin() {
-  if (adminLogado) {
-    document.getElementById('admin-login-wrap').style.display='none';
-    document.getElementById('admin-panel').style.display='block';
-    carregarAdminPrestadores();
-    carregarAdminAvaliacoes();
-  }
-}
-
-window.entrarAdmin = function() {
-  if (document.getElementById('admin-senha').value===ADMIN_SENHA) {
-    adminLogado=true;
-    document.getElementById('admin-login-wrap').style.display='none';
-    document.getElementById('admin-panel').style.display='block';
-    document.getElementById('admin-erro').style.display='none';
-    carregarAdminPrestadores();
-    carregarAdminAvaliacoes();
-  } else document.getElementById('admin-erro').style.display='block';
-}
-
-async function carregarAdminPrestadores() {
-  try {
-    const snap=await getDocs(query(collection(db,'prestadores'),orderBy('data','desc')));
-    const list=snap.docs.map(d=>({id:d.id,...d.data()}));
-    document.getElementById('admin-total-prest').textContent='('+list.length+')';
-    document.getElementById('admin-lista-prest').innerHTML = list.map(p=>`
-      <div class="admin-item">
-        <div>
-          <div style="font-weight:700;font-size:14px">${p.nome}</div>
-          <div style="font-size:12px;color:#888">${(TIPOS[p.tipo]||TIPOS.outro).label} • ${p.endereco||''}</div>
-          ${p.telefone?`<div style="font-size:12px;color:#2d8c3e">📱 ${p.telefone}</div>`:''}
-        </div>
-        <button class="btn-del" onclick="excluirPrestador('${p.id}')">🗑️</button>
-      </div>`).join('') || '<div class="empty">Nenhum cadastrado.</div>';
-  } catch(e){}
-}
-
-async function carregarAdminAvaliacoes() {
-  try {
-    const snap=await getDocs(query(collection(db,'avaliacoes'),orderBy('data','desc')));
-    const list=snap.docs.map(d=>({id:d.id,...d.data()}));
-    document.getElementById('admin-total-av').textContent='('+list.length+')';
-    document.getElementById('admin-lista-av').innerHTML = list.map(av=>`
-      <div class="admin-item">
-        <div>
-          <div style="font-weight:700;font-size:14px">${av.prestador_nome||'Serviço'}</div>
-          <div style="font-size:12px;color:#f59e0b">${'★'.repeat(Math.round(av.nota_geral||0))}</div>
-          ${av.texto?`<div style="font-size:12px;color:#555">${av.texto.substring(0,60)}...</div>`:''}
-          <div style="font-size:11px;color:#aaa">por ${av.autor||'Anônimo'} ${av.telefone_autor?'• 📱'+av.telefone_autor:''}</div>
-        </div>
-        <button class="btn-del" onclick="excluirAvaliacao('${av.id}')">🗑️</button>
-      </div>`).join('') || '<div class="empty">Nenhuma avaliação.</div>';
-  } catch(e){}
-}
-
-window.excluirPrestador = async function(id) {
-  if (!confirm('Excluir este prestador?')) return;
-  try { await deleteDoc(doc(db,'prestadores',id)); await carregarAdminPrestadores(); } catch(e){ alert('Erro.'); }
-}
-
-window.excluirAvaliacao = async function(id) {
-  if (!confirm('Excluir esta avaliação?')) return;
-  try { await deleteDoc(doc(db,'avaliacoes',id)); await carregarAdminAvaliacoes(); } catch(e){ alert('Erro.'); }
-}
-</script>
-</body>
-</html>
+        <label class="form-
