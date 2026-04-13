@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tr.Alienigena - A Voz do Motorista</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f4f4f4;color:#1a1a1a;font-family:'Barlow',sans-serif;min-height:100vh}
+input,textarea,select,button{font-family:'Barlow',sans-serif}
+.header{background:#fff;border-bottom:3px solid #2d8c3e;padding:10px 16px;position:sticky;top:0;z-index:2000;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.logo-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#1a1a1a}
+.logo-title span{color:#2d8c3e}
+.logo-voz{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;color:#2d8c3e;letter-spacing:1px}
+.header-info{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px}
+.header-tel{font-size:10px;color:#888}
+.header-relogio{font-size:10px;color:#2d8c3e;font-weight:700}
+.header-loc{font-size:10px;color:#1a5c26;font-weight:600}
+.btn-inicio{background:#f5f5f5;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;color:#555}
+.tela{display:none;min-height:calc(100vh - 70px)}
+.tela.ativa{display:block}
+#tela-inicio{display:block}
+.inicio-hero{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:24px 16px 20px;text-align:center}
+.inicio-hero h1{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:6px}
+.inicio-hero p{color:#a8d5b0;font-size:13px;margin-bottom:20px}
+.btns-destaque{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:460px;margin:0 auto 14px}
+.btn-hero{background:#fff;border:none;border-radius:14px;padding:20px 10px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.btn-hero-icon{font-size:32px;margin-bottom:6px}
+.btn-hero-label{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:#1a1a1a}
+.btn-hero-sub{font-size:11px;color:#888;margin-top:2px}
+.btns-sec{display:flex;gap:8px;justify-content:center}
+.btn-sec{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:7px 16px;cursor:pointer;font-size:11px;font-weight:700;color:#fff}
+.top5-section{padding:16px}
+.top5-titulo{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:10px}
+.top5-card{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee;display:flex;align-items:center;gap:12px}
+.top5-pos{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#2d8c3e;min-width:32px;text-align:center}
+.top5-nome{font-weight:700;font-size:13px;color:#1a1a1a}
+.top5-info{font-size:11px;color:#888;margin-top:2px}
+.top5-stars{color:#f59e0b;font-size:13px;margin-top:2px}
+.avs-recentes{padding:0 16px 16px}
+.avs-recentes h2{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:10px}
+.av-mini{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee}
+.av-mini-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.av-mini-nome{font-weight:700;font-size:13px}
+.av-mini-tipo{font-size:10px;color:#2d8c3e;font-weight:700}
+.av-mini-stars{color:#f59e0b;font-size:12px}
+.av-mini-txt{font-size:12px;color:#555;line-height:1.4}
+.av-mini-autor{font-size:10px;color:#aaa;margin-top:4px}
+.tela-header{background:#fff;padding:12px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;position:sticky;top:70px;z-index:100}
+.btn-voltar{background:#f5f5f5;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:700;color:#555}
+.tela-titulo{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700}
+.hero-grad{background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:16px}
+.hero-grad h2{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:2px}
+.hero-grad p{color:#a8d5b0;font-size:12px}
+.busca-body{padding:14px 16px}
+.busca-campo{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #eee}
+.busca-campo label{font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:8px}
+.servicos-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.serv-btn{background:#f5f5f5;border:2px solid #e5e5e5;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700;color:#666;transition:all .15s}
+.serv-btn.on{background:#2d8c3e15;border-color:#2d8c3e;color:#2d8c3e}
+.input-texto{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none}
+.input-texto:focus{border-color:#2d8c3e88;background:#fff}
+.ac-box{background:#fff;border:1px solid #ddd;border-radius:8px;margin-top:4px;display:none;max-height:150px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.ac-item{padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5f5f5}
+.ac-item:hover{background:#f0fdf4}
+.loc-wrap{position:relative}
+.loc-input{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 44px 10px 12px;font-size:14px;width:100%;outline:none}
+.btn-gps{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:#2d8c3e;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px;color:#fff}
+.gps-status{font-size:10px;color:#2d8c3e;margin-top:3px;display:none}
+.btn-buscar{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px}
+.btn-relacao{background:#fff;border:2px solid #2d8c3e;border-radius:10px;color:#2d8c3e;padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%}
+#mapa-resultados{height:220px;width:100%}
+.resultados-body{padding:14px 16px}
+.result-info{background:#f0fdf4;border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#166534;font-weight:600}
+.pc{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eee}
+.pc-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+.pc-nome{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700}
+.pc-tipo{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;margin-bottom:4px}
+.pc-servicos{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.pc-serv-tag{border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;background:#f0fdf4;color:#2d8c3e;border:1px solid #bbf7d0}
+.pc-local{color:#888;font-size:11px}
+.pc-stars-val{color:#f59e0b;font-size:13px}
+.pc-stars-num{font-size:10px;color:#aaa;display:block}
+.pc-btns{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.pc-btn{border-radius:6px;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700;border:none}
+.pc-btn-wpp{background:#25d366;color:#fff}
+.pc-btn-det{background:#fff;color:#2d8c3e;border:1px solid #2d8c3e !important;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700}
+.pc-btn-av{background:#fff6e5;color:#f59e0b;border:1px solid #f59e0b55 !important;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700}
+.pc-btn-rota{background:#2d8c3e;color:#fff}
+#mapa-detalhe{height:210px;width:100%}
+.detalhe-body{padding:16px}
+.det-nome{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;margin-bottom:4px}
+.det-info-box{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #eee}
+.info-linha{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;font-size:13px;color:#444;line-height:1.4}
+.info-ico{font-size:14px;flex-shrink:0;margin-top:1px}
+.btn-wpp-g{background:#25d366;border:none;border-radius:10px;color:#fff;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-rota-g{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px}
+.btn-av-g{background:#fff;border:2px solid #f59e0b;border-radius:10px;color:#f59e0b;padding:11px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-bottom:14px}
+.avs-titulo{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px}
+.av-card{background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid #eee}
+.crit-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:5px}
+.crit-item{font-size:11px;color:#666}
+.form-body{padding:14px 16px}
+.form-group{margin-bottom:12px}
+.form-label{color:#666;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;display:block}
+.form-input{background:#fff;border:1px solid #ddd;border-radius:8px;color:#1a1a1a;padding:10px 12px;font-size:14px;width:100%;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:#2d8c3e88}
+.form-input::placeholder{color:#bbb}
+textarea.form-input{min-height:80px;resize:vertical}
+select.form-input option{background:#fff}
+.form-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tags-grid{display:flex;flex-wrap:wrap;gap:6px}
+.tag-btn{background:#f5f5f5;border:1px solid #ddd;border-radius:6px;color:#888;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:700;transition:all .15s}
+.tag-btn.on{background:#2d8c3e15;border-color:#2d8c3e;color:#2d8c3e}
+#mapa-cadastro{height:180px;border-radius:8px;margin-top:6px;border:1px solid #ddd}
+.btn-submit{background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;color:#166534;font-size:13px;font-weight:700;text-align:center;margin-bottom:12px;display:none}
+.bp-sug{background:#fff;border:1px solid #ddd;border-radius:8px;margin-top:3px;display:none;max-height:150px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.bp-item{padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5f5f5}
+.bp-item:hover{background:#f0fdf4}
+.bp-item-nome{font-weight:700}
+.bp-item-tipo{font-size:11px;color:#2d8c3e}
+.ei-star{font-size:26px;cursor:pointer;color:#ddd;transition:color .1s;user-select:none}
+.ei-star.on{color:#f59e0b}
+.c-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.c-nome{font-size:13px;color:#444;font-weight:600}
+.c-stars{display:flex;gap:3px}
+.c-star{font-size:19px;cursor:pointer;color:#ddd;transition:color .1s}
+.c-star.on{color:#f59e0b}
+.nao-enc{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px;color:#795548}
+.btn-nao-enc{background:#ff8f00;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;color:#fff;margin-top:5px}
+.loading{text-align:center;color:#aaa;padding:32px;font-size:13px}
+.empty{text-align:center;color:#aaa;padding:20px;font-size:13px}
+.tag{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700}
+.admin-body{padding:14px 16px}
+.admin-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
+.admin-card-t{font-weight:700;color:#2d8c3e;font-size:14px;margin-bottom:10px}
+.admin-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f5f5f5;gap:8px}
+.btn-del{background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;padding:4px 9px;cursor:pointer;font-size:11px;font-weight:700}
+.btn-edit{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;color:#2d8c3e;padding:4px 9px;cursor:pointer;font-size:11px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="logo-title">👽 <span>Tr.Alienigena</span></div>
+      <div class="logo-voz">A VOZ DO MOTORISTA</div>
+      <div class="header-info">
+        <span class="header-tel">📱 (88) 98136-3953</span>
+        <span class="header-relogio" id="hRel">--:--</span>
+        <span class="header-loc" id="hLoc">📍 Localizando...</span>
+      </div>
+    </div>
+    <button class="btn-inicio" onclick="APP.inicio()">🏠 Início</button>
+  </div>
+</div>
+
+<!-- INÍCIO -->
+<div id="tela-inicio">
+  <div class="inicio-hero">
+    <h1>🚛 O que você precisa hoje?</h1>
+    <p>Serviços, pontos de parada e avaliações na estrada</p>
+    <div class="btns-destaque">
+      <button class="btn-hero" onclick="APP.show('tela-busca')">
+        <div class="btn-hero-icon">🔍</div>
+        <div class="btn-hero-label">Sou Motorista</div>
+        <div class="btn-hero-sub">Preciso de um serviço</div>
+      </button>
+      <button class="btn-hero" onclick="APP.show('tela-avaliar')">
+        <div class="btn-hero-icon">⭐</div>
+        <div class="btn-hero-label">Avaliar Serviço</div>
+        <div class="btn-hero-sub">Deixe sua experiência</div>
+      </button>
+    </div>
+    <div class="btns-sec">
+      <button class="btn-sec" onclick="APP.show('tela-cadastro')">🏪 Sou Prestador</button>
+      <button class="btn-sec" onclick="APP.show('tela-admin')" style="opacity:.6;font-size:10px">🔐 Admin</button>
+    </div>
+  </div>
+
+  <!-- TOP 5 -->
+  <div class="top5-section">
+    <div class="top5-titulo">🚿 Top 5 Melhores Banheiros</div>
+    <div id="top5-banheiro"><div class="loading">Carregando...</div></div>
+    <div class="top5-titulo" style="margin-top:16px">🍽️ Top 5 Melhores Restaurantes</div>
+    <div id="top5-restaurante"><div class="loading">Carregando...</div></div>
+    <div class="top5-titulo" style="margin-top:16px">🛏️ Top 5 Melhores Dormidas</div>
+    <div id="top5-dormida"><div class="loading">Carregando...</div></div>
+  </div>
+
+  <div class="avs-recentes">
+    <h2>⭐ Avaliações Recentes</h2>
+    <div id="lista-avs-recentes"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- BUSCA -->
+<div id="tela-busca" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🔍 Buscar Serviço</div>
+  </div>
+  <div class="busca-body">
+    <div class="busca-campo">
+      <label>TIPO DE SERVIÇO (selecione um ou mais)</label>
+      <div class="servicos-grid" id="servicos-grid"></div>
+      <div style="margin-top:8px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">OU DESCREVA O QUE PRECISA</label>
+        <input class="input-texto" id="busca-texto" placeholder="Ex: conserto de bomba, válvula, freio..." oninput="APP.autocomplete()" autocomplete="off"/>
+        <div class="ac-box" id="ac-box"></div>
+      </div>
+    </div>
+    <div class="busca-campo">
+      <label>📍 ONDE VOCÊ ESTÁ?</label>
+      <div class="loc-wrap">
+        <input class="loc-input" id="busca-local" placeholder="Cidade ou use o GPS..."/>
+        <button class="btn-gps" onclick="APP.gps('busca')">📡</button>
+      </div>
+      <div class="gps-status" id="gps-busca"></div>
+    </div>
+    <button class="btn-buscar" onclick="APP.buscar()">🔍 BUSCAR AGORA</button>
+    <button class="btn-relacao" onclick="APP.relacao()">📋 VER RELAÇÃO COMPLETA</button>
+  </div>
+</div>
+
+<!-- RESULTADOS -->
+<div id="tela-resultados" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.show('tela-busca')">← Voltar</button>
+    <div class="tela-titulo" id="result-titulo">Resultados</div>
+  </div>
+  <div id="mapa-resultados"></div>
+  <div class="resultados-body">
+    <div class="result-info" id="result-info" style="display:none"></div>
+    <div id="lista-resultados"><div class="loading">Buscando...</div></div>
+  </div>
+</div>
+
+<!-- DETALHE -->
+<div id="tela-detalhe" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" id="btn-voltar-det" onclick="APP.show('tela-resultados')">← Voltar</button>
+    <div class="tela-titulo">Detalhes</div>
+  </div>
+  <div id="mapa-detalhe"></div>
+  <div class="detalhe-body">
+    <div class="det-nome" id="det-nome"></div>
+    <div id="det-tipo" style="margin-bottom:8px"></div>
+    <div id="det-servicos" style="margin-bottom:10px"></div>
+    <div class="det-info-box" id="det-info"></div>
+    <button class="btn-wpp-g" id="btn-wpp-g" style="display:none">💬 CHAMAR NO WHATSAPP</button>
+    <button class="btn-rota-g" id="btn-rota-g">🗺️ IR ATÉ O LOCAL</button>
+    <button class="btn-av-g" onclick="APP.avaliarAtual()">⭐ AVALIAR ESTE SERVIÇO</button>
+    <div class="avs-titulo">💬 Avaliações</div>
+    <div id="lista-avs-det"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- RELAÇÃO COMPLETA -->
+<div id="tela-relacao" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.show('tela-busca')">← Voltar</button>
+    <div class="tela-titulo">📋 Relação Completa</div>
+  </div>
+  <div style="padding:14px 16px">
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <input class="form-input" id="rel-filtro" placeholder="🔍 Nome, tipo ou cidade..." oninput="APP.filtrarRel()" style="flex:1"/>
+      <select class="form-input" id="rel-tipo" onchange="APP.filtrarRel()" style="max-width:130px">
+        <option value="">Todos</option>
+        <option value="mecanico">🔩 Mecânico</option>
+        <option value="borracharia">🔧 Borracharia</option>
+        <option value="posto">⛽ Combustível</option>
+        <option value="guindaste">🏗️ Guincho</option>
+        <option value="eletricista">⚡ Elétrica</option>
+        <option value="pecas">🏪 Autopeças</option>
+        <option value="funilaria">🚗 Funilaria</option>
+        <option value="lavajato">🚿 Lava-Jato</option>
+        <option value="restaurante">🍽️ Restaurante</option>
+        <option value="pousada">🛏️ Pousada</option>
+        <option value="farmacia">💊 Farmácia</option>
+        <option value="tacografo">📟 Tacógrafo</option>
+        <option value="toxicologico">🧪 Toxicológico</option>
+        <option value="chapa">💪 Chapa</option>
+        <option value="outros">📦 Outros</option>
+      </select>
+    </div>
+    <div id="rel-count" style="font-size:11px;color:#aaa;margin-bottom:10px"></div>
+    <div id="lista-relacao"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- CADASTRO -->
+<div id="tela-cadastro" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🏪 Cadastro de Prestador</div>
+  </div>
+  <div class="hero-grad"><h2>Cadastre seu serviço</h2><p>Apareça para motoristas gratuitamente</p></div>
+  <div class="form-body">
+    <div class="alert-ok" id="cad-ok">✅ Prestador cadastrado com sucesso! Em breve você aparecerá nas buscas.</div>
+    <div class="form-group">
+      <label class="form-label">BUSCAR SE JÁ EXISTE SEU CADASTRO</label>
+      <div style="position:relative">
+        <input class="form-input" id="cad-busca" placeholder="Digite o nome do seu estabelecimento..." oninput="APP.buscarExistente()" autocomplete="off"/>
+        <div class="bp-sug" id="cad-sug"></div>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-top:3px">Se já existir, você se vincula. Se não, criamos um novo.</div>
+    </div>
+    <div id="form-novo">
+      <div class="form-group">
+        <label class="form-label">NOME DO ESTABELECIMENTO *</label>
+        <input class="form-input" id="cad-nome" placeholder="Ex: Oficina do Marquinhos"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">TIPO PRINCIPAL *</label>
+        <select class="form-input" id="cad-tipo">
+          <option value="">Selecione...</option>
+          <option value="mecanico">🔩 Mecânico</option>
+          <option value="borracharia">🔧 Borracharia</option>
+          <option value="posto">⛽ Combustível / Posto</option>
+          <option value="guindaste">🏗️ Guincho / Guindaste</option>
+          <option value="eletricista">⚡ Elétrica Veicular</option>
+          <option value="pecas">🏪 Autopeças</option>
+          <option value="funilaria">🚗 Funilaria / Pintura</option>
+          <option value="lavajato">🚿 Lava-Jato</option>
+          <option value="restaurante">🍽️ Restaurante</option>
+          <option value="pousada">🛏️ Pousada / Dormida</option>
+          <option value="farmacia">💊 Farmácia</option>
+          <option value="tacografo">📟 Tacógrafo</option>
+          <option value="toxicologico">🧪 Exame Toxicológico</option>
+          <option value="chapa">💪 Chapa / Ajudante</option>
+          <option value="outros">📦 Outros</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">OUTROS SERVIÇOS QUE VOCÊ OFERECE (selecione todos)</label>
+        <div class="tags-grid" id="cad-tags-grid"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">DESCRIÇÃO * <span style="font-weight:400;color:#aaa;text-transform:none">(usada na busca por palavras-chave)</span></label>
+        <textarea class="form-input" id="cad-desc" placeholder="Descreva o que você faz: marcas, serviços, diferenciais. Ex: mecânico Volvo e Scania, câmbio, freio, suspensão..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">WHATSAPP (opcional)</label>
+        <input class="form-input" id="cad-wpp" placeholder="(88) 99999-9999" type="tel"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">INSTAGRAM (opcional)</label>
+        <input class="form-input" id="cad-ig" placeholder="@nomedoperfil"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ENDEREÇO (opcional)</label>
+        <input class="form-input" id="cad-end" placeholder="Rua, número, cidade — UF" oninput="APP.geocode()"/>
+        <button type="button" onclick="APP.gps('cadastro')" style="margin-top:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#2d8c3e;width:100%">📡 Usar minha localização atual</button>
+        <div class="gps-status" id="gps-cad"></div>
+        <div id="mapa-cadastro"></div>
+        <input type="hidden" id="cad-lat"/><input type="hidden" id="cad-lng"/>
+      </div>
+      <div class="form-group form-row2">
+        <div><label class="form-label">ABRE ÀS</label><input class="form-input" id="cad-abre" type="time"/></div>
+        <div><label class="form-label">FECHA ÀS</label><input class="form-input" id="cad-fecha" type="time"/></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;color:#555;cursor:pointer">
+        <input type="checkbox" id="cad-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
+      </label>
+      <button class="btn-submit" id="btn-cad" onclick="APP.cadastrar()">✅ CADASTRAR MEU SERVIÇO</button>
+    </div>
+  </div>
+</div>
+
+<!-- AVALIAR -->
+<div id="tela-avaliar" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" id="btn-voltar-av" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">⭐ Avaliar Serviço</div>
+  </div>
+  <div class="hero-grad"><h2>Avalie um serviço</h2><p>Ajude outros motoristas</p></div>
+  <div class="form-body">
+    <div class="alert-ok" id="av-ok">✅ Avaliação enviada! Obrigado, brother!</div>
+    <div class="form-group">
+      <label class="form-label">BUSCAR ESTABELECIMENTO</label>
+      <div style="position:relative">
+        <input class="form-input" id="av-busca" placeholder="Digite o nome ou cidade..." oninput="APP.buscarAv()" autocomplete="off"/>
+        <div class="bp-sug" id="av-sug"></div>
+      </div>
+    </div>
+    <div class="nao-enc">
+      <strong>Não encontrou?</strong> Avalie assim mesmo — cadastramos automaticamente.
+      <br><button class="btn-nao-enc" onclick="APP.modoManual()">📝 Avaliar serviço não cadastrado</button>
+    </div>
+    <div id="av-alvo-box" style="display:none">
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:12px">
+        <div style="font-weight:700;color:#166534;font-size:14px" id="av-alvo-nome"></div>
+        <div style="font-size:11px;color:#2d8c3e" id="av-alvo-tipo"></div>
+      </div>
+    </div>
+    <div id="av-manual-box" style="display:none">
+      <div class="form-group">
+        <label class="form-label">NOME DO ESTABELECIMENTO *</label>
+        <input class="form-input" id="av-man-nome" placeholder="Ex: Borracharia do João"/>
+      </div>
+      <div class="form-group form-row2">
+        <div>
+          <label class="form-label">TIPO</label>
+          <select class="form-input" id="av-man-tipo">
+            <option value="mecanico">🔩 Mecânico</option>
+            <option value="borracharia">🔧 Borracharia</option>
+            <option value="posto">⛽ Combustível</option>
+            <option value="guindaste">🏗️ Guincho</option>
+            <option value="eletricista">⚡ Elétrica</option>
+            <option value="pecas">🏪 Autopeças</option>
+            <option value="funilaria">🚗 Funilaria</option>
+            <option value="lavajato">🚿 Lava-Jato</option>
+            <option value="restaurante">🍽️ Restaurante</option>
+            <option value="pousada">🛏️ Pousada</option>
+            <option value="farmacia">💊 Farmácia</option>
+            <option value="tacografo">📟 Tacógrafo</option>
+            <option value="toxicologico">🧪 Toxicológico</option>
+            <option value="chapa">💪 Chapa</option>
+            <option value="outros">📦 Outros</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">CIDADE</label>
+          <input class="form-input" id="av-man-cidade" placeholder="Cidade — UF"/>
+        </div>
+      </div>
+    </div>
+    <div id="av-form-box" style="display:none">
+      <div class="form-group">
+        <label class="form-label">NOTA GERAL *</label>
+        <div style="display:flex;gap:4px;margin-top:4px" id="av-geral"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CRITÉRIOS</label>
+        <div id="av-crits"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SEU COMENTÁRIO</label>
+        <textarea class="form-input" id="av-texto" placeholder="Conte sua experiência..."></textarea>
+      </div>
+      <div class="form-group form-row2">
+        <div><label class="form-label">SEU NOME (opcional)</label><input class="form-input" id="av-autor" placeholder="Zé da Estrada"/></div>
+        <div><label class="form-label">WHATSAPP (opcional)</label><input class="form-input" id="av-tel" placeholder="(88) 99..." type="tel"/></div>
+      </div>
+      <button class="btn-submit" id="btn-av" onclick="APP.enviarAv()">⭐ ENVIAR AVALIAÇÃO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="tela-admin" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🔐 Admin</div>
+  </div>
+  <div id="admin-login" style="padding:20px">
+    <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:14px">Área Restrita</div>
+    <div class="form-group"><label class="form-label">SENHA</label><input class="form-input" id="admin-senha" type="password" placeholder="Digite a senha"/></div>
+    <button class="btn-submit" onclick="APP.adminLogin()">ENTRAR</button>
+    <div id="admin-erro" style="display:none;color:#dc2626;font-size:13px;margin-top:8px;text-align:center">❌ Senha incorreta</div>
+  </div>
+  <div id="admin-painel" style="display:none">
+    <div class="admin-body">
+      <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:14px">📊 Painel Admin</div>
+      <div class="admin-card">
+        <div class="admin-card-t">🏪 Prestadores <span id="adm-tot-p" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div id="adm-lista-p"><div class="loading">Carregando...</div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-t">⭐ Avaliações <span id="adm-tot-a" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div id="adm-lista-a"><div class="loading">Carregando...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIÇÃO -->
+<div id="modal-ed" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:9999;overflow-y:auto">
+  <div style="background:#fff;margin:16px;border-radius:14px;overflow:hidden;max-width:600px;margin-left:auto;margin-right:auto">
+    <div style="background:linear-gradient(135deg,#1a3a1a,#2d8c3e);padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:#fff">✏️ Editar Prestador</div>
+      <button onclick="APP.fecharModal()" style="background:rgba(255,255,255,.2);border:none;border-radius:8px;color:#fff;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:700">✕</button>
+    </div>
+    <div style="padding:16px">
+      <input type="hidden" id="edit-id"/>
+      <div class="form-group"><label class="form-label">NOME *</label><input class="form-input" id="edit-nome"/></div>
+      <div class="form-group"><label class="form-label">TIPO *</label>
+        <select class="form-input" id="edit-tipo">
+          <option value="mecanico">🔩 Mecânico</option><option value="borracharia">🔧 Borracharia</option>
+          <option value="posto">⛽ Combustível</option><option value="guindaste">🏗️ Guincho</option>
+          <option value="eletricista">⚡ Elétrica</option><option value="pecas">🏪 Autopeças</option>
+          <option value="funilaria">🚗 Funilaria</option><option value="lavajato">🚿 Lava-Jato</option>
+          <option value="restaurante">🍽️ Restaurante</option><option value="pousada">🛏️ Pousada</option>
+          <option value="farmacia">💊 Farmácia</option><option value="tacografo">📟 Tacógrafo</option>
+          <option value="toxicologico">🧪 Toxicológico</option><option value="chapa">💪 Chapa</option>
+          <option value="outros">📦 Outros</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">DESCRIÇÃO</label><textarea class="form-input" id="edit-desc"></textarea></div>
+      <div class="form-group"><label class="form-label">WHATSAPP</label><input class="form-input" id="edit-wpp" type="tel"/></div>
+      <div class="form-group"><label class="form-label">INSTAGRAM</label><input class="form-input" id="edit-ig"/></div>
+      <div class="form-group"><label class="form-label">ENDEREÇO</label><input class="form-input" id="edit-end"/></div>
+      <div class="form-group form-row2">
+        <div><label class="form-label">ABRE</label><input class="form-input" id="edit-abre" type="time"/></div>
+        <div><label class="form-label">FECHA</label><input class="form-input" id="edit-fecha" type="time"/></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;color:#555;cursor:pointer">
+        <input type="checkbox" id="edit-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
+      </label>
+      <div id="edit-ok" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;color:#166534;font-size:13px;font-weight:700;text-align:center;margin-bottom:10px">✅ Salvo!</div>
+      <button onclick="APP.salvarEdit()" class="btn-submit">💾 SALVAR ALTERAÇÕES</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FB = { apiKey:"AIzaSyB4-eS5dLimqSewLPwwA_IT2haMV3kLD9s", authDomain:"tralienigena-ee7a9.firebaseapp.com", projectId:"tralienigena-ee7a9", storageBucket:"tralienigena-ee7a9.firebasestorage.app", messagingSenderId:"307288619335", appId:"1:307288619335:web:467b6aeae99b641866b462", measurementId:"G-K49FKDK046" };
+const db = getFirestore(initializeApp(FB));
+
+const TIPOS = {
+  mecanico:{label:"🔩 Mecânico",color:"#ea580c"}, borracharia:{label:"🔧 Borracharia",color:"#dc2626"},
+  posto:{label:"⛽ Combustível",color:"#16a34a"}, guindaste:{label:"🏗️ Guincho",color:"#c2410c"},
+  eletricista:{label:"⚡ Elétrica",color:"#ca8a04"}, pecas:{label:"🏪 Autopeças",color:"#0891b2"},
+  funilaria:{label:"🚗 Funilaria",color:"#9333ea"}, lavajato:{label:"🚿 Lava-Jato",color:"#0284c7"},
+  restaurante:{label:"🍽️ Restaurante",color:"#d97706"}, pousada:{label:"🛏️ Pousada",color:"#7c3aed"},
+  farmacia:{label:"💊 Farmácia",color:"#059669"}, tacografo:{label:"📟 Tacógrafo",color:"#0f766e"},
+  toxicologico:{label:"🧪 Toxicológico",color:"#7e22ce"}, chapa:{label:"💪 Chapa",color:"#0369a1"},
+  outros:{label:"📦 Outros",color:"#6b7280"}
+};
+
+// CRITÉRIOS ESPECÍFICOS POR CATEGORIA
+const CRITERIOS = {
+  posto:       ["Preço do Diesel","Banheiro","Segurança","Estacionamento","Atendimento","ARLA 32"],
+  mecanico:    ["Qualidade do Serviço","Honestidade","Preço","Agilidade","Atendimento","Garantia"],
+  borracharia: ["Qualidade","Preço","Agilidade","Atendimento","Equipamentos","Localização"],
+  eletricista: ["Qualidade","Honestidade","Preço","Agilidade","Diagnóstico","Atendimento"],
+  pecas:       ["Variedade de Peças","Preço","Atendimento","Qualidade","Prazo de Entrega","Conhecimento"],
+  funilaria:   ["Qualidade do Acabamento","Preço","Agilidade","Pintura","Atendimento","Garantia"],
+  guindaste:   ["Agilidade","Preço","Equipamento","Segurança","Atendimento","Disponibilidade"],
+  pousada:     ["Limpeza","Segurança","Conforto","Preço","Banheiro","Estacionamento"],
+  restaurante: ["Qualidade da Comida","Preço","Limpeza","Atendimento","Variedade","Espaço"],
+  lavajato:    ["Qualidade da Lavagem","Preço","Agilidade","Atendimento","Estrutura","Espaço"],
+  farmacia:    ["Variedade","Preço","Atendimento","Horário","Localização","Agilidade"],
+  tacografo:   ["Qualidade","Preço","Agilidade","Honestidade","Atendimento","Laudo"],
+  toxicologico:["Agilidade","Preço","Atendimento","Estrutura","Sigilo","Credibilidade"],
+  chapa:       ["Força e Eficiência","Pontualidade","Preço","Cuidado com a Carga","Atendimento","Experiência"],
+  outros:      ["Qualidade","Preço","Atendimento","Agilidade","Honestidade","Satisfação Geral"]
+};
+
+const TAGS_SERVICOS = ["⛽ Combustível/Diesel","🧴 ARLA 32","🛏️ Dormida","🚿 Banheiro/Chuveiro","🍽️ Restaurante","🔧 Borracharia","🔩 Mecânico","⚡ Elétrica Veicular","🏪 Autopeças","🚗 Funilaria","🏗️ Guincho","🅿️ Estacionamento","📶 Wi-Fi","💊 Farmácia","🏦 Banco/Caixa","💰 Abastece Caminhão","🔑 Chuveiro pago","🍺 Conveniência","🖨️ Xerox/Impressão","📟 Tacógrafo"];
+
+const SERVICOS_BUSCA = [{id:"mecanico",label:"🔩 Mecânico"},{id:"borracharia",label:"🔧 Borracharia"},{id:"posto",label:"⛽ Combustível"},{id:"guindaste",label:"🏗️ Guincho"},{id:"eletricista",label:"⚡ Elétrica"},{id:"pecas",label:"🏪 Autopeças"},{id:"funilaria",label:"🚗 Funilaria"},{id:"lavajato",label:"🚿 Lava-Jato"},{id:"restaurante",label:"🍽️ Restaurante"},{id:"pousada",label:"🛏️ Pousada"},{id:"farmacia",label:"💊 Farmácia"},{id:"tacografo",label:"📟 Tacógrafo"},{id:"toxicologico",label:"🧪 Toxicológico"},{id:"chapa",label:"💪 Chapa"},{id:"outros",label:"📦 Outros"}];
+
+const ADMIN_SENHA = 'Juli0Filh0';
+
+// ESTADO
+let prestadores=[],avs=[],coordsUser=null,prestAtual=null;
+let servSel=[],tagsCadSel=[],notaGeral=0,notasCrit={};
+let adminLogado=false,geocTimer=null;
+let mapaRes=null,mapaCad=null,mapaDet=null,marcCad=null;
+
+// RELÓGIO
+setInterval(()=>{ const n=new Date(); const el=document.getElementById('hRel'); if(el) el.textContent=`🕐 ${n.toLocaleTimeString('pt-BR')} • ${n.toLocaleDateString('pt-BR')}`; },1000);
+
+// GPS HEADER
+navigator.geolocation?.getCurrentPosition(async pos=>{
+  coordsUser={lat:pos.coords.latitude,lng:pos.coords.longitude};
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordsUser.lat}&lon=${coordsUser.lng}&format=json`);
+    const d=await r.json();
+    if(d?.address){ const c=d.address.city||d.address.town||d.address.village||''; const u=d.address.state_code||''; document.getElementById('hLoc').textContent=`📍 Você está em ${c}${u?', '+u:''}`; document.getElementById('busca-local').value=`${c}${u?', '+u:''}`; }
+  }catch(e){}
+},()=>{ document.getElementById('hLoc').textContent='📍 Localização não disponível'; });
+
+// INIT
+window.addEventListener('DOMContentLoaded',()=>{ buildGrids(); carregarTudo(); });
+
+async function carregarTudo(){
+  try{
+    const [pSnap,aSnap]=await Promise.all([getDocs(collection(db,'prestadores')),getDocs(collection(db,'avaliacoes'))]);
+    prestadores=pSnap.docs.map(d=>({id:d.id,...d.data()}));
+    avs=aSnap.docs.map(d=>({id:d.id,...d.data()}));
+    renderInicio();
+  }catch(e){ console.error(e); }
+}
+
+function calcMedia(prestId){ const n=avs.filter(a=>a.prestador_id===prestId).map(a=>a.nota_geral||0); return n.length?{media:+(n.reduce((a,b)=>a+b,0)/n.length).toFixed(1),total:n.length}:{media:0,total:0}; }
+
+function renderInicio(){
+  renderAvsRecentes();
+  renderTop5('banheiro','posto','Banheiro');
+  renderTop5('restaurante','restaurante','Comida');
+  renderTop5('dormida','pousada','Limpeza');
+}
+
+function renderAvsRecentes(){
+  const el=document.getElementById('lista-avs-recentes');
+  const lista=[...avs].sort((a,b)=>new Date(b.data)-new Date(a.data)).slice(0,5);
+  if(!lista.length){el.innerHTML='<div class="empty">Nenhuma avaliação ainda.</div>';return;}
+  el.innerHTML=lista.map(av=>{
+    const t=TIPOS[av.prestador_tipo]||TIPOS.outros;
+    const stars='★'.repeat(Math.round(av.nota_geral||0))+'☆'.repeat(5-Math.round(av.nota_geral||0));
+    return `<div class="av-mini"><div class="av-mini-top"><div><div class="av-mini-nome">${av.prestador_nome||'—'}</div><div class="av-mini-tipo" style="color:${t.color}">${t.label}</div></div><div class="av-mini-stars">${stars}</div></div>${av.texto?`<div class="av-mini-txt">${av.texto.substring(0,90)}${av.texto.length>90?'...':''}</div>`:''}<div class="av-mini-autor">por ${av.autor||'Anônimo'} • ${av.data?new Date(av.data).toLocaleDateString('pt-BR'):''}</div></div>`;
+  }).join('');
+}
+
+function renderTop5(elId, tipoFiltro, critNome){
+  const el=document.getElementById('top5-'+elId);
+  // Pegar prestadores do tipo
+  const lista=prestadores.filter(p=>p.tipo===tipoFiltro||( tipoFiltro==='posto'&&p.tipo==='posto'));
+  // Calcular nota do critério específico
+  const comNota=lista.map(p=>{
+    const avsP=avs.filter(a=>a.prestador_id===p.id);
+    let notaCrit=0,qtd=0;
+    avsP.forEach(a=>{ if(a.criterios&&a.criterios[critNome]){ notaCrit+=a.criterios[critNome]; qtd++; } });
+    const mediaGeral=calcMedia(p.id);
+    const nota=qtd>0?(notaCrit/qtd):mediaGeral.media;
+    return {...p,notaTop:nota,totalAv:mediaGeral.total};
+  }).filter(p=>p.notaTop>0).sort((a,b)=>b.notaTop-a.notaTop).slice(0,5);
+  if(!comNota.length){el.innerHTML='<div class="empty">Nenhuma avaliação ainda nesta categoria.</div>';return;}
+  el.innerHTML=comNota.map((p,i)=>{
+    const stars='★'.repeat(Math.round(p.notaTop))+'☆'.repeat(5-Math.round(p.notaTop));
+    return `<div class="top5-card" onclick="APP.detalhe('${p.id}','inicio')">
+      <div class="top5-pos">${i+1}º</div>
+      <div style="flex:1"><div class="top5-nome">${p.nome}</div><div class="top5-info">📍 ${p.endereco||'Localização não informada'}</div><div class="top5-stars">${stars} <span style="font-size:10px;color:#aaa">(${p.totalAv} av.)</span></div></div>
+    </div>`;
+  }).join('');
+}
+
+// GRIDS
+function buildGrids(){
+  document.getElementById('servicos-grid').innerHTML=SERVICOS_BUSCA.map(s=>`<button class="serv-btn" id="sb-${s.id}" onclick="APP.togServ('${s.id}')">${s.label}</button>`).join('');
+  document.getElementById('cad-tags-grid').innerHTML=TAGS_SERVICOS.map((t,i)=>`<button type="button" class="tag-btn" id="tag-${i}" onclick="APP.togTag(${i},'${t}')">${t}</button>`).join('');
+  setTimeout(()=>{ if(!mapaCad){ mapaCad=L.map('mapa-cadastro').setView([-5.0892,-42.8019],5); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaCad); mapaCad.on('click',e=>{ document.getElementById('cad-lat').value=e.latlng.lat; document.getElementById('cad-lng').value=e.latlng.lng; if(marcCad) marcCad.remove(); marcCad=L.marker([e.latlng.lat,e.latlng.lng]).addTo(mapaCad).bindPopup('Seu local').openPopup(); }); } },400);
+}
+
+// APP GLOBAL
+window.APP={
+  inicio(){ document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa')); document.getElementById('tela-inicio').style.display='block'; carregarTudo(); window.scrollTo(0,0); },
+  show(id){ document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa')); document.getElementById('tela-inicio').style.display='none'; document.getElementById(id).classList.add('ativa'); if(id==='tela-admin') this.adminCheck(); window.scrollTo(0,0); },
+  togServ(id){ const btn=document.getElementById('sb-'+id); if(servSel.includes(id)){servSel=servSel.filter(s=>s!==id);btn.classList.remove('on');}else{servSel.push(id);btn.classList.add('on');} },
+  togTag(i,t){ const btn=document.getElementById('tag-'+i); if(tagsCadSel.includes(t)){tagsCadSel=tagsCadSel.filter(x=>x!==t);btn.classList.remove('on');}else{tagsCadSel.push(t);btn.classList.add('on');} },
+  autocomplete(){ const q=document.getElementById('busca-texto').value.toLowerCase().trim(); const box=document.getElementById('ac-box'); if(q.length<2){box.style.display='none';return;} const termos=['motor','câmbio','freio','suspensão','bomba','válvula','ar condicionado','diferencial','embreagem','injeção','radiador','correia','pneu','bateria','alternador','filtro','óleo','escapamento','tacógrafo','toxicológico','retífica','solda','baú','refrigeração']; const s=termos.filter(t=>t.includes(q)).slice(0,5); if(!s.length){box.style.display='none';return;} box.style.display='block'; box.innerHTML=s.map(x=>`<div class="ac-item" onclick="APP.selAC('${x}')">${x}</div>`).join(''); },
+  selAC(s){ document.getElementById('busca-texto').value=s; document.getElementById('ac-box').style.display='none'; },
+  async gps(ctx){
+    const statusId=ctx==='busca'?'gps-busca':'gps-cad'; const el=document.getElementById(statusId); el.style.display='block'; el.textContent='📡 Localizando...';
+    if(!navigator.geolocation){el.textContent='GPS não disponível';return;}
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      coordsUser={lat:pos.coords.latitude,lng:pos.coords.longitude}; el.textContent='🔍 Buscando endereço...';
+      try{
+        const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordsUser.lat}&lon=${coordsUser.lng}&format=json&addressdetails=1`); const d=await r.json();
+        if(d?.address){ const a=d.address; const rua=a.road||a.street||''; const num=a.house_number||''; const bairro=a.suburb||a.neighbourhood||''; const cidade=a.city||a.town||a.village||''; const uf=a.state_code||''; const cep=a.postcode||''; const partes=[]; if(rua) partes.push(rua+(num?' '+num:'')); if(bairro) partes.push(bairro); if(cidade) partes.push(cidade); if(uf) partes.push(uf); if(cep) partes.push('CEP '+cep); const end=partes.join(', '); const loc=cidade+(uf?', '+uf:'');
+          if(ctx==='busca'){document.getElementById('busca-local').value=loc; el.textContent='✅ Localização obtida!';}
+          if(ctx==='cadastro'){ document.getElementById('cad-end').value=end||loc; document.getElementById('cad-lat').value=coordsUser.lat; document.getElementById('cad-lng').value=coordsUser.lng; el.textContent='✅ Endereço preenchido! Confirme se necessário.'; if(mapaCad){mapaCad.setView([coordsUser.lat,coordsUser.lng],17); if(marcCad) marcCad.remove(); marcCad=L.marker([coordsUser.lat,coordsUser.lng]).addTo(mapaCad).bindPopup(`${rua||'Sua localização'}${num?' '+num:''}<br>${cidade}${uf?', '+uf:''}${cep?'<br>CEP: '+cep:''}`).openPopup();} }
+        }
+      }catch(e){el.textContent='✅ Localização obtida!';}
+    },(err)=>{ const e=document.getElementById(statusId); e.style.display='block'; e.textContent=err.code===1?'❌ GPS negado. Ative nas configurações.':'❌ Erro ao localizar.'; },{enableHighAccuracy:true,timeout:15000});
+  },
+  geocode(){ clearTimeout(geocTimer); geocTimer=setTimeout(async()=>{ const end=document.getElementById('cad-end').value.trim(); if(end.length<5) return; try{ const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(end+', Brasil')}&format=json&limit=1`); const d=await r.json(); if(d?.[0]){ const lat=parseFloat(d[0].lat),lng=parseFloat(d[0].lon); document.getElementById('cad-lat').value=lat; document.getElementById('cad-lng').value=lng; if(mapaCad){mapaCad.setView([lat,lng],15); if(marcCad) marcCad.remove(); marcCad=L.marker([lat,lng]).addTo(mapaCad).bindPopup('Seu local').openPopup();} } }catch(e){} },700); },
+  async buscar(){
+    const txt=document.getElementById('busca-texto').value.trim().toLowerCase(); const loc=document.getElementById('busca-local').value.trim();
+    if(!servSel.length&&!txt){alert('Selecione um serviço ou descreva o que precisa.');return;}
+    if(!loc&&!coordsUser){alert('Informe sua localização.');return;}
+    this.show('tela-resultados'); document.getElementById('lista-resultados').innerHTML='<div class="loading">Buscando...</div>';
+    document.getElementById('result-titulo').textContent=servSel.map(s=>SERVICOS_BUSCA.find(x=>x.id===s)?.label||s).join(', ')||`"${txt}"`;
+    if(!mapaRes){mapaRes=L.map('mapa-resultados').setView([-5.0892,-42.8019],7); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaRes);}
+    if(!coordsUser&&loc){try{const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(loc+', Brasil')}&format=json&limit=1`); const d=await r.json(); if(d?.[0]) coordsUser={lat:parseFloat(d[0].lat),lng:parseFloat(d[0].lon)};}catch(e){}}
+    if(coordsUser) mapaRes.setView([coordsUser.lat,coordsUser.lng],11);
+    let fil=[...prestadores]; if(servSel.length) fil=fil.filter(p=>servSel.includes(p.tipo)); if(txt) fil=fil.filter(p=>(p.descricao||'').toLowerCase().includes(txt)||(p.nome||'').toLowerCase().includes(txt));
+    fil=fil.map(p=>{const m=calcMedia(p.id); const dist=coordsUser&&p.lat&&p.lng?calcDist(coordsUser.lat,coordsUser.lng,p.lat,p.lng):null; return{...p,...m,dist};}).sort((a,b)=>{ if(a.dist!==null&&b.dist!==null) return a.dist-b.dist; return b.media-a.media;});
+    const info=document.getElementById('result-info'); info.style.display='block'; info.textContent=`${fil.length} resultado(s) encontrado(s)`;
+    mapaRes.eachLayer(l=>{if(l instanceof L.Marker) mapaRes.removeLayer(l);});
+    fil.forEach(p=>{if(p.lat&&p.lng) L.marker([p.lat,p.lng]).addTo(mapaRes).bindPopup(`<strong>${p.nome}</strong>`);});
+    const el=document.getElementById('lista-resultados');
+    if(!fil.length){el.innerHTML='<div class="empty">Nenhum serviço encontrado.</div>';return;}
+    el.innerHTML=fil.map(p=>cardHTML(p,'resultados')).join('');
+  },
+  async relacao(){
+    this.show('tela-relacao');
+    const ord=[...prestadores].sort((a,b)=>{const tA=(TIPOS[a.tipo]||TIPOS.outros).label,tB=(TIPOS[b.tipo]||TIPOS.outros).label; return tA!==tB?tA.localeCompare(tB,'pt-BR'):(a.nome||'').localeCompare(b.nome||'','pt-BR');});
+    renderRel(ord);
+  },
+  filtrarRel(){ const q=document.getElementById('rel-filtro').value.toLowerCase().trim(); const tipo=document.getElementById('rel-tipo').value; const res=prestadores.filter(p=>(!tipo||p.tipo===tipo)&&(!q||p.nome.toLowerCase().includes(q)||(p.descricao||'').toLowerCase().includes(q)||(p.endereco||'').toLowerCase().includes(q))); renderRel(res); },
+  async detalhe(id,voltar='resultados'){
+    prestAtual=prestadores.find(x=>x.id===id)||null;
+    if(!prestAtual) return;
+    this.show('tela-detalhe');
+    const btn=document.getElementById('btn-voltar-det');
+    btn.onclick=()=>this.show(voltar==='inicio'?'tela-inicio':voltar==='relacao'?'tela-relacao':'tela-resultados');
+    const t=TIPOS[prestAtual.tipo]||TIPOS.outros;
+    document.getElementById('det-nome').textContent=prestAtual.nome;
+    document.getElementById('det-tipo').innerHTML=`<span class="tag" style="background:${t.color}18;color:${t.color};border:1px solid ${t.color}44">${t.label}</span>`;
+    // Tags de serviços adicionais
+    const tagsEl=document.getElementById('det-servicos');
+    if(prestAtual.tags_servicos&&prestAtual.tags_servicos.length){ tagsEl.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:4px">${prestAtual.tags_servicos.map(tg=>`<span class="pc-serv-tag">${tg}</span>`).join('')}</div>`; }else tagsEl.innerHTML='';
+    const h=prestAtual.aberto24h?'🕐 Aberto 24 horas':(prestAtual.abre&&prestAtual.fecha?`🕐 ${prestAtual.abre}h às ${prestAtual.fecha}h`:'');
+    document.getElementById('det-info').innerHTML=`${prestAtual.endereco?`<div class="info-linha"><span class="info-ico">📍</span><span>${prestAtual.endereco}</span></div>`:''}${prestAtual.whatsapp?`<div class="info-linha"><span class="info-ico">💬</span><span>${prestAtual.whatsapp}</span></div>`:''}${prestAtual.instagram?`<div class="info-linha"><span class="info-ico">📸</span><span>${prestAtual.instagram}</span></div>`:''}${h?`<div class="info-linha"><span class="info-ico">🕐</span><span>${h}</span></div>`:''}${prestAtual.descricao?`<div class="info-linha"><span class="info-ico">💬</span><span>${prestAtual.descricao}</span></div>`:''}`;
+    const wppNum=(prestAtual.whatsapp||'').replace(/\D/g,'');
+    const btnWpp=document.getElementById('btn-wpp-g');
+    if(wppNum){btnWpp.style.display='flex'; btnWpp.onclick=()=>window.open(`https://wa.me/55${wppNum}`,'_blank');}else btnWpp.style.display='none';
+    document.getElementById('btn-rota-g').onclick=()=>{ if(prestAtual.lat&&prestAtual.lng) window.open(`https://www.openstreetmap.org/directions?to=${prestAtual.lat},${prestAtual.lng}#map=15/${prestAtual.lat}/${prestAtual.lng}`,'_blank'); else alert('Localização não disponível.'); };
+    if(!mapaDet){mapaDet=L.map('mapa-detalhe'); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapaDet);}
+    if(prestAtual.lat&&prestAtual.lng){mapaDet.setView([prestAtual.lat,prestAtual.lng],15); L.marker([prestAtual.lat,prestAtual.lng]).addTo(mapaDet).bindPopup(prestAtual.nome).openPopup();}
+    this.carregarAvsDetalhe(id);
+  },
+  async carregarAvsDetalhe(id){
+    const el=document.getElementById('lista-avs-det'); el.innerHTML='<div class="loading">Carregando...</div>';
+    const lista=avs.filter(a=>a.prestador_id===id).sort((a,b)=>new Date(b.data)-new Date(a.data));
+    if(!lista.length){el.innerHTML='<div class="empty">Nenhuma avaliação ainda.</div>';return;}
+    el.innerHTML=lista.map(av=>{ const stars='★'.repeat(Math.round(av.nota_geral||0))+'☆'.repeat(5-Math.round(av.nota_geral||0)); const crits=av.criterios?Object.entries(av.criterios).map(([k,v])=>`<div class="crit-item">${k}: ${'★'.repeat(v)}</div>`).join(''):''; return `<div class="av-card"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#f59e0b;font-size:13px">${stars}</span><span style="font-size:10px;color:#aaa">${av.data?new Date(av.data).toLocaleDateString('pt-BR'):''}</span></div>${av.texto?`<div style="font-size:12px;color:#444;margin-bottom:4px">${av.texto}</div>`:''}<div class="crit-grid">${crits}</div><div style="font-size:10px;color:#aaa;margin-top:4px">por ${av.autor||'Anônimo'}</div></div>`; }).join('');
+  },
+  avaliarAtual(){ if(!prestAtual) return; this.show('tela-avaliar'); document.getElementById('btn-voltar-av').onclick=()=>this.show('tela-detalhe'); this.selAvAlvo(prestAtual.id); document.getElementById('av-busca').value=prestAtual.nome; },
+  async buscarExistente(){ const q=document.getElementById('cad-busca').value.trim().toLowerCase(); const s=document.getElementById('cad-sug'); if(q.length<2){s.style.display='none';return;} const r=prestadores.filter(p=>p.nome.toLowerCase().includes(q)).slice(0,5); if(!r.length){s.style.display='none';return;} s.style.display='block'; s.innerHTML=r.map(p=>`<div class="bp-item" onclick="APP.vincular('${p.id}')"><div class="bp-item-nome">${p.nome}</div><div class="bp-item-tipo">${(TIPOS[p.tipo]||TIPOS.outros).label} • ${p.endereco||''}</div></div>`).join(''); },
+  vincular(id){ const p=prestadores.find(x=>x.id===id); if(!p) return; document.getElementById('cad-sug').style.display='none'; document.getElementById('cad-ok').textContent='✅ Cadastro encontrado! Você já está vinculado a este estabelecimento.'; document.getElementById('cad-ok').style.display='block'; document.getElementById('form-novo').style.display='none'; setTimeout(()=>document.getElementById('cad-ok').style.display='none',4000); },
+  async cadastrar(){
+    const nome=document.getElementById('cad-nome').value.trim(); const tipo=document.getElementById('cad-tipo').value; const desc=document.getElementById('cad-desc').value.trim();
+    if(!nome||!tipo||!desc){alert('Preencha Nome, Tipo e Descrição.');return;}
+    const btn=document.getElementById('btn-cad'); btn.disabled=true; btn.textContent='Salvando...';
+    try{
+      await addDoc(collection(db,'prestadores'),{nome,tipo,descricao:desc,tags_servicos:[...tagsCadSel],whatsapp:document.getElementById('cad-wpp').value.trim(),instagram:document.getElementById('cad-ig').value.trim(),endereco:document.getElementById('cad-end').value.trim(),lat:parseFloat(document.getElementById('cad-lat').value)||null,lng:parseFloat(document.getElementById('cad-lng').value)||null,abre:document.getElementById('cad-abre').value,fecha:document.getElementById('cad-fecha').value,aberto24h:document.getElementById('cad-24h').checked,data:new Date().toISOString()});
+      document.getElementById('cad-ok').textContent='✅ Prestador cadastrado com sucesso! Em breve você aparecerá nas buscas.'; document.getElementById('cad-ok').style.display='block';
+      ['cad-nome','cad-wpp','cad-ig','cad-end','cad-desc','cad-abre','cad-fecha'].forEach(i=>document.getElementById(i).value=''); document.getElementById('cad-tipo').value=''; document.getElementById('cad-24h').checked=false; document.getElementById('cad-busca').value=''; document.getElementById('form-novo').style.display='block'; tagsCadSel=[]; buildGrids();
+      await carregarTudo(); setTimeout(()=>document.getElementById('cad-ok').style.display='none',5000);
+    }catch(e){alert('Erro ao cadastrar.');}
+    btn.disabled=false; btn.textContent='✅ CADASTRAR MEU SERVIÇO';
+  },
+  async buscarAv(){ const q=document.getElementById('av-busca').value.trim().toLowerCase(); const s=document.getElementById('av-sug'); if(q.length<2){s.style.display='none';return;} const r=prestadores.filter(p=>p.nome.toLowerCase().includes(q)||(p.endereco||'').toLowerCase().includes(q)).slice(0,6); if(!r.length){s.style.display='none';return;} s.style.display='block'; s.innerHTML=r.map(p=>`<div class="bp-item" onclick="APP.selAvAlvo('${p.id}')"><div class="bp-item-nome">${p.nome}</div><div class="bp-item-tipo">${(TIPOS[p.tipo]||TIPOS.outros).label} • ${p.endereco||''}</div></div>`).join(''); },
+  selAvAlvo(id){ const p=prestadores.find(x=>x.id===id); if(!p) return; window._avAlvoId=id; window._avAlvoTipo=p.tipo||'outros'; document.getElementById('av-sug').style.display='none'; document.getElementById('av-busca').value=p.nome; document.getElementById('av-alvo-box').style.display='block'; document.getElementById('av-alvo-nome').textContent=p.nome; document.getElementById('av-alvo-tipo').textContent=(TIPOS[p.tipo]||TIPOS.outros).label; document.getElementById('av-manual-box').style.display='none'; mostrarCrits(p.tipo||'outros'); },
+  modoManual(){ window._avAlvoId=null; document.getElementById('av-alvo-box').style.display='none'; document.getElementById('av-manual-box').style.display='block'; mostrarCrits('outros'); },
+  async enviarAv(){
+    if(!notaGeral){alert('Dê a nota geral.');return;}
+    const btn=document.getElementById('btn-av'); btn.disabled=true; btn.textContent='Enviando...';
+    try{
+      let prestId=window._avAlvoId,prestNome='',prestTipo=window._avAlvoTipo||'outros';
+      if(!prestId){ const nomePrest=document.getElementById('av-man-nome').value.trim(); if(!nomePrest){alert('Informe o nome.');btn.disabled=false;btn.textContent='⭐ ENVIAR AVALIAÇÃO';return;} const exist=prestadores.find(p=>p.nome.toLowerCase().trim()===nomePrest.toLowerCase().trim()); if(exist){prestId=exist.id;prestNome=exist.nome;prestTipo=exist.tipo||'outros';}else{ const tp=document.getElementById('av-man-tipo').value; const cid=document.getElementById('av-man-cidade').value.trim(); const ref=await addDoc(collection(db,'prestadores'),{nome:nomePrest,tipo:tp,endereco:cid,whatsapp:'',descricao:'',tags_servicos:[],data:new Date().toISOString(),cadastrado_via_avaliacao:true}); prestId=ref.id;prestNome=nomePrest;prestTipo=tp; await carregarTudo(); } }else{ const p=prestadores.find(x=>x.id===prestId); prestNome=p?.nome||'';prestTipo=p?.tipo||'outros'; }
+      await addDoc(collection(db,'avaliacoes'),{prestador_id:prestId,prestador_nome:prestNome,prestador_tipo:prestTipo,nota_geral:notaGeral,criterios:{...notasCrit},texto:document.getElementById('av-texto').value.trim(),autor:document.getElementById('av-autor').value.trim(),telefone_autor:document.getElementById('av-tel').value.trim(),data:new Date().toISOString()});
+      document.getElementById('av-ok').style.display='block'; ['av-busca','av-texto','av-autor','av-tel','av-man-nome','av-man-cidade'].forEach(i=>document.getElementById(i).value=''); document.getElementById('av-alvo-box').style.display='none'; document.getElementById('av-manual-box').style.display='none'; document.getElementById('av-form-box').style.display='none'; document.getElementById('av-sug').style.display='none'; window._avAlvoId=null; notaGeral=0; notasCrit={}; await carregarTudo();
+      setTimeout(()=>{document.getElementById('av-ok').style.display='none'; APP.inicio();},2500);
+    }catch(e){alert('Erro ao enviar.');}
+    btn.disabled=false; btn.textContent='⭐ ENVIAR AVALIAÇÃO';
+  },
+  adminCheck(){ if(adminLogado){document.getElementById('admin-login').style.display='none'; document.getElementById('admin-painel').style.display='block'; this.adminCarregar();} },
+  adminLogin(){ if(document.getElementById('admin-senha').value===ADMIN_SENHA){adminLogado=true; document.getElementById('admin-login').style.display='none'; document.getElementById('admin-painel').style.display='block'; document.getElementById('admin-erro').style.display='none'; this.adminCarregar();}else document.getElementById('admin-erro').style.display='block'; },
+  adminCarregar(){ renderAdmPrest(); renderAdmAvs(); },
+  async editar(id){ const p=prestadores.find(x=>x.id===id); if(!p) return; document.getElementById('edit-id').value=p.id; document.getElementById('edit-nome').value=p.nome||''; document.getElementById('edit-tipo').value=p.tipo||'outros'; document.getElementById('edit-desc').value=p.descricao||''; document.getElementById('edit-wpp').value=p.whatsapp||''; document.getElementById('edit-ig').value=p.instagram||''; document.getElementById('edit-end').value=p.endereco||''; document.getElementById('edit-abre').value=p.abre||''; document.getElementById('edit-fecha').value=p.fecha||''; document.getElementById('edit-24h').checked=p.aberto24h||false; document.getElementById('edit-ok').style.display='none'; document.getElementById('modal-ed').style.display='block'; document.body.style.overflow='hidden'; },
+  fecharModal(){ document.getElementById('modal-ed').style.display='none'; document.body.style.overflow=''; },
+  async salvarEdit(){ const id=document.getElementById('edit-id').value; const nome=document.getElementById('edit-nome').value.trim(); if(!nome){alert('Nome obrigatório.');return;} try{ await updateDoc(doc(db,'prestadores',id),{nome,tipo:document.getElementById('edit-tipo').value,descricao:document.getElementById('edit-desc').value.trim(),whatsapp:document.getElementById('edit-wpp').value.trim(),instagram:document.getElementById('edit-ig').value.trim(),endereco:document.getElementById('edit-end').value.trim(),abre:document.getElementById('edit-abre').value,fecha:document.getElementById('edit-fecha').value,aberto24h:document.getElementById('edit-24h').checked,atualizado:new Date().toISOString()}); document.getElementById('edit-ok').style.display='block'; await carregarTudo(); renderAdmPrest(); setTimeout(()=>{document.getElementById('edit-ok').style.display='none'; APP.fecharModal();},2000); }catch(e){alert('Erro ao salvar.');} },
+  async delPrest(id){ if(!confirm('Excluir?')) return; try{await deleteDoc(doc(db,'prestadores',id)); await carregarTudo(); renderAdmPrest();}catch(e){alert('Erro.');} },
+  async delAv(id){ if(!confirm('Excluir?')) return; try{await deleteDoc(doc(db,'avaliacoes',id)); avs=avs.filter(a=>a.id!==id); renderAdmAvs();}catch(e){alert('Erro.');} }
+};
+
+function calcDist(a,b,c,d){ const R=6371,dL=(c-a)*Math.PI/180,dO=(d-b)*Math.PI/180,x=Math.sin(dL/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dO/2)**2; return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); }
+
+function mostrarCrits(tipo){ notaGeral=0; notasCrit={}; const crits=CRITERIOS[tipo]||CRITERIOS.outros; document.getElementById('av-geral').innerHTML=[1,2,3,4,5].map(n=>`<span class="ei-star" id="ag${n}" onclick="APP._setNG(${n})">★</span>`).join(''); document.getElementById('av-crits').innerHTML=crits.map(c=>`<div class="c-row"><div class="c-nome">${c}</div><div class="c-stars">${[1,2,3,4,5].map(n=>`<span class="c-star" id="cs_${c.replace(/ /g,'_')}_${n}" onclick="APP._setNC('${c}',${n})">★</span>`).join('')}</div></div>`).join(''); document.getElementById('av-form-box').style.display='block'; }
+APP._setNG=function(n){ notaGeral=n; for(let i=1;i<=5;i++) document.getElementById('ag'+i).classList.toggle('on',i<=n); };
+APP._setNC=function(c,n){ notasCrit[c]=n; const k=c.replace(/ /g,'_'); for(let i=1;i<=5;i++){const el=document.getElementById(`cs_${k}_${i}`); if(el) el.classList.toggle('on',i<=n);} };
+
+function cardHTML(p, ctx){
+  const t=TIPOS[p.tipo]||TIPOS.outros; const m=calcMedia(p.id); const stars=m.media>0?'★'.repeat(Math.round(m.media))+'☆'.repeat(5-Math.round(m.media)):'☆☆☆☆☆'; const wpp=(p.whatsapp||'').replace(/\D/g,''); const dist=p.dist!==null&&p.dist!==undefined?(p.dist<1?(p.dist*1000).toFixed(0)+'m':p.dist.toFixed(1)+'km'):''; const tagsHTML=p.tags_servicos&&p.tags_servicos.length?`<div class="pc-servicos">${p.tags_servicos.slice(0,4).map(tg=>`<span class="pc-serv-tag">${tg}</span>`).join('')}${p.tags_servicos.length>4?`<span class="pc-serv-tag">+${p.tags_servicos.length-4}</span>`:''}</div>`:'';
+  return `<div class="pc"><div class="pc-top"><div style="flex:1;min-width:0"><div class="pc-nome">${p.nome}</div><span class="pc-tipo" style="background:${t.color}18;color:${t.color};border:1px solid ${t.color}44">${t.label}</span>${p.endereco?`<div class="pc-local">📍 ${p.endereco}${dist?' • <strong style="color:#2d8c3e">'+dist+'</strong>':''}</div>`:''}</div><div style="text-align:right;flex-shrink:0"><div class="pc-stars-val">${stars}</div><span class="pc-stars-num">${m.media>0?m.media+' ('+m.total+'av)':'Sem avaliação'}</span></div></div>${tagsHTML}${p.descricao?`<div style="font-size:12px;color:#666;margin:6px 0;line-height:1.4">${p.descricao.substring(0,80)}${p.descricao.length>80?'...':''}</div>`:''}<div class="pc-btns">${wpp?`<button class="pc-btn pc-btn-wpp" onclick="window.open('https://wa.me/55${wpp}','_blank')">💬 WhatsApp</button>`:''}<button class="pc-btn pc-btn-det" onclick="APP.detalhe('${p.id}','${ctx}')">🔍 Detalhes</button><button class="pc-btn pc-btn-av" onclick="APP.show('tela-avaliar');APP.selAvAlvo('${p.id}')">⭐ Avaliar</button>${p.lat&&p.lng?`<button class="pc-btn pc-btn-rota" onclick="window.open('https://www.openstreetmap.org/directions?to=${p.lat},${p.lng}#map=15/${p.lat}/${p.lng}','_blank')">🗺️ Ir</button>`:''}</div></div>`;
+}
+
+function renderRel(lista){ const el=document.getElementById('lista-relacao'); document.getElementById('rel-count').textContent=lista.length+' prestador(es)'; if(!lista.length){el.innerHTML='<div class="empty">Nenhum encontrado.</div>';return;} const ord=[...lista].sort((a,b)=>{const tA=(TIPOS[a.tipo]||TIPOS.outros).label,tB=(TIPOS[b.tipo]||TIPOS.outros).label; return tA!==tB?tA.localeCompare(tB,'pt-BR'):(a.nome||'').localeCompare(b.nome||'','pt-BR');}); let tipoAtual='',html=''; ord.forEach(p=>{ const t=TIPOS[p.tipo]||TIPOS.outros; if(p.tipo!==tipoAtual){tipoAtual=p.tipo; html+=`<div style="background:${t.color}18;border-left:4px solid ${t.color};border-radius:6px;padding:7px 12px;margin:12px 0 8px;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:${t.color}">${t.label}</div>`;} html+=cardHTML(p,'relacao'); }); el.innerHTML=html; }
+
+function renderAdmPrest(){ document.getElementById('adm-tot-p').textContent='('+prestadores.length+')'; document.getElementById('adm-lista-p').innerHTML=prestadores.length?[...prestadores].sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(p=>`<div class="admin-item"><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px">${p.nome}</div><div style="font-size:11px;color:#888">${(TIPOS[p.tipo]||TIPOS.outros).label} • ${p.endereco||''}</div>${p.whatsapp?`<div style="font-size:11px;color:#25d366">💬 ${p.whatsapp}</div>`:''}</div><div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0"><button class="btn-edit" onclick="APP.editar('${p.id}')">✏️ Editar</button><button class="btn-del" onclick="APP.delPrest('${p.id}')">🗑️ Excluir</button></div></div>`).join(''):'<div class="empty">Nenhum.</div>'; }
+function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+avs.length+')'; document.getElementById('adm-lista-a').innerHTML=avs.length?[...avs].sort((a,b)=>new Date(b.data)-new Date(a.data)).map(av=>`<div class="admin-item"><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px">${av.prestador_nome||'—'}</div><div style="font-size:11px;color:#f59e0b">${'★'.repeat(Math.round(av.nota_geral||0))}</div>${av.texto?`<div style="font-size:11px;color:#555">${av.texto.substring(0,50)}...</div>`:''}<div style="font-size:10px;color:#aaa">por ${av.autor||'Anônimo'} ${av.telefone_autor?'• '+av.telefone_autor:''}</div></div><button class="btn-del" onclick="APP.delAv('${av.id}')">🗑️</button></div>`).join(''):'<div class="empty">Nenhuma.</div>'; }
+</script>
+</body>
+</html>
