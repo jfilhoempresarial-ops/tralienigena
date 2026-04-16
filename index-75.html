@@ -239,37 +239,36 @@ select.form-input option{background:#fff}
 </head>
 <body>
 
-<!-- ===== POPUP LOJA DO ALIENÍGENA ===== -->
+<!-- ===== POPUP BOAS-VINDAS TR.ALIENÍGENA ===== -->
 <div id="popup-loja-overlay">
   <div id="popup-loja-box">
     <div class="pl-header">
       <button class="pl-close" onclick="fecharPopupLoja()" title="Fechar">×</button>
-      <div class="pl-badge">👽 Novidade</div>
-      <div class="pl-titulo">Loja do Alienígena</div>
-      <div class="pl-sub">Roupas e acessórios para caminhoneiros</div>
+      <div class="pl-badge">👽 Bem-vindo</div>
+      <div class="pl-titulo">Nunca Mais Fique no Prego!</div>
+      <div class="pl-sub">O aplicativo que salva o caminhoneiro</div>
     </div>
     <div class="pl-body">
-      <span class="pl-icone">👽</span>
+      <span class="pl-icone">🚛</span>
       <p class="pl-desc">
-        A loja feita <strong>por motorista, para motorista</strong>!<br>
-        Camisetas, bonins, canecas e muito mais com a cara da estrada.
+        Você está em uma cidade que não conhece? Precisa de um <strong>mecânico, borracharia ou posto</strong>?<br>
+        Encontre serviços de <strong>confiança</strong> avaliados por outros motoristas.
       </p>
       <div class="pl-tags">
-        <span class="pl-tag">👕 Camisetas</span>
-        <span class="pl-tag">🧢 Bonés</span>
-        <span class="pl-tag">☕ Canecas</span>
-        <span class="pl-tag">🎁 Presentes</span>
-        <span class="pl-tag">🚚 Temático</span>
+        <span class="pl-tag">🔍 Busca rápida</span>
+        <span class="pl-tag">📋 Avaliações reais</span>
+        <span class="pl-tag">📄 Informações completas</span>
+        <span class="pl-tag">💬 Comunidade</span>
       </div>
-      <a class="pl-btn-visitar" href="https://www.lojadoalienigena.com.br" target="_blank" onclick="fecharPopupLoja()">
-        🛒 VISITAR A LOJA AGORA
-      </a>
-      <button class="pl-btn-fechar" onclick="fecharPopupLoja()">Agora não, obrigado</button>
-      <div class="pl-rodape">📷 Siga também: @lojadoalienigena</div>
+      <button class="pl-btn-visitar" onclick="fecharPopupLoja(); APP.show('tela-busca');">
+        🔍 BUSCAR SERVIÇOS AGORA
+      </button>
+      <button class="pl-btn-fechar" onclick="fecharPopupLoja()">Entendi, vou explorar</button>
+      <div class="pl-rodape">📷 Siga: @tr.alienigena no Instagram</div>
     </div>
   </div>
 </div>
-<!-- ===== FIM POPUP LOJA ===== -->
+<!-- ===== FIM POPUP BOAS-VINDAS ===== -->
 
 <div class="header">
   <div class="header-top">
