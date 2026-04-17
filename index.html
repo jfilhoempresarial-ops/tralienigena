@@ -2730,7 +2730,7 @@ window.APP.filtrarMotoristas=function(){
 window.APP.delMotorista=async function(id){if(!confirm('Excluir?'))return;try{await deleteDoc(doc(db,'motoristas',id));await carregarMotoristas();}catch(e){alert('Erro.');}};
 
 // ===== PRESTADORES - VERIFICAÇÃO E TERMOS =====
-window.APP.verificarLoginPrestador=async function(){
+window.APP.verificarLoginPrestador=function(){
   if(!usuarioLogado){
     APP.loginGoogle();
     return;
