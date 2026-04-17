@@ -1,1 +1,8 @@
-
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.tralienigena.app",
+    "sha256_cert_fingerprints": ["C1:0D:23:50:40:42:71:55:82:3D:96:0C:95:19:CF:7C:31:9F:F9:B3:53:27:1F:31:B0:A9:4D:9A:F5:96:4C:3D"]
+  }
+}]
