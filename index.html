@@ -242,7 +242,45 @@ select.form-input option{background:#fff}
 </head>
 <body>
 
-<!-- ===== POPUP BOAS-VINDAS TR.ALIENÍGENA ===== -->
+<!-- ===== MODAL DE CONSENTIMENTO LGPD ===== -->
+<div id="modal-consentimento-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;max-width:420px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);padding:24px 20px;text-align:center">
+      <div style="font-size:40px;margin-bottom:10px">🔒</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Sua Privacidade Importa</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85)">Protegemos seus dados com a LGPD</div>
+    </div>
+    <div style="padding:24px;max-height:60vh;overflow-y:auto">
+      <div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:16px">
+        <p><strong>Bem-vindo ao Tr.Alienigena!</strong></p>
+        <p>Para usar este aplicativo, você precisa aceitar nossa <strong>Política de Privacidade</strong> e <strong>Termos de Uso</strong>.</p>
+        <p style="margin-top:12px;color:#2d8c3e;font-weight:700">📋 O que coletamos:</p>
+        <ul style="margin:8px 0 0 16px;font-size:12px">
+          <li>Nome e e-mail (via Google Login)</li>
+          <li>Número de WhatsApp (quando você cadastra)</li>
+          <li>Localização (para buscar serviços próximos)</li>
+          <li>Histórico de avaliações e cadastros</li>
+        </ul>
+        <p style="margin-top:12px;color:#2d8c3e;font-weight:700">🛡️ Como protegemos:</p>
+        <ul style="margin:8px 0 0 16px;font-size:12px">
+          <li>Dados criptografados no Firebase</li>
+          <li>Sem compartilhamento com terceiros</li>
+          <li>Você pode solicitar exclusão a qualquer momento</li>
+          <li>Conformidade total com a LGPD</li>
+        </ul>
+        <p style="margin-top:12px;font-size:11px;color:#999">Leia nossa <a href="https://github.com/jfilhoempresarial-ops/tralienigena/blob/main/PRIVACIDADE.md" target="_blank" style="color:#2d8c3e;text-decoration:none;font-weight:700">Política de Privacidade</a> e <a href="https://github.com/jfilhoempresarial-ops/tralienigena/blob/main/TERMOS.md" target="_blank" style="color:#2d8c3e;text-decoration:none;font-weight:700">Termos de Uso</a>.</p>
+      </div>
+      <button onclick="APP.aceitarConsentimento()" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:8px;color:#fff;padding:14px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;transition:transform .2s">
+        ✅ Aceito e Continuar
+      </button>
+      <button onclick="window.history.back()" style="background:#f3f4f6;border:none;border-radius:8px;color:#666;padding:12px;font-size:13px;font-weight:700;cursor:pointer;width:100%;transition:background .2s">
+        ❌ Não Aceito
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POPUP BOAS-VINDAS TR.ALIENIGENA ===== -->
 <div id="popup-loja-overlay">
   <div id="popup-loja-box">
     <div class="pl-header">
@@ -874,9 +912,15 @@ select.form-input option{background:#fff}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const FB = { apiKey:"AIzaSyB4-eS5dLimqSewLPwwA_IT2haMV3kLD9s", authDomain:"tralienigena-ee7a9.firebaseapp.com", projectId:"tralienigena-ee7a9", storageBucket:"tralienigena-ee7a9.firebasestorage.app", messagingSenderId:"307288619335", appId:"1:307288619335:web:467b6aeae99b641866b462", measurementId:"G-29J2FDXBH8" };
-const db = getFirestore(initializeApp(FB));
+const app = initializeApp(FB);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+let usuarioLogado=null,usuarioEmail=null,usuarioNome=null,usuarioId=null;
+onAuthStateChanged(auth,(user)=>{ if(user){ usuarioLogado=user; usuarioEmail=user.email; usuarioNome=user.displayName||user.email.split('@')[0]; usuarioId=user.uid; document.getElementById('modal-consentimento-overlay')&&(document.getElementById('modal-consentimento-overlay').style.display='none'); }else{ usuarioLogado=null; usuarioEmail=null; usuarioNome=null; usuarioId=null; } });
 
 const TIPOS = {
   mecanico:{label:"🔩 Mecânico",color:"#ea580c"}, borracharia:{label:"🔧 Borracharia",color:"#dc2626"},
@@ -1822,6 +1866,34 @@ window.APP={
     const chave='63649771000124';
     const url=`https://nubank.com.br/pix/${chave}`;
     window.open(url,'_blank');
+  },
+  async loginGoogle(){
+    try{
+      const result=await signInWithPopup(auth,googleProvider);
+      usuarioLogado=result.user;
+      usuarioEmail=result.user.email;
+      usuarioNome=result.user.displayName||result.user.email.split('@')[0];
+      usuarioId=result.user.uid;
+      alert('Login realizado com sucesso!');
+    }catch(e){
+      alert('Erro ao fazer login: '+e.message);
+    }
+  },
+  async logout(){
+    try{
+      await signOut(auth);
+      usuarioLogado=null;
+      usuarioEmail=null;
+      usuarioNome=null;
+      usuarioId=null;
+      alert('Desconectado com sucesso!');
+    }catch(e){
+      alert('Erro ao desconectar: '+e.message);
+    }
+  },
+  aceitarConsentimento(){
+    localStorage.setItem('consentimento_lgpd','aceito');
+    document.getElementById('modal-consentimento-overlay').style.display='none';
   }
 };
 
