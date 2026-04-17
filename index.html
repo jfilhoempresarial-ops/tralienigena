@@ -2583,10 +2583,9 @@ window.APP.salvarMotorista=async function(){
   const cnh=document.getElementById('mot-cnh').value;
   const wpp=document.getElementById('mot-wpp').value.trim();
   const cidade=document.getElementById('mot-cidade').value.trim();
+  const tipo_veiculo=document.getElementById('mot-tipo-veiculo').value.trim();
   if(!curriculoFile){alert('É obrigatório anexar o currículo em PDF.');return;}
-  if(!nome||!cnh||!wpp||!cidade){alert('Preencha nome, CNH, cidade e WhatsApp.');return;}
-  const tiposSel=Array.from(document.querySelectorAll('input[name="mot-tipo-check"]:checked')).map(c=>c.value);
-  const tipo_veiculo=tiposSel.join(', ')||'';
+  if(!nome||!cnh||!wpp||!cidade||!tipo_veiculo){alert('Preencha nome, CNH, cidade, WhatsApp e tipo de veículo.');return;}
   const cursosSel=Array.from(document.querySelectorAll('input[name="mot-curso-check"]:checked')).map(c=>c.value);
   const certificacoes=cursosSel.join(', ')||'';
   const status=document.getElementById('curriculo-status');
@@ -2609,7 +2608,8 @@ window.APP.salvarMotorista=async function(){
     await addDoc(collection(db,'motoristas'),{nome,cnh,tipo_veiculo,certificacoes,cidade,experiencia:document.getElementById('mot-exp').value.trim(),whatsapp:wpp,observacoes:document.getElementById('mot-obs').value.trim(),curriculo_url,criado:new Date().toISOString()});
     ['mot-nome','mot-cidade','mot-exp','mot-wpp','mot-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('mot-cnh').value='';
-    document.querySelectorAll('input[name="mot-tipo-check"], input[name="mot-curso-check"]').forEach(c=>{c.checked=false;c.closest('label').classList.remove('checked');});
+    document.getElementById('mot-tipo-veiculo').value='';
+    document.querySelectorAll('input[name="mot-curso-check"]').forEach(c=>{c.checked=false;c.closest('label').classList.remove('checked');});
     curriculoFile=null; document.getElementById('input-curriculo').value='';
     document.getElementById('cad-mot-form').style.display='none';
     document.getElementById('btn-abrir-cad-mot').style.display='block';
@@ -3053,22 +3053,31 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">VEÍCULOS COM EXPERIÊNCIA <span style="font-weight:400;color:#aaa;text-transform:none">(marque todos que já dirigiu)</span></label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
-          <label class="mot-tipo-label"><input type="checkbox" value="Carreta Sider" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🚛 Carreta Sider</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="Carreta Graneleiro" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🌾 Graneleiro</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="Carreta Frigorífica" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> ❄️ Frigorífica</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="Carreta Tanque" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🛢️ Tanque</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="Carreta Porta-Carro" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🚗 Porta-Carro</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="Bitrem" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🔗 Bitrem</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="Truck" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🚚 Truck</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="Toco" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🚛 Toco</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="VUC" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 📦 VUC</label>
-          <label class="mot-tipo-label"><input type="checkbox" value="Ônibus" name="mot-tipo-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🚌 Ônibus</label>
-        </div>
+        <label class="form-label">TIPO DE VEÍCULO *</label>
+        <select class="form-input" id="mot-tipo-veiculo" style="font-size:14px;padding:12px;border:1px solid #ddd;border-radius:8px;width:100%;font-family:inherit;cursor:pointer">
+          <option value="">-- Selecione o tipo de veículo --</option>
+          <optgroup label="🚨 PESADOS">
+            <option value="Bitrem">Bitrem</option>
+            <option value="Carreta">Carreta</option>
+            <option value="Carreta 4º Eixo">Carreta 4º Eixo</option>
+            <option value="Carreta LS">Carreta LS</option>
+            <option value="Rodotrem">Rodotrem</option>
+            <option value="Vanderléia">Vanderléia</option>
+          </optgroup>
+          <optgroup label="🚦 MÉDIOS">
+            <option value="Bitruck">Bitruck</option>
+            <option value="Truck">Truck</option>
+          </optgroup>
+          <optgroup label="🚘 LEVES">
+            <option value="3/4">3/4</option>
+            <option value="Fiorino">Fiorino</option>
+            <option value="Toco">Toco</option>
+            <option value="VLC">VLC</option>
+          </optgroup>
+        </select>
       </div>
       <div class="form-group"><label class="form-label">CIDADE / ESTADO *</label><input class="form-input" id="mot-cidade" placeholder="Ex: Sobral — CE"/></div>
-      <div class="form-group"><label class="form-label">ANOS DE EXPERIÊNCIA</label><input class="form-input" id="mot-exp" placeholder="Ex: 10 anos"/></div>
+      <div class="form-group"><label class="form-label">ANOS DE EXPERIÊNCIA</label><input class="form-input" id="mot-exp" type="number" min="0" max="70" placeholder="Ex: 10"/></div>
       <div class="form-group"><label class="form-label">WHATSAPP *</label><input class="form-input" id="mot-wpp" placeholder="(88) 99999-9999" type="tel"/></div>
       <div class="form-group">
         <label class="form-label">CURSOS E CERTIFICAÇÕES <span style="font-weight:400;color:#aaa;text-transform:none">(opcional — marque os que possui)</span></label>
