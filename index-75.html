@@ -947,6 +947,26 @@ async function carregarTudo(){
     prestadores=pSnap.docs.map(d=>({id:d.id,...d.data()}));
     avs=aSnap.docs.map(d=>({id:d.id,...d.data()}));
     renderInicio();
+    
+    // SCRIPT DE SEMENTE DE EVENTOS (Executa uma vez e se remove)
+    (async function() {
+        try {
+            const jaSemeado = localStorage.getItem('eventos_semeados_2026_v1');
+            if (!jaSemeado) {
+                const evs = [{'titulo': 'Arraiá do Motorista', 'data': '2026-06-16', 'hora': '21:00', 'descricao': 'O melhor Arraiá da região! Venha curtir com a gente no Palmeiras Country Club. Muita comida típica, música boa e diversão para toda a família dos motoristas.', 'endereco': 'Palmeiras Country Club, Sobral - CE', 'imagem': 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663566321890/DDzAufTwCVRhyfFA.png', 'whatsapp': '88981363953', 'instagram': 'tr.alienigena'}, {'titulo': 'Torneio de Futebol dos Motoristas', 'data': '2026-06-18', 'hora': '15:00', 'descricao': 'Grande torneio de futebol society exclusivo para motoristas. Venha mostrar seu talento em campo e disputar o troféu Tr.Alienigena!', 'endereco': 'Palmeiras Country Club, Sobral - CE', 'imagem': 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663566321890/QRBBWASbDluQNJrX.png', 'whatsapp': '88981363953', 'instagram': 'tr.alienigena'}];
+                for (const ev of evs) {
+                    // Verificar se já existe um evento com o mesmo título e data
+                    const q = query(collection(db, 'eventos'), where('titulo', '==', ev.titulo), where('data', '==', ev.data));
+                    const snap = await getDocs(q);
+                    if (snap.empty) {
+                        await addDoc(collection(db, 'eventos'), ev);
+                        console.log('Evento semeado:', ev.titulo);
+                    }
+                }
+                localStorage.setItem('eventos_semeados_2026_v1', 'true');
+            }
+        } catch (e) { console.error('Erro na semente:', e); }
+    })();
     carregarEventos();
     carregarCursos();
     carregarMotoristas();
