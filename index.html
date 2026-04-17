@@ -2759,7 +2759,20 @@ window.APP.salvarTermosPrestador=async function(){
   try{
     const docRef = await addDoc(collection(db,'prestadores'),{nome:cad.nome,tipo:cad.tipo,descricao:cad.desc,tags_servicos:[...tagsCadSel],whatsapp:document.getElementById('cad-wpp').value.trim(),instagram:document.getElementById('cad-ig').value.trim(),endereco:document.getElementById('cad-end').value.trim(),lat:parseFloat(document.getElementById('cad-lat').value)||null,lng:parseFloat(document.getElementById('cad-lng').value)||null,abre:document.getElementById('cad-abre').value,fecha:document.getElementById('cad-fecha').value,aberto24h:document.getElementById('cad-24h').checked,fotos:[],data:new Date().toISOString(),responsavel_nome:nome,responsavel_email:email,responsavel_uid:''});
     alert('Cadastro realizado com sucesso! Seu servico aparecera em breve apos verificacao.');
-    document.getElementById('cad-form').reset();
+    // Limpar os campos do formulário
+    document.getElementById('cad-nome').value='';
+    document.getElementById('cad-tipo').value='';
+    document.getElementById('cad-desc').value='';
+    document.getElementById('cad-wpp').value='';
+    document.getElementById('cad-ig').value='';
+    document.getElementById('cad-end').value='';
+    document.getElementById('cad-lat').value='';
+    document.getElementById('cad-lng').value='';
+    document.getElementById('cad-abre').value='';
+    document.getElementById('cad-fecha').value='';
+    document.getElementById('cad-24h').checked=false;
+    document.getElementById('fotos-preview-cad').innerHTML='';
+    document.getElementById('input-fotos-cad').value='';
     tagsCadSel=[];
     APP.show('tela-inicio');
     await carregarPrestadores();
