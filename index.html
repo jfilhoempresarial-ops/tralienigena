@@ -235,6 +235,9 @@ select.form-input option{background:#fff}
 .pl-btn-fechar{background:transparent;border:none;color:#666;font-size:12px;cursor:pointer;padding:4px;text-decoration:underline;transition:color .15s}
 .pl-btn-fechar:hover{color:#aaa}
 .pl-rodape{font-size:10px;color:#444;margin-top:10px}
+.mot-veiculo-tag{background:#f0f0f0;border:2px solid #ddd;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;color:#666;cursor:pointer;transition:all .2s;font-family:inherit;white-space:nowrap}
+.mot-veiculo-tag:hover{background:#e8f5e9;border-color:#2d8c3e;color:#2d8c3e}
+.mot-veiculo-tag.selected{background:#2d8c3e;border-color:#1a5c26;color:#fff;font-weight:700}
 </style>
 </head>
 <body>
@@ -2583,9 +2586,10 @@ window.APP.salvarMotorista=async function(){
   const cnh=document.getElementById('mot-cnh').value;
   const wpp=document.getElementById('mot-wpp').value.trim();
   const cidade=document.getElementById('mot-cidade').value.trim();
-  const tipo_veiculo=document.getElementById('mot-tipo-veiculo').value.trim();
+  const veiculosSelecionados=Array.from(document.querySelectorAll('.mot-veiculo-tag.selected')).map(b=>b.getAttribute('data-veiculo'));
+  const tipo_veiculo=veiculosSelecionados.join(', ')||'';
   if(!curriculoFile){alert('É obrigatório anexar o currículo em PDF.');return;}
-  if(!nome||!cnh||!wpp||!cidade||!tipo_veiculo){alert('Preencha nome, CNH, cidade, WhatsApp e tipo de veículo.');return;}
+  if(!nome||!cnh||!wpp||!cidade||!tipo_veiculo){alert('Preencha nome, CNH, cidade, WhatsApp e selecione pelo menos um tipo de veículo.');return;}
   const cursosSel=Array.from(document.querySelectorAll('input[name="mot-curso-check"]:checked')).map(c=>c.value);
   const certificacoes=cursosSel.join(', ')||'';
   const status=document.getElementById('curriculo-status');
@@ -2608,7 +2612,7 @@ window.APP.salvarMotorista=async function(){
     await addDoc(collection(db,'motoristas'),{nome,cnh,tipo_veiculo,certificacoes,cidade,experiencia:document.getElementById('mot-exp').value.trim(),whatsapp:wpp,observacoes:document.getElementById('mot-obs').value.trim(),curriculo_url,criado:new Date().toISOString()});
     ['mot-nome','mot-cidade','mot-exp','mot-wpp','mot-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('mot-cnh').value='';
-    document.getElementById('mot-tipo-veiculo').value='';
+    document.querySelectorAll('.mot-veiculo-tag').forEach(b=>b.classList.remove('selected'));
     document.querySelectorAll('input[name="mot-curso-check"]').forEach(c=>{c.checked=false;c.closest('label').classList.remove('checked');});
     curriculoFile=null; document.getElementById('input-curriculo').value='';
     document.getElementById('cad-mot-form').style.display='none';
@@ -3053,31 +3057,27 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">TIPO DE VEÍCULO *</label>
-        <select class="form-input" id="mot-tipo-veiculo" style="font-size:14px;padding:12px;border:1px solid #ddd;border-radius:8px;width:100%;font-family:inherit;cursor:pointer">
-          <option value="">-- Selecione o tipo de veículo --</option>
-          <optgroup label="🚨 PESADOS">
-            <option value="Bitrem">Bitrem</option>
-            <option value="Carreta">Carreta</option>
-            <option value="Carreta 4º Eixo">Carreta 4º Eixo</option>
-            <option value="Carreta LS">Carreta LS</option>
-            <option value="Rodotrem">Rodotrem</option>
-            <option value="Vanderléia">Vanderléia</option>
-          </optgroup>
-          <optgroup label="🚦 MÉDIOS">
-            <option value="Bitruck">Bitruck</option>
-            <option value="Truck">Truck</option>
-          </optgroup>
-          <optgroup label="🚘 LEVES">
-            <option value="3/4">3/4</option>
-            <option value="Fiorino">Fiorino</option>
-            <option value="Toco">Toco</option>
-            <option value="VLC">VLC</option>
-          </optgroup>
-        </select>
+        <label class="form-label">TIPOS DE VEÍCULO COM EXPERIÊNCIA * <span style="font-weight:400;color:#aaa;text-transform:none">(selecione todos que já dirigiu)</span></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <div style="grid-column:1/-1;font-size:12px;font-weight:700;color:#2d8c3e">PESADOS</div>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Bitrem" onclick="this.classList.toggle('selected')">Bitrem</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Carreta" onclick="this.classList.toggle('selected')">Carreta</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Carreta 4º Eixo" onclick="this.classList.toggle('selected')">Carreta 4º Eixo</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Carreta LS" onclick="this.classList.toggle('selected')">Carreta LS</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Rodotrem" onclick="this.classList.toggle('selected')">Rodotrem</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Vanderléia" onclick="this.classList.toggle('selected')">Vanderléia</button>
+          <div style="grid-column:1/-1;font-size:12px;font-weight:700;color:#2d8c3e;margin-top:8px">MÉDIOS</div>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Bitruck" onclick="this.classList.toggle('selected')">Bitruck</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Truck" onclick="this.classList.toggle('selected')">Truck</button>
+          <div style="grid-column:1/-1;font-size:12px;font-weight:700;color:#2d8c3e;margin-top:8px">LEVES</div>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="3/4" onclick="this.classList.toggle('selected')">3/4</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Fiorino" onclick="this.classList.toggle('selected')">Fiorino</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Toco" onclick="this.classList.toggle('selected')">Toco</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="VLC" onclick="this.classList.toggle('selected')">VLC</button>
+        </div>
       </div>
       <div class="form-group"><label class="form-label">CIDADE / ESTADO *</label><input class="form-input" id="mot-cidade" placeholder="Ex: Sobral — CE"/></div>
-      <div class="form-group"><label class="form-label">ANOS DE EXPERIÊNCIA</label><input class="form-input" id="mot-exp" type="number" min="0" max="70" placeholder="Ex: 10"/></div>
+      <div class="form-group"><label class="form-label">ANOS DE EXPERIÊNCIA</label><input class="form-input" id="mot-exp" type="number" min="0" max="70" placeholder="Ex: 10" style="width:100%"/></div>
       <div class="form-group"><label class="form-label">WHATSAPP *</label><input class="form-input" id="mot-wpp" placeholder="(88) 99999-9999" type="tel"/></div>
       <div class="form-group">
         <label class="form-label">CURSOS E CERTIFICAÇÕES <span style="font-weight:400;color:#aaa;text-transform:none">(opcional — marque os que possui)</span></label>
