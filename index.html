@@ -368,7 +368,7 @@ select.form-input option{background:#fff}
       </button>
     </div>
     <div class="btns-sec">
-      <button class="btn-sec" onclick="APP.show('tela-cadastro')"><span class="btn-sec-icon">🏪</span>Sou Prestador</button>
+      <button class="btn-sec" onclick="APP.verificarLoginPrestador()"><span class="btn-sec-icon">🏪</span>Sou Prestador</button>
       <button class="btn-sec" onclick="APP.show('tela-vagas')"><span class="btn-sec-icon">💼</span>Vagas</button>
       <button class="btn-sec" onclick="APP.show('tela-mapa-servicos')"><span class="btn-sec-icon">🗺️</span>Mapa</button>
       <button class="btn-sec" onclick="APP.show('tela-eventos')"><span class="btn-sec-icon">📅</span>Eventos</button>
@@ -1352,7 +1352,7 @@ window.APP={
     const btn=document.getElementById('btn-cad'); btn.disabled=true; btn.textContent='Salvando...';
     try{
       // Primeiro criar o prestador para ter o ID
-      const docRef = await addDoc(collection(db,'prestadores'),{nome,tipo,descricao:desc,tags_servicos:[...tagsCadSel],whatsapp:document.getElementById('cad-wpp').value.trim(),instagram:document.getElementById('cad-ig').value.trim(),endereco:document.getElementById('cad-end').value.trim(),lat:parseFloat(document.getElementById('cad-lat').value)||null,lng:parseFloat(document.getElementById('cad-lng').value)||null,abre:document.getElementById('cad-abre').value,fecha:document.getElementById('cad-fecha').value,aberto24h:document.getElementById('cad-24h').checked,fotos:[],data:new Date().toISOString()});
+      const docRef = await addDoc(collection(db,'prestadores'),{nome,tipo,descricao:desc,tags_servicos:[...tagsCadSel],whatsapp:document.getElementById('cad-wpp').value.trim(),instagram:document.getElementById('cad-ig').value.trim(),endereco:document.getElementById('cad-end').value.trim(),lat:parseFloat(document.getElementById('cad-lat').value)||null,lng:parseFloat(document.getElementById('cad-lng').value)||null,abre:document.getElementById('cad-abre').value,fecha:document.getElementById('cad-fecha').value,aberto24h:document.getElementById('cad-24h').checked,fotos:[],data:new Date().toISOString(),responsavel_nome:usuarioNome||'',responsavel_email:usuarioEmail||'',responsavel_uid:usuarioId||''});
       // Upload das fotos se houver
       if(this._fotosParaUpload.length > 0){
         btn.textContent='📤 Enviando fotos...';
@@ -2729,6 +2729,40 @@ window.APP.filtrarMotoristas=function(){
 };
 window.APP.delMotorista=async function(id){if(!confirm('Excluir?'))return;try{await deleteDoc(doc(db,'motoristas',id));await carregarMotoristas();}catch(e){alert('Erro.');}};
 
+// ===== PRESTADORES - VERIFICAÇÃO E TERMOS =====
+window.APP.verificarLoginPrestador=async function(){
+  if(!usuarioLogado){
+    APP.loginGoogle();
+    return;
+  }
+  document.getElementById('modal-termos-prestador-overlay').style.display='flex';
+  document.getElementById('check-termos-prestador').checked=false;
+  document.getElementById('btn-aceitar-termos-prestador').disabled=true;
+  document.getElementById('btn-aceitar-termos-prestador').style.opacity='.5';
+  document.getElementById('btn-aceitar-termos-prestador').style.cursor='not-allowed';
+};
+window.APP.fecharTermosPrestador=function(){
+  document.getElementById('modal-termos-prestador-overlay').style.display='none';
+};
+window.APP.abrirCadPrestadorApos=function(){
+  document.getElementById('modal-termos-prestador-overlay').style.display='none';
+  APP.show('tela-cadastro');
+};
+document.addEventListener('change',function(e){
+  if(e.target.id==='check-termos-prestador'){
+    const btn=document.getElementById('btn-aceitar-termos-prestador');
+    if(e.target.checked){
+      btn.disabled=false;
+      btn.style.opacity='1';
+      btn.style.cursor='pointer';
+    }else{
+      btn.disabled=true;
+      btn.style.opacity='.5';
+      btn.style.cursor='not-allowed';
+    }
+  }
+});
+
 // ===== NOTÍCIAS =====
 let todasNoticias=[];
 const TEMAS_NOTICIAS={
@@ -3285,6 +3319,46 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
 <style>
 @keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
+
+<!-- MODAL DE TERMOS PARA PRESTADORES -->
+<div id="modal-termos-prestador-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:99998;align-items:center;justify-content:center;padding:16px;overflow-y:auto">
+  <div style="background:#fff;border-radius:16px;max-width:420px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:popIn .4s ease-out;margin:20px 0">
+    <div style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);padding:24px 20px;text-align:center">
+      <div style="font-size:40px;margin-bottom:12px">⚖️</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Termos de Responsabilidade</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85)">Antes de cadastrar seu serviço</div>
+    </div>
+    <div style="padding:20px;max-height:300px;overflow-y:auto">
+      <div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px">
+        <strong>Ao prosseguir, você declara que:</strong>
+        <ul style="margin:12px 0;padding-left:20px">
+          <li>As informações cadastradas são verdadeiras e precisas.</li>
+          <li>Você tem autorização legal para cadastrar este estabelecimento/serviço.</li>
+          <li>Você é o responsável pelas informações fornecidas.</li>
+          <li>Você concorda em cumprir as políticas da plataforma Tr.Alienigena.</li>
+          <li>Você entende que dados falsos ou não autorizados podem resultar em bloqueio.</li>
+        </ul>
+      </div>
+      <div style="background:#fff3e0;border-left:4px solid #f59e0b;padding:12px;border-radius:4px;font-size:12px;color:#e65100;margin-bottom:16px">
+        <strong>⚠️ Aviso:</strong> Seu nome, e-mail e ID de autenticação serão registrados como responsáveis por este cadastro para fins de rastreabilidade e segurança.
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:16px">
+        <input type="checkbox" id="check-termos-prestador" style="margin-top:3px;cursor:pointer"/>
+        <label for="check-termos-prestador" style="font-size:12px;color:#666;cursor:pointer;flex:1">
+          Declaro que li e concordo com os termos acima
+        </label>
+      </div>
+    </div>
+    <div style="padding:16px;border-top:1px solid #eee;display:flex;gap:8px">
+      <button onclick="APP.fecharTermosPrestador()" style="flex:1;background:#f0f0f0;border:none;border-radius:8px;color:#666;padding:12px;font-size:13px;font-weight:700;cursor:pointer">
+        Cancelar
+      </button>
+      <button onclick="APP.abrirCadPrestadorApos()" id="btn-aceitar-termos-prestador" disabled style="flex:1;background:#2d8c3e;border:none;border-radius:8px;color:#fff;padding:12px;font-size:13px;font-weight:700;cursor:not-allowed;opacity:.5">
+        Aceitar e Continuar
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL DE APOIO -->
 <div id="modal-apoio-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:99997;align-items:center;justify-content:center;padding:16px">
