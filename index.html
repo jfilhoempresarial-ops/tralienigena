@@ -243,7 +243,7 @@ select.form-input option{background:#fff}
 <body>
 
 <!-- ===== MODAL DE CONSENTIMENTO LGPD ===== -->
-<div id="modal-consentimento-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px">
+<div id="modal-consentimento-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:99999;display:none;align-items:center;justify-content:center;padding:16px">
   <div style="background:#fff;border-radius:16px;max-width:420px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)">
     <div style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);padding:24px 20px;text-align:center">
       <div style="font-size:40px;margin-bottom:10px">🔒</div>
@@ -1062,7 +1062,8 @@ function renderAvsRecentes(){
     const t=TIPOS[av.prestador_tipo]||TIPOS.outros;
     const stars='★'.repeat(Math.round(av.nota_geral||0))+'☆'.repeat(5-Math.round(av.nota_geral||0));
     const clickable = av.prestador_id ? `onclick="APP.detalhe('${av.prestador_id}','inicio')" style="cursor:pointer"` : '';
-    return `<div class="av-mini" ${clickable}><div class="av-mini-top"><div><div class="av-mini-nome">${av.prestador_nome||'—'}</div><div class="av-mini-tipo" style="color:${t.color}">${t.label}</div></div><div class="av-mini-stars">${stars}</div></div>${av.texto?`<div class="av-mini-txt">${av.texto.substring(0,90)}${av.texto.length>90?'...':''}</div>`:''}<div class="av-mini-autor">por ${av.autor||'Anônimo'} • ${av.data?new Date(av.data).toLocaleDateString('pt-BR'):''}</div></div>`;
+    const cidadeAutor = av.cidade_autor || 'Desconhecida';
+    return `<div class="av-mini" ${clickable}><div class="av-mini-top"><div><div class="av-mini-nome">${av.prestador_nome||'—'}</div><div class="av-mini-tipo" style="color:${t.color}">${t.label}</div></div><div class="av-mini-stars">${stars}</div></div>${av.texto?`<div class="av-mini-txt">${av.texto.substring(0,90)}${av.texto.length>90?'...':''}</div>`:''}<div class="av-mini-autor">por ${av.autor||'Anônimo'} (${cidadeAutor}) • ${av.data?new Date(av.data).toLocaleDateString('pt-BR'):''}</div></div>`;
   }).join('');
 }
 
@@ -1675,6 +1676,7 @@ window.APP={
   },
 
   async enviarAv(){
+    if(!usuarioLogado){alert('Você precisa fazer login com Google para enviar uma avaliação.');await APP.loginGoogle();return;}
     const autorVal = document.getElementById('av-autor').value.trim();
     const telVal = document.getElementById('av-tel').value.trim();
     if(!notaGeral){alert('Dê a nota geral.');return;}
@@ -1689,7 +1691,7 @@ window.APP={
         const exist = prestadores.find(p=>p.nome.toLowerCase().trim()===ai.nome.toLowerCase().trim()&&(p.endereco||'').toLowerCase().includes((ai.lat||'').toString().substring(0,5)));
         if(exist){ prestId=exist.id; prestNome=exist.nome; prestTipo=exist.tipo||'outros'; }
         else {
-          const ref = await addDoc(collection(db,'prestadores'),{nome:ai.nome,tipo:ai.tipo||'outros',endereco:ai.endereco,lat:ai.lat||null,lng:ai.lng||null,whatsapp:'',descricao:'',tags_servicos:[],data:new Date().toISOString(),cadastrado_via_internet:true});
+          const ref = await addDoc(collection(db,'prestadores'),{nome:ai.nome,tipo:ai.tipo||'outros',endereco:ai.endereco,lat:ai.lat||null,lng:ai.lng||null,whatsapp:'',descricao:'',tags_servicos:[],data:new Date().toISOString(),cadastrado_via_internet:true,autor_email:usuarioEmail,autor_id:usuarioId});
           prestId=ref.id; prestNome=ai.nome; prestTipo=ai.tipo||'outros'; await carregarTudo();
         }
       } else if(!prestId){
@@ -1703,8 +1705,8 @@ window.APP={
           prestId=ref.id;prestNome=nomePrest;prestTipo=tp; await carregarTudo();
         }
       } else { const p=prestadores.find(x=>x.id===prestId); prestNome=p?.nome||'';prestTipo=p?.tipo||'outros'; }
-      await addDoc(collection(db,'avaliacoes'),{prestador_id:prestId,prestador_nome:prestNome,prestador_tipo:prestTipo,nota_geral:notaGeral,criterios:{...notasCrit},texto:document.getElementById('av-texto').value.trim(),autor:document.getElementById('av-autor').value.trim(),telefone_autor:document.getElementById('av-tel').value.trim(),data:new Date().toISOString()});
-      APP.mostrarPopup('⭐','Avaliação registrada!','Obrigado, brother! Sua avaliação já está disponível para outros motoristas.'); ['av-busca','av-texto','av-autor','av-tel','av-man-nome','av-man-cidade'].forEach(i=>document.getElementById(i).value=''); document.getElementById('av-alvo-box').style.display='none'; document.getElementById('av-manual-box').style.display='none'; document.getElementById('av-form-box').style.display='none'; document.getElementById('av-sug').style.display='none'; window._avAlvoId=null; notaGeral=0; notasCrit={}; await carregarTudo();
+      await addDoc(collection(db,'avaliacoes'),{prestador_id:prestId,prestador_nome:prestNome,prestador_tipo:prestTipo,nota_geral:notaGeral,criterios:{...notasCrit},texto:document.getElementById('av-texto').value.trim(),autor:document.getElementById('av-autor').value.trim(),telefone_autor:document.getElementById('av-tel').value.trim(),data:new Date().toISOString(),autor_email:usuarioEmail,autor_id:usuarioId,autor_nome_google:usuarioNome,cidade_autor:document.getElementById('busca-local').value.trim()||'Desconhecida'});
+      APP.mostrarPopup('⭐','Avaliação registrada!','Sua avaliação ('+document.getElementById('av-autor').value.trim()+' - '+document.getElementById('av-busca').value.trim()+') já está disponível para outros motoristas.'); ['av-busca','av-texto','av-autor','av-tel','av-man-nome','av-man-cidade'].forEach(i=>document.getElementById(i).value=''); document.getElementById('av-alvo-box').style.display='none'; document.getElementById('av-manual-box').style.display='none'; document.getElementById('av-form-box').style.display='none'; document.getElementById('av-sug').style.display='none'; window._avAlvoId=null; notaGeral=0; notasCrit={}; await carregarTudo();
       setTimeout(()=>APP.inicio(),3200);
     }catch(e){alert('Erro ao enviar.');}
     btn.disabled=false; btn.textContent='⭐ ENVIAR AVALIAÇÃO';
@@ -2675,6 +2677,7 @@ window.APP.selecionarCurriculo=async function(event){
   }catch(e){status.style.color='#f59e0b';status.style.background='#fff8e1';status.textContent='⚠️ Preencha os campos manualmente — PDF será anexado.';}
 };
 window.APP.salvarMotorista=async function(){
+  if(!usuarioLogado){alert('Você precisa fazer login com Google para cadastrar como motorista.');await APP.loginGoogle();return;}
   const nome=document.getElementById('mot-nome').value.trim();
   const cnh=document.getElementById('mot-cnh').value;
   const wpp=document.getElementById('mot-wpp').value.trim();
