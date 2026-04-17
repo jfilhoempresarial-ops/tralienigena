@@ -368,7 +368,7 @@ select.form-input option{background:#fff}
       </button>
     </div>
     <div class="btns-sec">
-      <button class="btn-sec" onclick="APP.verificarLoginPrestador()"><span class="btn-sec-icon">🏪</span>Sou Prestador</button>
+      <button class="btn-sec" onclick="APP.show('tela-cadastro')"><span class="btn-sec-icon">🏪</span>Sou Prestador</button>
       <button class="btn-sec" onclick="APP.show('tela-vagas')"><span class="btn-sec-icon">💼</span>Vagas</button>
       <button class="btn-sec" onclick="APP.show('tela-mapa-servicos')"><span class="btn-sec-icon">🗺️</span>Mapa</button>
       <button class="btn-sec" onclick="APP.show('tela-eventos')"><span class="btn-sec-icon">📅</span>Eventos</button>
@@ -1349,6 +1349,16 @@ window.APP={
   async cadastrar(){
     const nome=document.getElementById('cad-nome').value.trim(); const tipo=document.getElementById('cad-tipo').value; const desc=document.getElementById('cad-desc').value.trim();
     if(!nome||!tipo||!desc){alert('Preencha Nome, Tipo e Descrição.');return;}
+    // Abrir modal de termos antes de salvar
+    document.getElementById('modal-termos-prestador-overlay').style.display='flex';
+    document.getElementById('termos-nome').value='';
+    document.getElementById('termos-email').value='';
+    document.getElementById('check-termos-prestador').checked=false;
+    document.getElementById('btn-aceitar-termos-prestador').disabled=true;
+    document.getElementById('btn-aceitar-termos-prestador').style.opacity='.5';
+    document.getElementById('btn-aceitar-termos-prestador').style.cursor='not-allowed';
+    window._cadastroPendente={nome,tipo,desc};
+    return;
     const btn=document.getElementById('btn-cad'); btn.disabled=true; btn.textContent='Salvando...';
     try{
       // Primeiro criar o prestador para ter o ID
@@ -2731,22 +2741,35 @@ window.APP.delMotorista=async function(id){if(!confirm('Excluir?'))return;try{aw
 
 // ===== PRESTADORES - VERIFICAÇÃO E TERMOS =====
 window.APP.verificarLoginPrestador=function(){
-  if(!usuarioLogado){
-    APP.loginGoogle();
-    return;
-  }
-  document.getElementById('modal-termos-prestador-overlay').style.display='flex';
-  document.getElementById('check-termos-prestador').checked=false;
-  document.getElementById('btn-aceitar-termos-prestador').disabled=true;
-  document.getElementById('btn-aceitar-termos-prestador').style.opacity='.5';
-  document.getElementById('btn-aceitar-termos-prestador').style.cursor='not-allowed';
+  // Função removida - agora abre a tela direto
 };
 window.APP.fecharTermosPrestador=function(){
   document.getElementById('modal-termos-prestador-overlay').style.display='none';
+  window._cadastroPendente=null;
 };
-window.APP.abrirCadPrestadorApos=function(){
+window.APP.salvarTermosPrestador=async function(){
+  const nome=document.getElementById('termos-nome').value.trim();
+  const email=document.getElementById('termos-email').value.trim();
+  if(!nome||!email){alert('Preencha seu nome e e-mail.');return;}
+  if(!email.includes('@')){alert('E-mail invalido.');return;}
+  if(!window._cadastroPendente){alert('Erro: dados do cadastro nao encontrados.');return;}
+  const cad=window._cadastroPendente;
   document.getElementById('modal-termos-prestador-overlay').style.display='none';
-  APP.show('tela-cadastro');
+  const btn=document.getElementById('btn-cad'); btn.disabled=true; btn.textContent='Salvando...';
+  try{
+    const docRef = await addDoc(collection(db,'prestadores'),{nome:cad.nome,tipo:cad.tipo,descricao:cad.desc,tags_servicos:[...tagsCadSel],whatsapp:document.getElementById('cad-wpp').value.trim(),instagram:document.getElementById('cad-ig').value.trim(),endereco:document.getElementById('cad-end').value.trim(),lat:parseFloat(document.getElementById('cad-lat').value)||null,lng:parseFloat(document.getElementById('cad-lng').value)||null,abre:document.getElementById('cad-abre').value,fecha:document.getElementById('cad-fecha').value,aberto24h:document.getElementById('cad-24h').checked,fotos:[],data:new Date().toISOString(),responsavel_nome:nome,responsavel_email:email,responsavel_uid:''});
+    alert('Cadastro realizado com sucesso! Seu servico aparecera em breve apos verificacao.');
+    document.getElementById('cad-form').reset();
+    tagsCadSel=[];
+    APP.show('tela-inicio');
+    await carregarPrestadores();
+  }catch(e){
+    alert('Erro ao salvar: '+e.message);
+  }finally{
+    btn.disabled=false;
+    btn.textContent='✅ CADASTRAR MEU SERVICO';
+    window._cadastroPendente=null;
+  }
 };
 document.addEventListener('change',function(e){
   if(e.target.id==='check-termos-prestador'){
@@ -3328,7 +3351,18 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
       <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Termos de Responsabilidade</div>
       <div style="font-size:12px;color:rgba(255,255,255,.85)">Antes de cadastrar seu serviço</div>
     </div>
-    <div style="padding:20px;max-height:300px;overflow-y:auto">
+    <div style="padding:20px;max-height:400px;overflow-y:auto">
+      <div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px">
+        <strong>Informações de Responsabilidade:</strong>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">Seu Nome *</label>
+        <input type="text" id="termos-nome" placeholder="Digite seu nome completo" style="background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none"/>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">Seu E-mail *</label>
+        <input type="email" id="termos-email" placeholder="Digite seu e-mail" style="background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none"/>
+      </div>
       <div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px">
         <strong>Ao prosseguir, você declara que:</strong>
         <ul style="margin:12px 0;padding-left:20px">
@@ -3336,11 +3370,7 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
           <li>Você tem autorização legal para cadastrar este estabelecimento/serviço.</li>
           <li>Você é o responsável pelas informações fornecidas.</li>
           <li>Você concorda em cumprir as políticas da plataforma Tr.Alienigena.</li>
-          <li>Você entende que dados falsos ou não autorizados podem resultar em bloqueio.</li>
         </ul>
-      </div>
-      <div style="background:#fff3e0;border-left:4px solid #f59e0b;padding:12px;border-radius:4px;font-size:12px;color:#e65100;margin-bottom:16px">
-        <strong>⚠️ Aviso:</strong> Seu nome, e-mail e ID de autenticação serão registrados como responsáveis por este cadastro para fins de rastreabilidade e segurança.
       </div>
       <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:16px">
         <input type="checkbox" id="check-termos-prestador" style="margin-top:3px;cursor:pointer"/>
@@ -3353,8 +3383,8 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
       <button onclick="APP.fecharTermosPrestador()" style="flex:1;background:#f0f0f0;border:none;border-radius:8px;color:#666;padding:12px;font-size:13px;font-weight:700;cursor:pointer">
         Cancelar
       </button>
-      <button onclick="APP.abrirCadPrestadorApos()" id="btn-aceitar-termos-prestador" disabled style="flex:1;background:#2d8c3e;border:none;border-radius:8px;color:#fff;padding:12px;font-size:13px;font-weight:700;cursor:not-allowed;opacity:.5">
-        Aceitar e Continuar
+      <button onclick="APP.salvarTermosPrestador()" id="btn-aceitar-termos-prestador" disabled style="flex:1;background:#2d8c3e;border:none;border-radius:8px;color:#fff;padding:12px;font-size:13px;font-weight:700;cursor:not-allowed;opacity:.5">
+        Confirmar
       </button>
     </div>
   </div>
