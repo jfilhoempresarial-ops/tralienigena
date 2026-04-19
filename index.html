@@ -563,7 +563,7 @@ select.form-input option{background:#fff}
         <textarea class="form-input" id="cad-desc" placeholder="Descreva o que você faz: marcas, serviços, diferenciais. Ex: mecânico Volvo e Scania, câmbio, freio, suspensão..."></textarea>
       </div>
       <div class="form-group">
-        <label class="form-label">WHATSAPP (opcional)</label>
+        <label class="form-label">WHATSAPP * <span style="font-weight:400;color:#dc2626;font-size:10px;text-transform:none">obrigatório</span></label>
         <input class="form-input" id="cad-wpp" placeholder="(88) 99999-9999" type="tel"/>
       </div>
       <div class="form-group">
@@ -571,7 +571,7 @@ select.form-input option{background:#fff}
         <input class="form-input" id="cad-ig" placeholder="@nomedoperfil"/>
       </div>
       <div class="form-group">
-        <label class="form-label">ENDEREÇO (opcional)</label>
+        <label class="form-label">ENDEREÇO * <span style="font-weight:400;color:#dc2626;font-size:10px;text-transform:none">obrigatório</span></label>
         <input class="form-input" id="cad-end" placeholder="Rua, número, cidade — UF" oninput="APP.geocode()"/>
         <button type="button" onclick="APP.gps('cadastro')" style="margin-top:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#2d8c3e;width:100%">📡 Usar minha localização atual</button>
         <div class="gps-status" id="gps-cad"></div>
@@ -585,6 +585,24 @@ select.form-input option{background:#fff}
       <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;color:#555;cursor:pointer">
         <input type="checkbox" id="cad-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
       </label>
+      <!-- DIAS DE FUNCIONAMENTO -->
+      <div class="form-group">
+        <label class="form-label">DIAS DE FUNCIONAMENTO</label>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+          <label id="label-seg-sab" style="display:flex;align-items:center;gap:10px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;user-select:none">
+            <input type="checkbox" id="cad-dias-seg-sab" style="accent-color:#2d8c3e;width:17px;height:17px;flex-shrink:0" onchange="APP.toggleDias('seg-sab')">
+            📅 Segunda a Sábado
+          </label>
+          <label id="label-dom-fer" style="display:flex;align-items:center;gap:10px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;user-select:none">
+            <input type="checkbox" id="cad-dias-dom-fer" style="accent-color:#2d8c3e;width:17px;height:17px;flex-shrink:0" onchange="APP.toggleDias('dom-fer')">
+            🌟 Domingos e Feriados
+          </label>
+          <label id="label-todos-dias" style="display:flex;align-items:center;gap:10px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;user-select:none">
+            <input type="checkbox" id="cad-dias-todos" style="accent-color:#2d8c3e;width:17px;height:17px;flex-shrink:0" onchange="APP.toggleDias('todos')">
+            🗓️ Todos os dias
+          </label>
+        </div>
+      </div>
       <div class="form-group">
         <label class="form-label">FOTOS DO LOCAL (até 5 fotos)</label>
         <div class="foto-upload-area" onclick="document.getElementById('input-fotos-cad').click()">
@@ -1127,6 +1145,26 @@ window.APP={
       }catch(e){el.textContent='✅ Localização obtida!';}
     },(err)=>{ const e=document.getElementById(statusId); e.style.display='block'; e.textContent=err.code===1?'❌ GPS negado. Ative nas configurações.':'❌ Erro ao localizar.'; },{enableHighAccuracy:true,timeout:15000});
   },
+  toggleDias(opcao){
+    const segSab=document.getElementById('cad-dias-seg-sab');
+    const domFer=document.getElementById('cad-dias-dom-fer');
+    const todos=document.getElementById('cad-dias-todos');
+    const lSegSab=document.getElementById('label-seg-sab');
+    const lDomFer=document.getElementById('label-dom-fer');
+    const lTodos=document.getElementById('label-todos-dias');
+    if(opcao==='todos'){
+      if(todos.checked){ segSab.checked=true; domFer.checked=true; }
+      else{ segSab.checked=false; domFer.checked=false; }
+    } else {
+      if(segSab.checked && domFer.checked){ todos.checked=true; }
+      else{ todos.checked=false; }
+    }
+    [lSegSab,lDomFer,lTodos].forEach(l=>l.style.border='2px solid #e0e0e0');
+    [lSegSab,lDomFer,lTodos].forEach(l=>l.style.background='#f5f5f5');
+    if(segSab.checked){lSegSab.style.border='2px solid #2d8c3e';lSegSab.style.background='#f0fdf4';}
+    if(domFer.checked){lDomFer.style.border='2px solid #2d8c3e';lDomFer.style.background='#f0fdf4';}
+    if(todos.checked){lTodos.style.border='2px solid #2d8c3e';lTodos.style.background='#f0fdf4';}
+  },
   geocode(){ clearTimeout(geocTimer); geocTimer=setTimeout(async()=>{ const end=document.getElementById('cad-end').value.trim(); if(end.length<5) return; try{ const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(end+', Brasil')}&format=json&limit=1`); const d=await r.json(); if(d?.[0]){ const lat=parseFloat(d[0].lat),lng=parseFloat(d[0].lon); document.getElementById('cad-lat').value=lat; document.getElementById('cad-lng').value=lng; if(mapaCad){mapaCad.setView([lat,lng],15); if(marcCad) marcCad.remove(); marcCad=L.marker([lat,lng]).addTo(mapaCad).bindPopup('Seu local').openPopup();} } }catch(e){} },700); },
   async buscar(){
     const txt=document.getElementById('busca-texto').value.trim().toLowerCase(); const loc=document.getElementById('busca-local').value.trim();
@@ -1353,7 +1391,11 @@ window.APP={
 
   async cadastrar(){
     const nome=document.getElementById('cad-nome').value.trim(); const tipo=document.getElementById('cad-tipo').value; const desc=document.getElementById('cad-desc').value.trim();
+    const wpp=document.getElementById('cad-wpp').value.trim();
+    const endVal=document.getElementById('cad-end').value.trim();
     if(!nome||!tipo||!desc){alert('Preencha Nome, Tipo e Descrição.');return;}
+    if(!wpp){alert('WhatsApp é obrigatório para que motoristas possam te chamar.');return;}
+    if(!endVal){alert('Endereço é obrigatório para aparecer no mapa.');return;}
     // Abrir modal de termos antes de salvar
     document.getElementById('modal-termos-prestador-overlay').style.display='flex';
     document.getElementById('termos-nome').value='';
@@ -2762,7 +2804,10 @@ window.APP.salvarTermosPrestador=async function(){
   document.getElementById('modal-termos-prestador-overlay').style.display='none';
   const btn=document.getElementById('btn-cad'); btn.disabled=true; btn.textContent='Salvando...';
   try{
-    const docRef = await addDoc(collection(db,'prestadores'),{nome:cad.nome,tipo:cad.tipo,descricao:cad.desc,tags_servicos:[...tagsCadSel],whatsapp:document.getElementById('cad-wpp').value.trim(),instagram:document.getElementById('cad-ig').value.trim(),endereco:document.getElementById('cad-end').value.trim(),lat:parseFloat(document.getElementById('cad-lat').value)||null,lng:parseFloat(document.getElementById('cad-lng').value)||null,abre:document.getElementById('cad-abre').value,fecha:document.getElementById('cad-fecha').value,aberto24h:document.getElementById('cad-24h').checked,fotos:[],data:new Date().toISOString(),responsavel_nome:nome,responsavel_email:email,responsavel_uid:''});
+    const diasFuncionamento=[];
+    if(document.getElementById('cad-dias-seg-sab').checked) diasFuncionamento.push('Seg–Sáb');
+    if(document.getElementById('cad-dias-dom-fer').checked) diasFuncionamento.push('Dom/Feriados');
+    const docRef = await addDoc(collection(db,'prestadores'),{nome:cad.nome,tipo:cad.tipo,descricao:cad.desc,tags_servicos:[...tagsCadSel],whatsapp:document.getElementById('cad-wpp').value.trim(),instagram:document.getElementById('cad-ig').value.trim(),endereco:document.getElementById('cad-end').value.trim(),lat:parseFloat(document.getElementById('cad-lat').value)||null,lng:parseFloat(document.getElementById('cad-lng').value)||null,abre:document.getElementById('cad-abre').value,fecha:document.getElementById('cad-fecha').value,aberto24h:document.getElementById('cad-24h').checked,dias_funcionamento:diasFuncionamento,fotos:[],data:new Date().toISOString(),responsavel_nome:nome,responsavel_email:email,responsavel_uid:''});
     alert('Cadastro realizado com sucesso! Seu servico aparecera em breve apos verificacao.');
     // Limpar os campos do formulário
     document.getElementById('cad-nome').value='';
@@ -2776,6 +2821,8 @@ window.APP.salvarTermosPrestador=async function(){
     document.getElementById('cad-abre').value='';
     document.getElementById('cad-fecha').value='';
     document.getElementById('cad-24h').checked=false;
+    ['cad-dias-seg-sab','cad-dias-dom-fer','cad-dias-todos'].forEach(id=>{document.getElementById(id).checked=false;});
+    ['label-seg-sab','label-dom-fer','label-todos-dias'].forEach(id=>{const l=document.getElementById(id);if(l){l.style.border='2px solid #e0e0e0';l.style.background='#f5f5f5';}});
     document.getElementById('fotos-preview-cad').innerHTML='';
     document.getElementById('input-fotos-cad').value='';
     tagsCadSel=[];
@@ -3362,47 +3409,51 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
 </style>
 
 <!-- MODAL DE TERMOS PARA PRESTADORES -->
-<div id="modal-termos-prestador-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:99998;align-items:center;justify-content:center;padding:16px;overflow-y:auto">
-  <div style="background:#fff;border-radius:16px;max-width:420px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:popIn .4s ease-out;margin:20px 0">
-    <div style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);padding:24px 20px;text-align:center">
-      <div style="font-size:40px;margin-bottom:12px">⚖️</div>
-      <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Termos de Responsabilidade</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.85)">Antes de cadastrar seu serviço</div>
+<div id="modal-termos-prestador-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:99998;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto">
+  <div style="background:#fff;border-radius:16px;max-width:440px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:popIn .4s ease-out;margin:20px 0">
+    <div style="background:linear-gradient(135deg,#1a3a1a,#2d8c3e);padding:20px;text-align:center">
+      <div style="font-size:36px;margin-bottom:8px">⚖️</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:2px">Termo de Responsabilidade</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.8)">Leia com atenção antes de confirmar</div>
     </div>
-    <div style="padding:20px;max-height:400px;overflow-y:auto">
-      <div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px">
-        <strong>Informações de Responsabilidade:</strong>
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">Seu Nome *</label>
-        <input type="text" id="termos-nome" placeholder="Digite seu nome completo" style="background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none"/>
+    <div style="padding:18px;max-height:60vh;overflow-y:auto">
+      <!-- DADOS DO RESPONSÁVEL -->
+      <div style="font-size:11px;font-weight:700;color:#2d8c3e;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">📋 Dados do Responsável pelo Cadastro</div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">Nome Completo *</label>
+        <input type="text" id="termos-nome" placeholder="Seu nome completo" style="background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none;font-family:'Barlow',sans-serif"/>
       </div>
       <div style="margin-bottom:16px">
-        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">Seu E-mail *</label>
-        <input type="email" id="termos-email" placeholder="Digite seu e-mail" style="background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none"/>
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">E-mail *</label>
+        <input type="email" id="termos-email" placeholder="Seu e-mail" style="background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none;font-family:'Barlow',sans-serif"/>
       </div>
-      <div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px">
-        <strong>Ao prosseguir, você declara que:</strong>
-        <ul style="margin:12px 0;padding-left:20px">
-          <li>As informações cadastradas são verdadeiras e precisas.</li>
-          <li>Você tem autorização legal para cadastrar este estabelecimento/serviço.</li>
-          <li>Você é o responsável pelas informações fornecidas.</li>
-          <li>Você concorda em cumprir as políticas da plataforma Tr.Alienigena.</li>
-        </ul>
+      <!-- TEXTO DO TERMO -->
+      <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:8px">TERMO DE RESPONSABILIDADE DE CADASTRO — TR.ALIENIGENA</div>
+        <div style="font-size:11px;color:#555;line-height:1.7">
+          Ao confirmar este cadastro, o responsável declara, para todos os fins de direito, que:<br/><br/>
+          <strong>1.</strong> Todas as informações fornecidas são <strong>verdadeiras, atualizadas e precisas</strong>, assumindo total responsabilidade civil e criminal por qualquer dado falso ou enganoso cadastrado na plataforma.<br/><br/>
+          <strong>2.</strong> Possui <strong>autorização legal</strong> para representar e cadastrar o estabelecimento ou serviço indicado, estando ciente de que o cadastro indevido de terceiros sem autorização pode configurar crime previsto no Código Penal Brasileiro.<br/><br/>
+          <strong>3.</strong> Reconhece que a plataforma <strong>Tr.Alienigena</strong> atua apenas como intermediária de informações, sendo o cadastrante o único responsável pelo conteúdo inserido, isentando a plataforma de qualquer responsabilidade por informações incorretas.<br/><br/>
+          <strong>4.</strong> Compromete-se a <strong>manter as informações atualizadas</strong> e a notificar a plataforma em caso de encerramento ou alteração relevante do serviço.<br/><br/>
+          <strong>5.</strong> Está ciente de que dados do cadastro — incluindo nome e e-mail do responsável — poderão ser utilizados pela Tr.Alienigena para verificação e contato, nos termos da Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018).
+        </div>
       </div>
-      <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:16px">
-        <input type="checkbox" id="check-termos-prestador" style="margin-top:3px;cursor:pointer"/>
-        <label for="check-termos-prestador" style="font-size:12px;color:#666;cursor:pointer;flex:1">
-          Declaro que li e concordo com os termos acima
+      <!-- CHECKBOX -->
+      <div style="display:flex;gap:10px;align-items:flex-start;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:4px">
+        <input type="checkbox" id="check-termos-prestador" style="margin-top:2px;cursor:pointer;width:18px;height:18px;accent-color:#2d8c3e;flex-shrink:0"/>
+        <label for="check-termos-prestador" style="font-size:12px;color:#166534;cursor:pointer;flex:1;line-height:1.5;font-weight:600">
+          Li, compreendi e concordo com todas as cláusulas deste Termo de Responsabilidade, assumindo as responsabilidades descritas acima.
         </label>
       </div>
+      <div style="font-size:10px;color:#aaa;text-align:center;margin-top:6px">Data e hora serão registradas automaticamente junto ao cadastro</div>
     </div>
-    <div style="padding:16px;border-top:1px solid #eee;display:flex;gap:8px">
+    <div style="padding:14px 18px;border-top:1px solid #eee;display:flex;gap:8px">
       <button onclick="APP.fecharTermosPrestador()" style="flex:1;background:#f0f0f0;border:none;border-radius:8px;color:#666;padding:12px;font-size:13px;font-weight:700;cursor:pointer">
-        Cancelar
+        ✕ Cancelar
       </button>
       <button onclick="APP.salvarTermosPrestador()" id="btn-aceitar-termos-prestador" disabled style="flex:1;background:#2d8c3e;border:none;border-radius:8px;color:#fff;padding:12px;font-size:13px;font-weight:700;cursor:not-allowed;opacity:.5">
-        Confirmar
+        ✅ Confirmar Cadastro
       </button>
     </div>
   </div>
