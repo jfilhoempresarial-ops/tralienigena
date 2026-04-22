@@ -3090,7 +3090,7 @@ window.APP.enviarFormularioRadio=function(tipo){
       data:new Date().toISOString()
     };
     if(!dados.nome||!dados.cidade||!dados.mensagem){
-      return alert(\'Por favor, preencha todos os campos!\');
+      return alert('Por favor, preencha todos os campos!');
     }
   } else if(tipo==='musica'){
     dados={
@@ -3102,7 +3102,7 @@ window.APP.enviarFormularioRadio=function(tipo){
       data:new Date().toISOString()
     };
     if(!dados.nome||!dados.titulo||!dados.artista){
-      return alert(\'Por favor, preencha todos os campos obrigatorios!\');
+      return alert('Por favor, preencha todos os campos obrigatorios!');
     }
   } else if(tipo==='entrevista'){
     dados={
@@ -3113,32 +3113,33 @@ window.APP.enviarFormularioRadio=function(tipo){
       data:new Date().toISOString()
     };
     if(!dados.nome||!dados.whatsapp||!dados.tema){
-      return alert(\'Por favor, preencha todos os campos!\');
+      return alert('Por favor, preencha todos os campos!');
     }
   }
   
-  if(tipo===\'alo\'){
-    const historicoDiv = document.getElementById(\'alo-historico\');
-    historicoDiv.innerHTML = `<p><b>Seu Alô:</b> ${dados.nome} de ${dados.cidade} - \"${dados.mensagem}\" (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
-    document.getElementById(\'alo-nome\').value=\'\';
-    document.getElementById(\'alo-cidade\').value=\'\';
-    document.getElementById(\'alo-msg\').value=\'\';
-  } else if(tipo===\'musica\'){
-    const historicoDiv = document.getElementById(\'musica-historico\');
-    historicoDiv.innerHTML = `<p><b>Sua Música:</b> \"${dados.titulo}\" de ${dados.artista} (Dedicado a: ${dados.dedicacao}) (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
-    document.getElementById(\'musica-nome\').value=\'\';
-    document.getElementById(\'musica-titulo\').value=\'\';
-    document.getElementById(\'musica-artista\').value=\'\';
-    document.getElementById(\'musica-dedicacao\').value=\'\';
-  } else if(tipo===\'entrevista\'){
-    const historicoDiv = document.getElementById(\'entrevista-historico\');
-    historicoDiv.innerHTML = `<p><b>Sua Proposta:</b> ${dados.nome} (${dados.whatsapp}) - Tema: \"${dados.tema}\" (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
-    document.getElementById(\'entrevista-nome\').value=\'\';
-    document.getElementById(\'entrevista-wpp\').value=\'\';
-    document.getElementById(\'entrevista-tema\').value=\'\';
+  if(tipo==='alo'){
+    const historicoDiv = document.getElementById('alo-historico');
+    historicoDiv.innerHTML = `<p><b>Seu Alô:</b> ${dados.nome} de ${dados.cidade} - "${dados.mensagem}" (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
+    document.getElementById('alo-nome').value='';
+    document.getElementById('alo-cidade').value='';
+    document.getElementById('alo-msg').value='';
+  } else if(tipo==='musica'){
+    const historicoDiv = document.getElementById('musica-historico');
+    historicoDiv.innerHTML = `<p><b>Sua Música:</b> "${dados.titulo}" de ${dados.artista} (Dedicado a: ${dados.dedicacao}) (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
+    document.getElementById('musica-nome').value='';
+    document.getElementById('musica-titulo').value='';
+    document.getElementById('musica-artista').value='';
+    document.getElementById('musica-dedicacao').value='';
+  } else if(tipo==='entrevista'){
+    const historicoDiv = document.getElementById('entrevista-historico');
+    historicoDiv.innerHTML = `<p><b>Sua Proposta:</b> ${dados.nome} (${dados.whatsapp}) - Tema: "${dados.tema}" (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
+    document.getElementById('entrevista-nome').value='';
+    document.getElementById('entrevista-wpp').value='';
+    document.getElementById('entrevista-tema').value='';
   }
-  APP.mostrarPopup(\'✅\',\'Formulario Enviado!\',\'Obrigado por participar do Programa de Radio! Entraremos em contato em breve.\');
-}; =====
+  APP.mostrarPopup('✅','Formulário Enviado!','Obrigado por participar do Programa de Rádio! Entraremos em contato em breve.');
+};
+// ===== FIM PROGRAMA DE RÁDIO =====
 
 // Service Worker
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
@@ -3521,7 +3522,7 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
         <input type="text" id="alo-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <input type="text" id="alo-cidade" placeholder="Sua cidade" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <textarea id="alo-msg" placeholder="Seu alô para o programa (máx. 200 caracteres)" maxlength="200" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 80px;"></textarea>
-        <button onclick="APP.enviarFormularioRadio(\'alo\')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Alô</button>
+        <button onclick="APP.enviarFormularioRadio('alo')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Alô</button>
         <div id="alo-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>     </div>
 
       <div id="aba-musica" style="display: none;">
@@ -3530,14 +3531,15 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
         <input type="text" id="musica-titulo" placeholder="Nome da música" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <input type="text" id="musica-artista" placeholder="Artista" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <input type="text" id="musica-dedicacao" placeholder="Para quem você dedica?" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-        <button onclick="APP.enviarFormularioRadio(\'musica\')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Música</button>
+        <button onclick="APP.enviarFormularioRadio('musica')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Música</button>
         <div id="musica-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>     </div>
 
       <div id="aba-entrevista" style="display: none;">
         <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎙️ Participe como Entrevistado</h3>
         <input type="text" id="entrevista-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <input type="text" id="entrevista-wpp" placeholder="Seu WhatsApp" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-        <textarea id="entrevista-tema" placeholder="Qual é seu tema ou história? (máx. 300 caracteres)" maxlength="300" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 100px;"></textarea>        <button onclick="APP.enviarFormularioRadio(\'entrevista\')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Proposta</button>
+        <textarea id="entrevista-tema" placeholder="Qual é seu tema ou história? (máx. 300 caracteres)" maxlength="300" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 100px;"></textarea>
+        <button onclick="APP.enviarFormularioRadio('entrevista')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Proposta</button>
         <div id="entrevista-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>      </div>
     </div>
 
