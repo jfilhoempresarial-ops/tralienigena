@@ -3052,6 +3052,93 @@ window.APP.lojaRenderGrid=function(){
 };
 // ===== FIM LOJA =====
 
+// ===== PROGRAMA DE RÁDIO =====
+window.APP.mostrarAbaRadio=function(aba){
+  document.getElementById('aba-alo').style.display='none';
+  document.getElementById('aba-musica').style.display='none';
+  document.getElementById('aba-entrevista').style.display='none';
+  document.getElementById('btn-alo').style.background='#e5e7eb';
+  document.getElementById('btn-alo').style.color='#1f2937';
+  document.getElementById('btn-musica').style.background='#e5e7eb';
+  document.getElementById('btn-musica').style.color='#1f2937';
+  document.getElementById('btn-entrevista').style.background='#e5e7eb';
+  document.getElementById('btn-entrevista').style.color='#1f2937';
+  
+  if(aba==='alo'){
+    document.getElementById('aba-alo').style.display='block';
+    document.getElementById('btn-alo').style.background='#2d8c3e';
+    document.getElementById('btn-alo').style.color='white';
+  } else if(aba==='musica'){
+    document.getElementById('aba-musica').style.display='block';
+    document.getElementById('btn-musica').style.background='#2d8c3e';
+    document.getElementById('btn-musica').style.color='white';
+  } else if(aba==='entrevista'){
+    document.getElementById('aba-entrevista').style.display='block';
+    document.getElementById('btn-entrevista').style.background='#2d8c3e';
+    document.getElementById('btn-entrevista').style.color='white';
+  }
+};
+
+window.APP.enviarFormularioRadio=function(tipo){
+  let dados={};
+  if(tipo==='alo'){
+    dados={
+      tipo:'alo',
+      nome:document.getElementById('alo-nome').value,
+      cidade:document.getElementById('alo-cidade').value,
+      mensagem:document.getElementById('alo-msg').value,
+      data:new Date().toISOString()
+    };
+    if(!dados.nome||!dados.cidade||!dados.mensagem){
+      alert('Por favor, preencha todos os campos!');
+      return;
+    }
+  } else if(tipo==='musica'){
+    dados={
+      tipo:'musica',
+      nome:document.getElementById('musica-nome').value,
+      titulo:document.getElementById('musica-titulo').value,
+      artista:document.getElementById('musica-artista').value,
+      dedicacao:document.getElementById('musica-dedicacao').value,
+      data:new Date().toISOString()
+    };
+    if(!dados.nome||!dados.titulo||!dados.artista){
+      alert('Por favor, preencha todos os campos obrigatorios!');
+      return;
+    }
+  } else if(tipo==='entrevista'){
+    dados={
+      tipo:'entrevista',
+      nome:document.getElementById('entrevista-nome').value,
+      whatsapp:document.getElementById('entrevista-wpp').value,
+      tema:document.getElementById('entrevista-tema').value,
+      data:new Date().toISOString()
+    };
+    if(!dados.nome||!dados.whatsapp||!dados.tema){
+      alert('Por favor, preencha todos os campos!');
+      return;
+    }
+  }
+  
+  APP.mostrarPopup('✅','Formulario Enviado!','Obrigado por participar do Programa de Radio! Entraremos em contato em breve.');
+  
+  if(tipo==='alo'){
+    document.getElementById('alo-nome').value='';
+    document.getElementById('alo-cidade').value='';
+    document.getElementById('alo-msg').value='';
+  } else if(tipo==='musica'){
+    document.getElementById('musica-nome').value='';
+    document.getElementById('musica-titulo').value='';
+    document.getElementById('musica-artista').value='';
+    document.getElementById('musica-dedicacao').value='';
+  } else if(tipo==='entrevista'){
+    document.getElementById('entrevista-nome').value='';
+    document.getElementById('entrevista-wpp').value='';
+    document.getElementById('entrevista-tema').value='';
+  }
+};
+// ===== FIM PROGRAMA DE RÁDIO =====
+
 // Service Worker
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
 // ===== FIM NOVAS FUNCIONALIDADES =====
@@ -3391,6 +3478,82 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
     <div style="color:#a8d5b0;font-size:12px">Feiras, encontros, palestras e mais</div>
   </div>
   <div style="padding:14px 16px"><div id="lista-eventos"><div class="loading">Carregando...</div></div></div>
+</div>
+
+<!-- TELA PROGRAMA DE RÁDIO -->
+<div id="tela-radio" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">📻 Programa de Rádio</div>
+  </div>
+  <div class="tela-conteudo" style="padding:16px">
+    <!-- Informações do Programa -->
+    <div style="background: linear-gradient(135deg, #2d5016 0%, #4a7c2e 100%); border-radius: 12px; padding: 20px; margin-bottom: 20px; color: white; text-align: center;">
+      <h2 style="margin: 0 0 10px 0; font-size: 18px;">📻 Próximo Programa</h2>
+      <p style="margin: 5px 0; font-size: 16px; font-weight: bold;">Sábado, 26 de Abril</p>
+      <p style="margin: 5px 0; font-size: 14px;">15h às 17h</p>
+      <p style="margin: 5px 0; font-size: 14px;">Rádio Educadora 107,5 FM</p>
+      <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.9;">Sobral - Ceará</p>
+    </div>
+
+    <!-- Links de Transmissão -->
+    <div style="margin-bottom: 20px;">
+      <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">Ouça o Programa</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <a href="https://www.facebook.com/radioeducadora" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #1877f2; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px;">📱 Facebook</a>
+        <a href="https://www.radiosnet.com.br" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #ff6b35; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px;">🎙️ RadiosNet</a>
+        <a href="https://www.youtube.com" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #ff0000; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px; grid-column: 1 / -1;">▶️ YouTube</a>
+      </div>
+    </div>
+
+    <!-- Abas de Interatividade -->
+    <div style="margin-bottom: 20px;">
+      <div style="display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;">
+        <button onclick="APP.mostrarAbaRadio('alo')" id="btn-alo" style="background: #2d8c3e; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap;">🎤 Peça seu Alô</button>
+        <button onclick="APP.mostrarAbaRadio('musica')" id="btn-musica" style="background: #e5e7eb; color: #1f2937; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap;">🎵 Peça sua Música</button>
+        <button onclick="APP.mostrarAbaRadio('entrevista')" id="btn-entrevista" style="background: #e5e7eb; color: #1f2937; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap;">🎙️ Seja Entrevistado</button>
+      </div>
+
+      <!-- Conteúdo das Abas -->
+      <div id="aba-alo" style="display: block;">
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎤 Peça seu Alô</h3>
+        <input type="text" id="alo-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="alo-cidade" placeholder="Sua cidade" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <textarea id="alo-msg" placeholder="Seu alô para o programa (máx. 200 caracteres)" maxlength="200" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 80px;"></textarea>
+        <button onclick="APP.enviarFormularioRadio('alo')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Alô</button>
+      </div>
+
+      <div id="aba-musica" style="display: none;">
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎵 Peça sua Música</h3>
+        <input type="text" id="musica-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="musica-titulo" placeholder="Nome da música" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="musica-artista" placeholder="Artista" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="musica-dedicacao" placeholder="Para quem você dedica?" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <button onclick="APP.enviarFormularioRadio('musica')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Música</button>
+      </div>
+
+      <div id="aba-entrevista" style="display: none;">
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎙️ Participe como Entrevistado</h3>
+        <input type="text" id="entrevista-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="entrevista-wpp" placeholder="Seu WhatsApp" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <textarea id="entrevista-tema" placeholder="Qual é seu tema ou história? (máx. 300 caracteres)" maxlength="300" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 100px;"></textarea>
+        <button onclick="APP.enviarFormularioRadio('entrevista')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Proposta</button>
+      </div>
+    </div>
+
+    <!-- Parceiros -->
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+      <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 15px 0; color: #1f2937;">🤝 Parceiros do Programa</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🛢️ Posto Gatão</div>
+        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🏦 Banco Omni</div>
+        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🏨 Pousada São Francisco</div>
+        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🛞 Indy Pneus</div>
+        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🔧 Ricardo Auto Molas</div>
+        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🚛 Tião Truck Center</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="popup-sucesso" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99998;align-items:center;justify-content:center">
