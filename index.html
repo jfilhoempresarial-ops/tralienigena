@@ -2441,6 +2441,26 @@ async function carregarEventos(){
     const snap=await getDocs(collection(db,'eventos'));
     eventos=snap.docs.map(d=>({id:d.id,...d.data()}))
       .sort((a,b)=>new Date(a.data||0)-new Date(b.data||0)); // mais próximo primeiro
+    
+    // Auto-delete de eventos expirados (dia seguinte ao evento)
+    const hoje=new Date(); hoje.setHours(0,0,0,0);
+    for(const ev of eventos){
+      const dataEvento=new Date(ev.data+'T23:59:59');
+      const proximoDia=new Date(dataEvento);
+      proximoDia.setDate(proximoDia.getDate()+1);
+      if(hoje>=proximoDia){
+        try{
+          await deleteDoc(doc(db,'eventos',ev.id));
+          console.log('Evento expirado deletado automaticamente:',ev.titulo);
+        }catch(e){console.error('Erro ao deletar evento expirado:',e);}
+      }
+    }
+    
+    // Recarregar após deletar
+    const snapAtualizado=await getDocs(collection(db,'eventos'));
+    eventos=snapAtualizado.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>new Date(a.data||0)-new Date(b.data||0));
+    
     renderEventos(); renderAdmEventos();
   }catch(e){console.error(e);}
 }
