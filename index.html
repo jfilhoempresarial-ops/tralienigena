@@ -1043,7 +1043,7 @@ async function carregarTudo(){
         try {
             const jaSemeadoPrestadores = localStorage.getItem('prestadores_semeados_2026_v1');
             if (!jaSemeadoPrestadores) {
-                const prestSemear = [{'nome': 'Cardan Service Fortaleza', 'tipo': 'mecanico', 'descricao': 'Cardan, freios, suspensão, direção. Socorro Mecânico. Linha Diesel. A Casa do chofer em Fortaleza.', 'tags_servicos': ['Cardan', 'Freios', 'Suspensão', 'Direção', 'Socorro Mecânico', 'Linha Diesel'], 'whatsapp': '(85) 98136-3953', 'instagram': '@cardanservice', 'endereco': 'Rod. Quarto Anel Viário, 2700 E, Fortaleza - CE', 'lat': -3.7319, 'lng': -38.5267, 'abre': '06:00', 'fecha': '18:00', 'aberto24h': false, 'fotos': [], 'data': new Date().toISOString(), 'responsavel_nome': 'Júlio Filho', 'responsavel_email': 'julio@tralienigena.com', 'responsavel_uid': 'admin_julio_filho', 'responsavel_telefone': '(88) 98136-3953', 'fonte': 'instagram_print', 'status': 'ativo'}];
+                const prestSemear = [{'nome': 'Eudes Auto Peças', 'tipo': 'pecas', 'descricao': 'Peças e Acessórios para a Linha Diesel. Sobral - CE. Atendimento rápido e eficiente.', 'tags_servicos': ['Peças', 'Acessórios', 'Linha Diesel', 'Entrega'], 'whatsapp': '(88) 9 9448-0540', 'instagram': '@eudespecas', 'endereco': 'BR-222 KM-222 Nº 1329 - Distrito Industrial, Sobral - CE', 'lat': -3.7680, 'lng': -40.3478, 'abre': '08:00', 'fecha': '18:00', 'aberto24h': false, 'fotos': [], 'data': new Date().toISOString(), 'responsavel_nome': 'Júlio Filho', 'responsavel_email': 'julio@tralienigena.com', 'responsavel_uid': 'admin_julio_filho', 'responsavel_telefone': '(88) 98136-3953', 'fonte': 'instagram_print', 'status': 'ativo'}, {'nome': 'Tião Truck Center', 'tipo': 'mecanico', 'descricao': 'Vida de caminhoneiro, do jeito que ela é. Oficina • Peças • Pneus. Reboque 24h • Tacógrafo. Aqui a estrada encontra apoio.', 'tags_servicos': ['Oficina', 'Peças', 'Pneus', 'Reboque 24h', 'Tacógrafo', 'Socorro Mecânico'], 'whatsapp': '(88) 98655-1844', 'instagram': '@tiaotruckcenter_', 'endereco': 'Rodovia BR 222 KM 222, Nº 1581 - Sobral - CE', 'lat': -3.7680, 'lng': -40.3478, 'abre': '00:00', 'fecha': '23:59', 'aberto24h': true, 'fotos': [], 'data': new Date().toISOString(), 'responsavel_nome': 'Júlio Filho', 'responsavel_email': 'julio@tralienigena.com', 'responsavel_uid': 'admin_julio_filho', 'responsavel_telefone': '(88) 98136-3953', 'fonte': 'instagram_print', 'status': 'ativo'}, {'nome': 'Cardan Service Fortaleza', 'tipo': 'mecanico', 'descricao': 'Cardan, freios, suspensão, direção. Socorro Mecânico. Linha Diesel. A Casa do chofer em Fortaleza.', 'tags_servicos': ['Cardan', 'Freios', 'Suspensão', 'Direção', 'Socorro Mecânico', 'Linha Diesel'], 'whatsapp': '(85) 98136-3953', 'instagram': '@cardanservice', 'endereco': 'Rod. Quarto Anel Viário, 2700 E, Fortaleza - CE', 'lat': -3.7319, 'lng': -38.5267, 'abre': '06:00', 'fecha': '18:00', 'aberto24h': false, 'fotos': [], 'data': new Date().toISOString(), 'responsavel_nome': 'Júlio Filho', 'responsavel_email': 'julio@tralienigena.com', 'responsavel_uid': 'admin_julio_filho', 'responsavel_telefone': '(88) 98136-3953', 'fonte': 'instagram_print', 'status': 'ativo'}];
                 for (const prest of prestSemear) {
                     // Verificar se já existe um prestador com o mesmo nome
                     const q = query(collection(db, 'prestadores'), where('nome', '==', prest.nome));
@@ -3098,6 +3098,24 @@ window.APP.mostrarAbaRadio=function(aba){
   }
 };
 
+// Função para verificar se é domingo e limpar histórico de rádio
+function verificarLimpezaRadioSemanal(){
+  const ultimaLimpeza = localStorage.getItem('radio_ultima_limpeza');
+  const agora = new Date();
+  const hoje = agora.toISOString().split('T')[0];
+  
+  if(!ultimaLimpeza || ultimaLimpeza !== hoje){
+    const diaSemana = agora.getDay();
+    if(diaSemana === 0){ // 0 = domingo
+      document.getElementById('alo-historico').innerHTML = '';
+      document.getElementById('musica-historico').innerHTML = '';
+      document.getElementById('entrevista-historico').innerHTML = '';
+      console.log('Histórico de rádio limpo automaticamente no domingo');
+    }
+    localStorage.setItem('radio_ultima_limpeza', hoje);
+  }
+}
+
 window.APP.enviarFormularioRadio=function(tipo){
   let dados={};
   if(tipo==='alo'){
@@ -3157,6 +3175,7 @@ window.APP.enviarFormularioRadio=function(tipo){
     document.getElementById('entrevista-tema').value='';
   }
   APP.mostrarPopup('✅','Formulário Enviado!','Obrigado por participar do Programa de Rádio! Entraremos em contato em breve.');
+  verificarLimpezaRadioSemanal();
 };
 // ===== FIM PROGRAMA DE RÁDIO =====
 
