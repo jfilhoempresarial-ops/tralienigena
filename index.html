@@ -3090,8 +3090,7 @@ window.APP.enviarFormularioRadio=function(tipo){
       data:new Date().toISOString()
     };
     if(!dados.nome||!dados.cidade||!dados.mensagem){
-      alert('Por favor, preencha todos os campos!');
-      return;
+      return alert(\'Por favor, preencha todos os campos!\');
     }
   } else if(tipo==='musica'){
     dados={
@@ -3103,8 +3102,7 @@ window.APP.enviarFormularioRadio=function(tipo){
       data:new Date().toISOString()
     };
     if(!dados.nome||!dados.titulo||!dados.artista){
-      alert('Por favor, preencha todos os campos obrigatorios!');
-      return;
+      return alert(\'Por favor, preencha todos os campos obrigatorios!\');
     }
   } else if(tipo==='entrevista'){
     dados={
@@ -3115,29 +3113,32 @@ window.APP.enviarFormularioRadio=function(tipo){
       data:new Date().toISOString()
     };
     if(!dados.nome||!dados.whatsapp||!dados.tema){
-      alert('Por favor, preencha todos os campos!');
-      return;
+      return alert(\'Por favor, preencha todos os campos!\');
     }
   }
   
-  APP.mostrarPopup('✅','Formulario Enviado!','Obrigado por participar do Programa de Radio! Entraremos em contato em breve.');
-  
-  if(tipo==='alo'){
-    document.getElementById('alo-nome').value='';
-    document.getElementById('alo-cidade').value='';
-    document.getElementById('alo-msg').value='';
-  } else if(tipo==='musica'){
-    document.getElementById('musica-nome').value='';
-    document.getElementById('musica-titulo').value='';
-    document.getElementById('musica-artista').value='';
-    document.getElementById('musica-dedicacao').value='';
-  } else if(tipo==='entrevista'){
-    document.getElementById('entrevista-nome').value='';
-    document.getElementById('entrevista-wpp').value='';
-    document.getElementById('entrevista-tema').value='';
+  if(tipo===\'alo\'){
+    const historicoDiv = document.getElementById(\'alo-historico\');
+    historicoDiv.innerHTML = `<p><b>Seu Alô:</b> ${dados.nome} de ${dados.cidade} - \"${dados.mensagem}\" (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
+    document.getElementById(\'alo-nome\').value=\'\';
+    document.getElementById(\'alo-cidade\').value=\'\';
+    document.getElementById(\'alo-msg\').value=\'\';
+  } else if(tipo===\'musica\'){
+    const historicoDiv = document.getElementById(\'musica-historico\');
+    historicoDiv.innerHTML = `<p><b>Sua Música:</b> \"${dados.titulo}\" de ${dados.artista} (Dedicado a: ${dados.dedicacao}) (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
+    document.getElementById(\'musica-nome\').value=\'\';
+    document.getElementById(\'musica-titulo\').value=\'\';
+    document.getElementById(\'musica-artista\').value=\'\';
+    document.getElementById(\'musica-dedicacao\').value=\'\';
+  } else if(tipo===\'entrevista\'){
+    const historicoDiv = document.getElementById(\'entrevista-historico\');
+    historicoDiv.innerHTML = `<p><b>Sua Proposta:</b> ${dados.nome} (${dados.whatsapp}) - Tema: \"${dados.tema}\" (${new Date(dados.data).toLocaleString()})</p>` + historicoDiv.innerHTML;
+    document.getElementById(\'entrevista-nome\').value=\'\';
+    document.getElementById(\'entrevista-wpp\').value=\'\';
+    document.getElementById(\'entrevista-tema\').value=\'\';
   }
-};
-// ===== FIM PROGRAMA DE RÁDIO =====
+  APP.mostrarPopup(\'✅\',\'Formulario Enviado!\',\'Obrigado por participar do Programa de Radio! Entraremos em contato em breve.\');
+}; =====
 
 // Service Worker
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
@@ -3500,9 +3501,9 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
     <div style="margin-bottom: 20px;">
       <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">Ouça o Programa</h3>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <a href="https://www.facebook.com/radioeducadora" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #1877f2; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px;">📱 Facebook</a>
-        <a href="https://www.radiosnet.com.br" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #ff6b35; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px;">🎙️ RadiosNet</a>
-        <a href="https://www.youtube.com" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #ff0000; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px; grid-column: 1 / -1;">▶️ YouTube</a>
+        <a href="https://www.facebook.com/radioeducadora" target="_blank" class="social-icon-btn" style="background:#1877f2;">📱</a>
+        <a href="https://www.radiosnet.com.br" target="_blank" class="social-icon-btn" style="background:#ff6b35;">🎙️</a>
+        <a href="https://www.youtube.com" target="_blank" class="social-icon-btn" style="background:#ff0000;">▶️</a>
       </div>
     </div>
 
@@ -3520,8 +3521,8 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
         <input type="text" id="alo-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <input type="text" id="alo-cidade" placeholder="Sua cidade" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <textarea id="alo-msg" placeholder="Seu alô para o programa (máx. 200 caracteres)" maxlength="200" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 80px;"></textarea>
-        <button onclick="APP.enviarFormularioRadio('alo')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Alô</button>
-      </div>
+        <button onclick="APP.enviarFormularioRadio(\'alo\')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Alô</button>
+        <div id="alo-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>     </div>
 
       <div id="aba-musica" style="display: none;">
         <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎵 Peça sua Música</h3>
@@ -3529,30 +3530,18 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
         <input type="text" id="musica-titulo" placeholder="Nome da música" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <input type="text" id="musica-artista" placeholder="Artista" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <input type="text" id="musica-dedicacao" placeholder="Para quem você dedica?" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-        <button onclick="APP.enviarFormularioRadio('musica')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Música</button>
-      </div>
+        <button onclick="APP.enviarFormularioRadio(\'musica\')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Música</button>
+        <div id="musica-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>     </div>
 
       <div id="aba-entrevista" style="display: none;">
         <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎙️ Participe como Entrevistado</h3>
         <input type="text" id="entrevista-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
         <input type="text" id="entrevista-wpp" placeholder="Seu WhatsApp" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
-        <textarea id="entrevista-tema" placeholder="Qual é seu tema ou história? (máx. 300 caracteres)" maxlength="300" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 100px;"></textarea>
-        <button onclick="APP.enviarFormularioRadio('entrevista')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Proposta</button>
-      </div>
+        <textarea id="entrevista-tema" placeholder="Qual é seu tema ou história? (máx. 300 caracteres)" maxlength="300" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 100px;"></textarea>        <button onclick="APP.enviarFormularioRadio(\'entrevista\')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Proposta</button>
+        <div id="entrevista-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>      </div>
     </div>
 
-    <!-- Parceiros -->
-    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
-      <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 15px 0; color: #1f2937;">🤝 Parceiros do Programa</h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🛢️ Posto Gatão</div>
-        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🏦 Banco Omni</div>
-        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🏨 Pousada São Francisco</div>
-        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🛞 Indy Pneus</div>
-        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🔧 Ricardo Auto Molas</div>
-        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #1f2937;">🚛 Tião Truck Center</div>
-      </div>
-    </div>
+
   </div>
 </div>
 
@@ -3679,8 +3668,10 @@ function renderAdmAvs(){ document.getElementById('adm-tot-a').textContent='('+av
     .ref-card-org{font-family:'Oswald',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
     .ref-card-titulo{font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.3;margin-bottom:3px}
     .ref-card-desc{font-size:11px;color:#888;line-height:1.4}
-    .ref-card-arrow{display:flex;align-items:center;padding-right:12px;color:#ccc;font-size:18px;font-weight:700}
-  </style>
+.ref-card-arrow{display:flex;align-items:center;padding-right:12px;color:#ccc;font-size:18px;font-weight:700}
+	  .social-icon-btn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;text-decoration:none;font-size:22px;color:white;transition:transform .2s;}
+	  .social-icon-btn:active{transform:scale(.9);}
+	  </style>
 
   <!-- FRETE & REGULAÇÃO -->
   <div class="ref-section">⚖️ Frete & Regulação</div>
