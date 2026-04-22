@@ -1038,6 +1038,25 @@ async function carregarTudo(){
             }
         } catch (e) { console.error('Erro na semente:', e); }
     })();
+    // SCRIPT DE SEMENTE DE PRESTADORES (Executa uma vez e se remove)
+    (async function() {
+        try {
+            const jaSemeadoPrestadores = localStorage.getItem('prestadores_semeados_2026_v1');
+            if (!jaSemeadoPrestadores) {
+                const prestSemear = [{'nome': 'Cardan Service Fortaleza', 'tipo': 'mecanico', 'descricao': 'Cardan, freios, suspensão, direção. Socorro Mecânico. Linha Diesel. A Casa do chofer em Fortaleza.', 'tags_servicos': ['Cardan', 'Freios', 'Suspensão', 'Direção', 'Socorro Mecânico', 'Linha Diesel'], 'whatsapp': '(85) 98136-3953', 'instagram': '@cardanservice', 'endereco': 'Rod. Quarto Anel Viário, 2700 E, Fortaleza - CE', 'lat': -3.7319, 'lng': -38.5267, 'abre': '06:00', 'fecha': '18:00', 'aberto24h': false, 'fotos': [], 'data': new Date().toISOString(), 'responsavel_nome': 'Júlio Filho', 'responsavel_email': 'julio@tralienigena.com', 'responsavel_uid': 'admin_julio_filho', 'responsavel_telefone': '(88) 98136-3953', 'fonte': 'instagram_print', 'status': 'ativo'}];
+                for (const prest of prestSemear) {
+                    // Verificar se já existe um prestador com o mesmo nome
+                    const q = query(collection(db, 'prestadores'), where('nome', '==', prest.nome));
+                    const snap = await getDocs(q);
+                    if (snap.empty) {
+                        await addDoc(collection(db, 'prestadores'), prest);
+                        console.log('Prestador semeado:', prest.nome);
+                    }
+                }
+                localStorage.setItem('prestadores_semeados_2026_v1', 'true');
+            }
+        } catch (e) { console.error('Erro na semente de prestadores:', e); }
+    })();
     carregarEventos();
     carregarCursos();
     carregarMotoristas();
