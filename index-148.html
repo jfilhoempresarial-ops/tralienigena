@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tr.Alienigena - A Voz do Motorista</title>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#2d8c3e"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Tr.Alienigena"/>
+<link rel="apple-touch-icon" href="/icons/icon-192.png"/>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-29J2FDXBH8"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ===== MODAL DE CONSENTIMENTO LGPD ===== -->
+<div id="modal-consentimento-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:99999;display:none;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;max-width:420px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);padding:24px 20px;text-align:center">
+      <div style="font-size:40px;margin-bottom:10px">🔒</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Sua Privacidade Importa</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85)">Protegemos seus dados com a LGPD</div>
+    </div>
+    <div style="padding:24px;max-height:60vh;overflow-y:auto">
+      <div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:16px">
+        <p><strong>Bem-vindo ao Tr.Alienigena!</strong></p>
+        <p>Para usar este aplicativo, você precisa aceitar nossa <strong>Política de Privacidade</strong> e <strong>Termos de Uso</strong>.</p>
+        <p style="margin-top:12px;color:#2d8c3e;font-weight:700">📋 O que coletamos:</p>
+        <ul style="margin:8px 0 0 16px;font-size:12px">
+          <li>Nome e e-mail (via Google Login)</li>
+          <li>Número de WhatsApp (quando você cadastra)</li>
+          <li>Localização (para buscar serviços próximos)</li>
+          <li>Histórico de avaliações e cadastros</li>
+        </ul>
+        <p style="margin-top:12px;color:#2d8c3e;font-weight:700">🛡️ Como protegemos:</p>
+        <ul style="margin:8px 0 0 16px;font-size:12px">
+          <li>Dados criptografados no Firebase</li>
+          <li>Sem compartilhamento com terceiros</li>
+          <li>Você pode solicitar exclusão a qualquer momento</li>
+          <li>Conformidade total com a LGPD</li>
+        </ul>
+        <p style="margin-top:12px;font-size:11px;color:#999">Leia nossa <a href="https://github.com/jfilhoempresarial-ops/tralienigena/blob/main/PRIVACIDADE.md" target="_blank" style="color:#2d8c3e;text-decoration:none;font-weight:700">Política de Privacidade</a> e <a href="https://github.com/jfilhoempresarial-ops/tralienigena/blob/main/TERMOS.md" target="_blank" style="color:#2d8c3e;text-decoration:none;font-weight:700">Termos de Uso</a>.</p>
+      </div>
+      <button onclick="APP.aceitarConsentimento()" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:8px;color:#fff;padding:14px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;transition:transform .2s">
+        ✅ Aceito e Continuar
+      </button>
+      <button onclick="window.history.back()" style="background:#f3f4f6;border:none;border-radius:8px;color:#666;padding:12px;font-size:13px;font-weight:700;cursor:pointer;width:100%;transition:background .2s">
+        ❌ Não Aceito
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POPUP REMOVIDO ===== -->
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="logo-title">👽 <span>Tr.Alienigena</span></div>
+      <div class="logo-voz">A VOZ DO MOTORISTA</div>
+      <div class="header-info">
+        <a href="https://wa.me/5588981363953?text=Olá%20TR%20Alienígena!" target="_blank" style="display:inline-flex;align-items:center;gap:3px;text-decoration:none;color:#25d366;font-size:10px;font-weight:700">💬 Fale com a TR</a>
+        <span class="header-tel" style="color:#888">• (88) 98136-3953</span>
+      </div>
+      <div class="header-info" style="margin-top:2px;gap:8px">
+        <span class="header-relogio" id="hRel">--:--</span>
+        <span class="header-loc" id="hLoc">📍 Localizando...</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+        <a href="https://www.instagram.com/tr.alienigena" target="_blank" style="display:inline-flex;align-items:center;gap:3px;text-decoration:none;background:#f5f5f5;border-radius:20px;padding:3px 8px;border:1px solid #e0e0e0;font-size:10px;font-weight:700;color:#555">📷 @tr.alienigena</a>
+        <a href="https://www.instagram.com/lojadoalienigena" target="_blank" style="display:inline-flex;align-items:center;gap:3px;text-decoration:none;background:#f5f5f5;border-radius:20px;padding:3px 8px;border:1px solid #e0e0e0;font-size:10px;font-weight:700;color:#555">📷 @lojadoalienigena</a>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+      <div style="display:flex;gap:4px;align-items:center">
+        <button class="btn-inicio" onclick="APP.inicio()">🏠 Início</button>
+        <button class="btn-dark" id="btn-dark-toggle" onclick="APP.toggleDark()" title="Modo noturno">🌙</button>
+      </div>
+      <div style="display:flex;gap:4px">
+        <a href="tel:191" style="display:inline-flex;align-items:center;justify-content:center;background:#d32f2f;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-size:13px;color:#fff;text-decoration:none;font-weight:700;box-shadow:0 2px 8px rgba(211,47,47,0.3)">📞 191</a>
+        <button onclick="APP.show('tela-admin')" style="background:#2d8c3e;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-size:13px;color:#fff;opacity:.7">🔒</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INÍCIO -->
+<div id="tela-inicio" class="tela" style="display:block">
+  <div class="inicio-hero">
+    <!-- LETREIRO LUMINOSO -->
+    <div style="background:#000;overflow:hidden;white-space:nowrap;padding:7px 0;margin:-24px -16px 20px -16px;border-bottom:2px solid #f59e0b;border-top:2px solid #f59e0b">
+      <div class="marquee-track">
+        <span class="marquee-content">
+          🚛 Bem-vindo ao Tr.Alienigena — A Voz do Motorista! &nbsp;⭐&nbsp; Avalie os serviços que você já usou na estrada &nbsp;🔧&nbsp; Encontre mecânicos, borracharias e postos próximos de você &nbsp;💼&nbsp; Confira as vagas de emprego do SINE atualizadas diariamente &nbsp;🛒&nbsp; Visite a Loja do Alienígena — roupas e acessórios para caminhoneiros &nbsp;📅&nbsp; Fique por dentro dos eventos e encontros de motoristas &nbsp;🚛&nbsp; Cadastre-se em Motoristas Disponíveis e seja encontrado por empresas &nbsp;📚&nbsp; Invista na sua carreira — confira os cursos disponíveis &nbsp;👽&nbsp; Siga @tr.alienigena no Instagram e fique ligado nas novidades! &nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+        <span class="marquee-content" aria-hidden="true">
+          🚛 Bem-vindo ao Tr.Alienigena — A Voz do Motorista! &nbsp;⭐&nbsp; Avalie os serviços que você já usou na estrada &nbsp;🔧&nbsp; Encontre mecânicos, borracharias e postos próximos de você &nbsp;💼&nbsp; Confira as vagas de emprego do SINE atualizadas diariamente &nbsp;🛒&nbsp; Visite a Loja do Alienígena — roupas e acessórios para caminhoneiros &nbsp;📅&nbsp; Fique por dentro dos eventos e encontros de motoristas &nbsp;🚛&nbsp; Cadastre-se em Motoristas Disponíveis e seja encontrado por empresas &nbsp;📚&nbsp; Invista na sua carreira — confira os cursos disponíveis &nbsp;👽&nbsp; Siga @tr.alienigena no Instagram e fique ligado nas novidades! &nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+      </div>
+    </div>
+    <h1>🚛 O que você precisa hoje?</h1>
+    <p>Selecione uma opção abaixo</p>
+
+    <!-- 3 BOTÕES PRINCIPAIS -->
+    <div class="btns-principais">
+      <button class="btn-principal" onclick="APP.show('tela-busca')">
+        <div class="btn-principal-icon">🔍</div>
+        <div class="btn-principal-label">Sou Motorista</div>
+        <div class="btn-principal-sub">Preciso de um serviço</div>
+      </button>
+      <button class="btn-principal btn-sos" onclick="APP.sosMecanico()">
+        <div class="btn-principal-icon">🆘</div>
+        <div class="btn-principal-label">SOS Mecânico</div>
+        <div class="btn-principal-sub">Quebrei! Manda minha localização</div>
+      </button>
+      <button class="btn-principal btn-outros" onclick="APP.show('tela-outros-servicos')">
+        <div class="btn-principal-icon">☰</div>
+        <div class="btn-principal-label">Outros Serviços</div>
+        <div class="btn-principal-sub">Vagas, rádio, loja e mais</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- TOP 5 -->
+  <div class="top5-section">
+    <div class="top5-titulo">🚿 Top 5 Melhores Banheiros</div>
+    <div style="font-size:11px;color:#888;margin-bottom:8px">Avaliados por caminhoneiros que passaram por lá</div>
+    <div id="top5-banheiro"><div class="loading">Carregando...</div></div>
+    <div class="top5-titulo" style="margin-top:20px">🍽️ Top 5 Melhores Restaurantes</div>
+    <div style="font-size:11px;color:#888;margin-bottom:8px">Comida boa, preço justo e atendimento nota 10</div>
+    <div id="top5-restaurante"><div class="loading">Carregando...</div></div>
+    <div class="top5-titulo" style="margin-top:20px">🛏️ Top 5 Melhores Dormidas</div>
+    <div style="font-size:11px;color:#888;margin-bottom:8px">Seguro, limpo e com estacionamento para o caminhão</div>
+    <div id="top5-dormida"><div class="loading">Carregando...</div></div>
+  </div>
+
+  <div class="avs-recentes">
+    <h2>⭐ Avaliações Recentes</h2>
+    <div id="lista-avs-recentes"><div class="loading">Carregando...</div></div>
+  </div>
+
+  <div style="padding:0 16px 20px">
+    <h2 style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:10px">🆕 Cadastros Recentes</h2>
+    <div id="lista-cadastros-recentes"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- BOTÃO VOLTAR FLUTUANTE -->
+<button id="btn-voltar-fixo" onclick="APP.voltarFixo()">← Início</button>
+
+<!-- OUTROS SERVIÇOS -->
+<div id="tela-outros-servicos" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">☰ Outros Serviços</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:14px 16px 18px;text-align:center">
+    <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:2px">Tudo que você precisa</div>
+    <div style="font-size:12px;color:#a8d5b0">Recursos extras para o motorista</div>
+  </div>
+  <div class="outros-grid">
+    <div class="outro-card" onclick="APP.show('tela-avaliar')">
+      <div class="outro-card-icon">⭐</div>
+      <div class="outro-card-label">Avaliar Serviço</div>
+      <div class="outro-card-sub">Deixe sua experiência na estrada</div>
+    </div>
+    <div class="outro-card" onclick="APP.show('tela-vagas')">
+      <div class="outro-card-icon">💼</div>
+      <div class="outro-card-label">Vagas de Emprego</div>
+      <div class="outro-card-sub">SINE atualizado todo dia</div>
+    </div>
+    <div class="outro-card" onclick="APP.show('tela-mapa-servicos')">
+      <div class="outro-card-icon">🗺️</div>
+      <div class="outro-card-label">Mapa do Motorista</div>
+      <div class="outro-card-sub">Serviços no mapa</div>
+    </div>
+    <div class="outro-card" onclick="APP.show('tela-eventos')">
+      <div class="outro-card-icon">📅</div>
+      <div class="outro-card-label">Eventos</div>
+      <div class="outro-card-sub">Encontros e eventos de motoristas</div>
+    </div>
+    <div class="outro-card" onclick="APP.show('tela-cursos')">
+      <div class="outro-card-icon">📚</div>
+      <div class="outro-card-label">Cursos</div>
+      <div class="outro-card-sub">Invista na sua carreira</div>
+    </div>
+    <div class="outro-card" onclick="APP.show('tela-motoristas')">
+      <div class="outro-card-icon">🚛</div>
+      <div class="outro-card-label">Me Contrata</div>
+      <div class="outro-card-sub">Apareça para empresas</div>
+    </div>
+    <div class="outro-card" onclick="APP.show('tela-radio')">
+      <div class="outro-card-icon">📻</div>
+      <div class="outro-card-label">Programa de Rádio</div>
+      <div class="outro-card-sub">Rádio ao vivo para caminhoneiros</div>
+    </div>
+    <div class="outro-card" onclick="APP.show('tela-cadastro')">
+      <div class="outro-card-icon">🏪</div>
+      <div class="outro-card-label">Presto Serviço</div>
+      <div class="outro-card-sub">Cadastre sua empresa no app</div>
+    </div>
+    <div class="outro-card" onclick="window.open('https://www.lojadoalienigena.com.br','_blank')" style="border-color:#f59e0b44;background:#fffbeb">
+      <div class="outro-card-icon">🛒</div>
+      <div class="outro-card-label" style="color:#92400e">Loja do Alienígena</div>
+      <div class="outro-card-sub">Roupas e acessórios para motoristas</div>
+    </div>
+    <div class="outro-card" onclick="APP.abrirApoio()" style="border-color:#fca5a5;background:#fff5f5">
+      <div class="outro-card-icon">❤️</div>
+      <div class="outro-card-label" style="color:#dc2626">Apoie o Projeto</div>
+      <div class="outro-card-sub">Ajude a manter o app no ar</div>
+    </div>
+    <div class="outro-card" onclick="APP.show('tela-noticias')">
+      <div class="outro-card-icon">📰</div>
+      <div class="outro-card-label">Notícias</div>
+      <div class="outro-card-sub">Informação para o motorista</div>
+    </div>
+  </div>
+</div>
+
+<!-- BUSCA -->
+  
+
+<!-- BUSCA -->
+<div id="tela-busca" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🔍 Buscar Serviço</div>
+  </div>
+  <div class="busca-body">
+    <!-- SERVIÇOS PRÓXIMOS -->
+    <div id="proximos-busca-box" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase">📍 SERVIÇOS PRÓXIMOS — RAIO DE 20KM</div>
+        <button onclick="APP.atualizarProximosBusca()" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;color:#2d8c3e;font-weight:700">🔄 Atualizar</button>
+      </div>
+      <div id="proximos-busca-status" style="font-size:11px;color:#2d8c3e;margin-bottom:6px">📡 Buscando serviços próximos...</div>
+      <div id="proximos-busca-lista" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div style="border-top:1px solid #eee;padding-top:12px">
+    <div class="busca-campo">
+      <label>TIPO DE SERVIÇO (selecione um ou mais)</label>
+      <div class="servicos-grid" id="servicos-grid"></div>
+      <div style="margin-top:8px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">OU DESCREVA O QUE PRECISA</label>
+        <input class="input-texto" id="busca-texto" placeholder="Ex: conserto de bomba, válvula, freio..." oninput="APP.autocomplete()" autocomplete="off"/>
+        <div class="ac-box" id="ac-box"></div>
+      </div>
+    </div>
+    <div class="busca-campo">
+      <label>📍 ONDE VOCÊ ESTÁ?</label>
+      <div class="loc-wrap">
+        <input class="loc-input" id="busca-local" placeholder="Cidade ou use o GPS..."/>
+        <button class="btn-gps" onclick="APP.gps('busca')">📡</button>
+      </div>
+      <div class="gps-status" id="gps-busca"></div>
+    </div>
+    <button class="btn-buscar" onclick="APP.buscar()">🔍 BUSCAR AGORA</button>
+    <button class="btn-relacao" onclick="APP.relacao()">📋 VER RELAÇÃO COMPLETA</button>
+    </div><!-- fecha div extra -->
+  </div>
+</div>
+
+<!-- RESULTADOS -->
+<div id="tela-resultados" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.show('tela-busca')">← Voltar</button>
+    <div class="tela-titulo" id="result-titulo">Resultados</div>
+  </div>
+  <div id="mapa-resultados"></div>
+  <div class="resultados-body">
+    <div class="result-info" id="result-info" style="display:none"></div>
+    <div id="lista-resultados"><div class="loading">Buscando...</div></div>
+  </div>
+</div>
+
+<!-- DETALHE -->
+<div id="tela-detalhe" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" id="btn-voltar-det" onclick="APP.show('tela-resultados')">← Voltar</button>
+    <div class="tela-titulo">Detalhes</div>
+  </div>
+  <div id="mapa-detalhe"></div>
+  <div class="detalhe-body">
+    <div class="det-nome" id="det-nome"></div>
+    <div id="det-tipo" style="margin-bottom:8px"></div>
+    <div id="det-servicos" style="margin-bottom:10px"></div>
+    <div id="det-galeria" style="display:none;margin-bottom:12px"></div>
+    <div class="det-info-box" id="det-info"></div>
+    <button class="btn-wpp-g" id="btn-wpp-g" style="display:none">💬 CHAMAR NO WHATSAPP</button>
+    <button class="btn-rota-g" id="btn-rota-g">🗺️ IR ATÉ O LOCAL</button>
+    <button class="btn-av-g" onclick="APP.avaliarAtual()">⭐ AVALIAR ESTE SERVIÇO</button>
+    <div class="avs-titulo">💬 Avaliações</div>
+    <div id="lista-avs-det"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- RELAÇÃO COMPLETA -->
+<div id="tela-relacao" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.show('tela-busca')">← Voltar</button>
+    <div class="tela-titulo">📋 Relação Completa</div>
+  </div>
+  <div style="padding:14px 16px">
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <input class="form-input" id="rel-filtro" placeholder="🔍 Nome, tipo ou cidade..." oninput="APP.filtrarRel()" style="flex:1"/>
+      <select class="form-input" id="rel-tipo" onchange="APP.filtrarRel()" style="max-width:130px">
+        <option value="">Todos</option>
+        <option value="mecanico">🔩 Mecânico</option>
+        <option value="borracharia">🔧 Borracharia</option>
+        <option value="posto">⛽ Combustível</option>
+        <option value="guindaste">🏗️ Guincho</option>
+        <option value="eletricista">⚡ Elétrica</option>
+        <option value="pecas">🏪 Autopeças</option>
+        <option value="funilaria">🚗 Funilaria</option>
+        <option value="lavajato">🚿 Lava-Jato</option><option value="lavanderia">👕 Lavanderia</option>
+        <option value="restaurante">🍽️ Restaurante</option>
+        <option value="pousada">🛏️ Pousada</option>
+        <option value="farmacia">💊 Farmácia</option>
+        <option value="tacografo">📟 Tacógrafo</option>
+        <option value="toxicologico">🧪 Toxicológico</option>
+        <option value="chapa">💪 Chapa</option>
+        <option value="outros">📦 Outros</option>
+        <option value="financiamento">💰 Financiamento</option>
+        <option value="saude">🏥 Saúde</option>
+      </select>
+    </div>
+    <div id="rel-count" style="font-size:11px;color:#aaa;margin-bottom:10px"></div>
+    <div id="lista-relacao"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- CADASTRO -->
+<div id="tela-cadastro" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🏪 Cadastro de Prestador</div>
+  </div>
+  <div class="hero-grad"><h2>Cadastre seu serviço</h2><p>Apareça para motoristas gratuitamente</p></div>
+  <div class="form-body">
+    <div class="alert-ok" id="cad-ok">✅ Prestador cadastrado com sucesso! Em breve você aparecerá nas buscas.</div>
+    <div class="form-group">
+      <label class="form-label">BUSCAR SE JÁ EXISTE SEU CADASTRO</label>
+      <div style="position:relative">
+        <input class="form-input" id="cad-busca" placeholder="Digite o nome do seu estabelecimento..." oninput="APP.buscarExistente()" autocomplete="off"/>
+        <div class="bp-sug" id="cad-sug"></div>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-top:3px">Se já existir, você se vincula. Se não, criamos um novo.</div>
+    </div>
+    <div id="form-novo">
+      <div class="form-group">
+        <label class="form-label">NOME DO ESTABELECIMENTO *</label>
+        <input class="form-input" id="cad-nome" placeholder="Ex: Oficina do Marquinhos"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">TIPO PRINCIPAL *</label>
+        <select class="form-input" id="cad-tipo">
+          <option value="">Selecione...</option>
+          <option value="mecanico">🔩 Mecânico</option>
+          <option value="borracharia">🔧 Borracharia</option>
+          <option value="posto">⛽ Combustível / Posto</option>
+          <option value="guindaste">🏗️ Guincho / Guindaste</option>
+          <option value="eletricista">⚡ Elétrica Veicular</option>
+          <option value="pecas">🏪 Autopeças</option>
+          <option value="funilaria">🚗 Funilaria / Pintura</option>
+          <option value="lavajato">🚿 Lava-Jato</option><option value="lavanderia">👕 Lavanderia</option>
+          <option value="restaurante">🍽️ Restaurante</option>
+          <option value="pousada">🛏️ Pousada / Dormida</option>
+          <option value="farmacia">💊 Farmácia</option>
+          <option value="tacografo">📟 Tacógrafo</option>
+          <option value="toxicologico">🧪 Exame Toxicológico</option>
+          <option value="polimento">✨ Polimento</option>
+          <option value="chapa">💪 Chapa / Ajudante</option>
+          <option value="outros">📦 Outros</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">OUTROS SERVIÇOS QUE VOCÊ OFERECE (selecione todos)</label>
+        <div class="tags-grid" id="cad-tags-grid"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">DESCRIÇÃO * <span style="font-weight:400;color:#aaa;text-transform:none">(usada na busca por palavras-chave)</span></label>
+        <textarea class="form-input" id="cad-desc" placeholder="Descreva o que você faz: marcas, serviços, diferenciais. Ex: mecânico Volvo e Scania, câmbio, freio, suspensão..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">WHATSAPP * <span style="font-weight:400;color:#dc2626;font-size:10px;text-transform:none">obrigatório</span></label>
+        <input class="form-input" id="cad-wpp" placeholder="(88) 99999-9999" type="tel"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">INSTAGRAM (opcional)</label>
+        <input class="form-input" id="cad-ig" placeholder="@nomedoperfil"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ENDEREÇO * <span style="font-weight:400;color:#dc2626;font-size:10px;text-transform:none">obrigatório</span></label>
+        <input class="form-input" id="cad-end" placeholder="Rua, número, cidade — UF" oninput="APP.geocode()"/>
+        <button type="button" onclick="APP.gps('cadastro')" style="margin-top:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#2d8c3e;width:100%">📡 Usar minha localização atual</button>
+        <div class="gps-status" id="gps-cad"></div>
+        <div id="mapa-cadastro"></div>
+        <input type="hidden" id="cad-lat"/><input type="hidden" id="cad-lng"/>
+      </div>
+      <div class="form-group form-row2">
+        <div><label class="form-label">ABRE ÀS</label><input class="form-input" id="cad-abre" type="time"/></div>
+        <div><label class="form-label">FECHA ÀS</label><input class="form-input" id="cad-fecha" type="time"/></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;color:#555;cursor:pointer">
+        <input type="checkbox" id="cad-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
+      </label>
+      <!-- DIAS DE FUNCIONAMENTO -->
+      <div class="form-group">
+        <label class="form-label">DIAS DE FUNCIONAMENTO</label>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+          <label id="label-seg-sab" style="display:flex;align-items:center;gap:10px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;user-select:none">
+            <input type="checkbox" id="cad-dias-seg-sab" style="accent-color:#2d8c3e;width:17px;height:17px;flex-shrink:0" onchange="APP.toggleDias('seg-sab')">
+            📅 Segunda a Sábado
+          </label>
+          <label id="label-dom-fer" style="display:flex;align-items:center;gap:10px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;user-select:none">
+            <input type="checkbox" id="cad-dias-dom-fer" style="accent-color:#2d8c3e;width:17px;height:17px;flex-shrink:0" onchange="APP.toggleDias('dom-fer')">
+            🌟 Domingos e Feriados
+          </label>
+          <label id="label-todos-dias" style="display:flex;align-items:center;gap:10px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;user-select:none">
+            <input type="checkbox" id="cad-dias-todos" style="accent-color:#2d8c3e;width:17px;height:17px;flex-shrink:0" onchange="APP.toggleDias('todos')">
+            🗓️ Todos os dias
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">FOTOS DO LOCAL (até 5 fotos)</label>
+        <div class="foto-upload-area" onclick="document.getElementById('input-fotos-cad').click()">
+          <input type="file" id="input-fotos-cad" accept="image/*" multiple onchange="APP.previsualizarFotos(event)"/>
+          <div style="font-size:28px;margin-bottom:6px">📷</div>
+          <div style="font-size:13px;font-weight:700;color:#555">Toque para adicionar fotos</div>
+          <div style="font-size:11px;color:#aaa;margin-top:3px">Fachada, área interna, estacionamento...</div>
+        </div>
+        <div class="fotos-preview" id="fotos-preview-cad"></div>
+        <div id="fotos-status" style="font-size:11px;color:#2d8c3e;margin-top:4px;display:none"></div>
+      </div>
+      <button class="btn-submit" id="btn-cad" onclick="APP.cadastrar()">✅ CADASTRAR MEU SERVIÇO</button>
+    </div>
+  </div>
+</div>
+
+<!-- AVALIAR -->
+<div id="tela-avaliar" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" id="btn-voltar-av" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">⭐ Avaliar Serviço</div>
+  </div>
+  <div class="hero-grad"><h2>Avalie um serviço</h2><p>Ajude outros motoristas</p></div>
+  <div class="form-body">
+    <div class="alert-ok" id="av-ok">✅ Avaliação enviada! Obrigado, brother!</div>
+    <!-- PRÓXIMOS NÃO CADASTRADOS -->
+    <div id="av-proximos-box" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:12px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase">🌐 EMPRESAS PRÓXIMAS — RAIO DE 20KM (não cadastradas)</div>
+        <button onclick="APP.carregarProximos()" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;color:#2d8c3e;font-weight:700">🔄</button>
+      </div>
+      <div style="font-size:11px;color:#888;margin-bottom:6px">Empresas do nicho de caminhoneiro encontradas na internet. Clique para avaliar e cadastrar automaticamente.</div>
+      <div id="av-proximos-status" style="font-size:11px;color:#2d8c3e;margin-bottom:6px">📡 Buscando...</div>
+      <div id="av-proximos-lista" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <div style="border-top:1px solid #eee;padding-top:12px;margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">📝 CADASTRAR SERVIÇO NÃO ENCONTRADO</label>
+        <div style="font-size:11px;color:#888;margin-bottom:10px">Use sua localização para encontrar o serviço próximo, ou busque pelo nome.</div>
+        <!-- GPS primeiro -->
+        <button type="button" onclick="APP.gpsParaBuscarAv()" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:8px;padding:11px;cursor:pointer;font-size:13px;font-weight:700;color:#fff;width:100%;margin-bottom:8px">📡 Usar minha localização para encontrar</button>
+        <div id="av-gps-busca-status" style="font-size:11px;color:#2d8c3e;margin-bottom:8px;display:none"></div>
+        <!-- Ou buscar por nome -->
+        <div style="font-size:11px;color:#aaa;text-align:center;margin-bottom:8px">— ou busque pelo nome —</div>
+        <div style="position:relative">
+          <input class="form-input" id="av-busca" placeholder="Ex: Posto Rezende Sobral CE..." oninput="APP.buscarAv()" autocomplete="off"/>
+          <div id="av-buscando" style="display:none;font-size:11px;color:#2d8c3e;margin-top:3px">🔍 Buscando na internet e no banco...</div>
+          <div class="bp-sug" id="av-sug"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alvo selecionado -->
+    <div id="av-alvo-box" style="display:none">
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:12px">
+        <div style="font-size:10px;color:#888;margin-bottom:4px" id="av-alvo-origem"></div>
+        <div style="font-weight:700;color:#166534;font-size:14px" id="av-alvo-nome"></div>
+        <div style="font-size:11px;color:#2d8c3e" id="av-alvo-tipo"></div>
+        <div style="font-size:11px;color:#888;margin-top:2px" id="av-alvo-end"></div>
+      </div>
+    </div>
+
+    <!-- Não encontrou nem na internet -->
+    <div id="av-nao-enc-box" style="display:none">
+      <div class="nao-enc">
+        <strong>Não encontramos na internet nem no banco.</strong> Preencha os dados abaixo para cadastrar e avaliar.
+      </div>
+      <div class="form-group">
+        <label class="form-label">NOME DO ESTABELECIMENTO *</label>
+        <input class="form-input" id="av-man-nome" placeholder="Ex: Borracharia do João"/>
+      </div>
+      <div class="form-group form-row2">
+        <div>
+          <label class="form-label">TIPO</label>
+          <select class="form-input" id="av-man-tipo">
+            <option value="mecanico">🔩 Mecânico</option>
+            <option value="borracharia">🔧 Borracharia</option>
+            <option value="posto">⛽ Combustível</option>
+            <option value="guindaste">🏗️ Guincho</option>
+            <option value="eletricista">⚡ Elétrica</option>
+            <option value="pecas">🏪 Autopeças</option>
+            <option value="funilaria">🚗 Funilaria</option>
+            <option value="lavajato">🚿 Lava-Jato</option><option value="lavanderia">👕 Lavanderia</option>
+            <option value="restaurante">🍽️ Restaurante</option>
+            <option value="pousada">🛏️ Pousada</option>
+            <option value="farmacia">💊 Farmácia</option>
+            <option value="tacografo">📟 Tacógrafo</option>
+            <option value="toxicologico">🧪 Toxicológico</option>
+            <option value="chapa">💪 Chapa</option>
+            <option value="outros">📦 Outros</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">CIDADE</label>
+          <input class="form-input" id="av-man-cidade" placeholder="Cidade — UF"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ENDEREÇO (para aparecer no mapa)</label>
+        <input class="form-input" id="av-man-end" placeholder="Rua, número, bairro..." oninput="APP.validarEndAv()"/>
+        <div id="av-end-status" style="font-size:11px;margin-top:3px;display:none"></div>
+      </div>
+    </div>
+
+    <!-- Botão avaliar manualmente -->
+    <div id="av-btn-manual-box">
+      <div class="nao-enc">
+        <strong>Não encontrou?</strong> Avalie assim mesmo — buscamos na internet ou cadastramos.
+        <br><button class="btn-nao-enc" onclick="APP.modoManual()">📝 Avaliar serviço não cadastrado</button>
+      </div>
+    </div>
+    <div id="av-form-box" style="display:none">
+      <div class="form-group">
+        <label class="form-label">NOTA GERAL *</label>
+        <div style="display:flex;gap:4px;margin-top:4px" id="av-geral"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CRITÉRIOS</label>
+        <div id="av-crits"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SEU COMENTÁRIO</label>
+        <textarea class="form-input" id="av-texto" placeholder="Conte sua experiência..."></textarea>
+      </div>
+      <div class="form-group form-row2">
+        <div><label class="form-label">SEU NOME *</label><input class="form-input" id="av-autor" placeholder="Seu nome completo"/></div>
+        <div><label class="form-label">WHATSAPP * <span style="font-weight:400;color:#aaa;font-size:10px;text-transform:none">(privado)</span></label><input class="form-input" id="av-tel" placeholder="(88) 99999-9999" type="tel"/></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">FOTOS (opcional — até 3 fotos)</label>
+        <div class="foto-upload-area" onclick="document.getElementById('input-fotos-av').click()">
+          <input type="file" id="input-fotos-av" accept="image/*" multiple onchange="APP.previsualizarFotosAv(event)"/>
+          <div style="font-size:24px;margin-bottom:4px">📷</div>
+          <div style="font-size:13px;font-weight:700;color:#555">Toque para adicionar fotos</div>
+          <div style="font-size:11px;color:#aaa;margin-top:2px">Foto do serviço, local ou nota fiscal</div>
+        </div>
+        <div class="fotos-preview" id="fotos-preview-av"></div>
+        <div id="fotos-av-status" style="font-size:11px;color:#2d8c3e;margin-top:4px;display:none"></div>
+      </div>
+      <button class="btn-submit" id="btn-av" onclick="APP.enviarAv()">⭐ ENVIAR AVALIAÇÃO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="tela-admin" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🔐 Admin</div>
+  </div>
+  <div id="admin-login" style="padding:20px">
+    <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:14px">Área Restrita</div>
+    <div class="form-group"><label class="form-label">SENHA</label><input class="form-input" id="admin-senha" type="password" placeholder="Digite a senha"/></div>
+    <button class="btn-submit" onclick="APP.adminLogin()">ENTRAR</button>
+    <div id="admin-erro" style="display:none;color:#dc2626;font-size:13px;margin-top:8px;text-align:center">❌ Senha incorreta</div>
+  </div>
+  <div id="admin-painel" style="display:none">
+    <div class="admin-body">
+      <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:14px">📊 Painel Admin</div>
+      <div class="admin-card">
+        <div class="admin-card-t">🏪 Prestadores <span id="adm-tot-p" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div id="adm-lista-p"><div class="loading">Carregando...</div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-t">⭐ Avaliações <span id="adm-tot-a" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div id="adm-lista-a"><div class="loading">Carregando...</div></div>
+      </div>
+      <!-- GESTÃO DE VAGAS -->
+      <div class="admin-card">
+        <div class="admin-card-t">💼 Vagas SINE <span id="adm-tot-vagas" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div style="background:#f9fbe7;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #e8f5e9">
+          <!-- Botão captura automática IDT -->
+          <div style="font-size:12px;font-weight:700;color:#2d8c3e;margin-bottom:6px">🌐 Captura automática do SINE/IDT</div>
+          <div style="font-size:11px;color:#666;margin-bottom:8px;line-height:1.5">Busca e filtra automaticamente vagas de transporte do site idt.org.br — atualizado 2x por dia.</div>
+          <button onclick="APP.captarVagasIDT()" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:8px;color:#fff;padding:10px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px">🔄 Captar vagas do SINE agora</button>
+          <div id="vagas-idt-status" style="display:none;font-size:12px;font-weight:700;margin-bottom:8px;text-align:center;padding:8px;border-radius:8px;background:#f0fdf4;color:#2d8c3e"></div>
+          <!-- Divisor -->
+          <div style="display:flex;align-items:center;gap:8px;margin:10px 0">
+            <div style="flex:1;height:1px;background:#ccc"></div>
+            <span style="font-size:10px;color:#aaa;font-weight:700">ou envie manualmente</span>
+            <div style="flex:1;height:1px;background:#ccc"></div>
+          </div>
+          <div style="font-size:11px;color:#666;margin-bottom:8px">Colunas esperadas: <strong>Cidade, Função, Total</strong></div>
+          <div class="foto-upload-area" onclick="document.getElementById('input-vagas-csv').click()" style="border-color:#2d8c3e;background:#fff;border-width:2px;padding:12px">
+            <input type="file" id="input-vagas-csv" accept=".csv,text/csv" style="display:none" onchange="APP.uploadVagasCSV(event)"/>
+            <div style="font-size:24px;margin-bottom:4px">📂</div>
+            <div style="font-size:12px;font-weight:700;color:#2d8c3e">Toque para enviar CSV</div>
+          </div>
+          <div id="vagas-upload-status" style="display:none;font-size:12px;font-weight:700;margin-top:8px;text-align:center;padding:8px;border-radius:8px"></div>
+        </div>
+        <div id="adm-lista-vagas" style="max-height:300px;overflow-y:auto"><div class="loading">Carregando...</div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-t">📅 Eventos <span id="adm-tot-ev" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div style="background:#f9fbe7;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #e8f5e9">
+          <div id="ev-form-titulo" style="font-size:12px;font-weight:700;color:#2d8c3e;margin-bottom:10px">➕ Novo Evento</div>
+          <input type="hidden" id="ev-id"/>
+          <div class="form-group"><label class="form-label">TÍTULO *</label><input class="form-input" id="ev-titulo" placeholder="Nome do evento"/></div>
+          <div class="form-group"><label class="form-label">DATA *</label><input class="form-input" id="ev-data" type="date"/></div>
+          <div class="form-group"><label class="form-label">HORA</label><input class="form-input" id="ev-hora" type="time"/></div>
+          <div class="form-group"><label class="form-label">DESCRIÇÃO</label><textarea class="form-input" id="ev-desc" placeholder="Descrição..."></textarea></div>
+          <div class="form-group">
+            <label class="form-label">ENDEREÇO / LOCAL</label>
+            <div style="display:flex;gap:8px">
+              <input class="form-input" id="ev-end" placeholder="Ex: Posto Gatão, Sobral — CE" style="flex:1"/>
+              <button onclick="APP.evBuscarLocal()" style="background:#2d8c3e;border:none;border-radius:8px;color:#fff;padding:8px 10px;cursor:pointer;font-size:14px;flex-shrink:0" title="Buscar no mapa">📍</button>
+            </div>
+            <div id="ev-loc-status" style="display:none;font-size:11px;color:#2d8c3e;font-weight:700;margin-top:4px"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">BANNER DO EVENTO</label>
+            <div class="foto-upload-area" onclick="document.getElementById('input-ev-img').click()" style="border-color:#2d8c3e;background:#fff;border-width:2px;padding:14px">
+              <input type="file" id="input-ev-img" accept="image/*" style="display:none" onchange="APP.uploadBannerEvento(event)"/>
+              <div style="font-size:28px;margin-bottom:4px">🖼️</div>
+              <div style="font-size:13px;font-weight:700;color:#2d8c3e">Toque para subir o banner</div>
+              <div style="font-size:11px;color:#aaa;margin-top:2px">Recomendado: 1080×1350px</div>
+            </div>
+            <div id="ev-img-status" style="display:none;font-size:12px;font-weight:700;color:#2d8c3e;margin-top:6px;text-align:center;padding:8px;background:#f0fdf4;border-radius:8px"></div>
+            <input type="hidden" id="ev-img"/>
+            <div id="ev-img-preview" style="display:none;margin-top:8px;border-radius:8px;overflow:hidden">
+              <img id="ev-img-preview-img" src="" style="width:100%;aspect-ratio:4/5;object-fit:cover;display:block"/>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">INSTAGRAM</label><input class="form-input" id="ev-ig" placeholder="@perfil"/></div>
+          <div class="form-group"><label class="form-label">WHATSAPP</label><input class="form-input" id="ev-wpp" placeholder="(88) 99999-9999" type="tel"/></div>
+          <!-- FORMULÁRIO DE INSCRIÇÃO -->
+          <div class="form-group" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px">
+            <label class="form-label" style="color:#166534">📋 FORMULÁRIO DE INSCRIÇÃO</label>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#1a1a1a;cursor:pointer">
+                <input type="checkbox" id="ev-tem-form" style="width:18px;height:18px;accent-color:#2d8c3e" onchange="document.getElementById('ev-form-wpp-box').style.display=this.checked?'block':'none'"/>
+                Habilitar inscrição para este evento
+              </label>
+            </div>
+            <div id="ev-form-wpp-box" style="display:none">
+              <div style="font-size:11px;color:#555;margin-bottom:6px;line-height:1.5">As inscrições chegam via WhatsApp. Informe o número que vai receber:</div>
+              <input class="form-input" id="ev-form-wpp" placeholder="WhatsApp para receber inscrições (88) 99999-9999" type="tel"/>
+            </div>
+          </div>
+          <div class="form-row2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><label class="form-label">LATITUDE</label><input class="form-input" id="ev-lat" placeholder="-3.68..." type="number" step="any"/></div>
+            <div><label class="form-label">LONGITUDE</label><input class="form-input" id="ev-lng" placeholder="-40.34..." type="number" step="any"/></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button onclick="APP.salvarEvento()" class="btn-submit" style="flex:1">📅 PUBLICAR EVENTO</button>
+            <button id="ev-btn-cancelar" onclick="APP.evCancelarEdicao()" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;color:#dc2626;padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer">✕ Cancelar</button>
+          </div>
+          <div id="ev-ok" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;color:#166534;font-size:13px;font-weight:700;text-align:center;margin-top:8px">✅ Evento salvo!</div>
+        </div>
+        <div id="adm-lista-ev"><div class="loading">Carregando...</div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-t">📚 Cursos <span id="adm-tot-cur" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div style="background:#f9fbe7;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #e8f5e9">
+          <div style="font-size:12px;font-weight:700;color:#2d8c3e;margin-bottom:10px">➕ Novo Curso</div>
+          <div class="form-group"><label class="form-label">NOME *</label><input class="form-input" id="cur-nome" placeholder="Nome do curso"/></div>
+          <div class="form-group"><label class="form-label">DESCRIÇÃO</label><textarea class="form-input" id="cur-desc" placeholder="Descrição..."></textarea></div>
+          <div class="form-group"><label class="form-label">INSTITUIÇÃO</label><input class="form-input" id="cur-inst" placeholder="Escola ou instituição"/></div>
+          <div class="form-group"><label class="form-label">CIDADE/MODALIDADE</label><input class="form-input" id="cur-cidade" placeholder="Ex: Sobral — CE / Online"/></div>
+          <div class="form-group"><label class="form-label">PREÇO</label><input class="form-input" id="cur-preco" placeholder="Ex: Gratuito / R$ 350,00"/></div>
+          <div class="form-group"><label class="form-label">SITE</label><input class="form-input" id="cur-site" placeholder="https://..."/></div>
+          <div class="form-group"><label class="form-label">WHATSAPP</label><input class="form-input" id="cur-wpp" placeholder="(88) 99999-9999" type="tel"/></div>
+          <div class="form-group"><label class="form-label">IMAGEM (link)</label><input class="form-input" id="cur-img" placeholder="https://..."/></div>
+          <button onclick="APP.salvarCurso()" class="btn-submit" style="margin-top:10px">📚 PUBLICAR CURSO</button>
+          <div id="cur-ok" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;color:#166534;font-size:13px;font-weight:700;text-align:center;margin-top:8px">✅ Curso publicado!</div>
+        </div>
+        <div id="adm-lista-cur"><div class="loading">Carregando...</div></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-t">🚛 Me Contrata <span id="adm-tot-mot" style="font-weight:400;color:#aaa;font-size:12px"></span></div>
+        <div id="adm-lista-mot"><div class="loading">Carregando...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIÇÃO -->
+<div id="modal-ed" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:9999;overflow-y:auto">
+  <div style="background:#fff;margin:16px;border-radius:14px;overflow:hidden;max-width:600px;margin-left:auto;margin-right:auto">
+    <div style="background:linear-gradient(135deg,#1a3a1a,#2d8c3e);padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:#fff">✏️ Editar Prestador</div>
+      <button onclick="APP.fecharModal()" style="background:rgba(255,255,255,.2);border:none;border-radius:8px;color:#fff;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:700">✕</button>
+    </div>
+    <div style="padding:16px">
+      <input type="hidden" id="edit-id"/>
+      <div class="form-group"><label class="form-label">NOME *</label><input class="form-input" id="edit-nome"/></div>
+      <div class="form-group"><label class="form-label">TIPO *</label>
+        <select class="form-input" id="edit-tipo">
+          <option value="mecanico">🔩 Mecânico</option><option value="borracharia">🔧 Borracharia</option>
+          <option value="posto">⛽ Combustível</option><option value="guindaste">🏗️ Guincho</option>
+          <option value="eletricista">⚡ Elétrica</option><option value="pecas">🏪 Autopeças</option>
+          <option value="funilaria">🚗 Funilaria</option><option value="lavajato">🚿 Lava-Jato</option><option value="lavanderia">👕 Lavanderia</option>
+          <option value="restaurante">🍽️ Restaurante</option><option value="pousada">🛏️ Pousada</option>
+          <option value="farmacia">💊 Farmácia</option><option value="tacografo">📟 Tacógrafo</option>
+          <option value="toxicologico">🧪 Toxicológico</option><option value="chapa">💪 Chapa</option>
+          <option value="outros">📦 Outros</option>
+          <option value="financiamento">💰 Financiamento</option>
+          <option value="saude">🏥 Saúde</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">DESCRIÇÃO</label><textarea class="form-input" id="edit-desc"></textarea></div>
+      <div class="form-group"><label class="form-label">WHATSAPP</label><input class="form-input" id="edit-wpp" type="tel"/></div>
+      <div class="form-group"><label class="form-label">INSTAGRAM</label><input class="form-input" id="edit-ig"/></div>
+      <div class="form-group"><label class="form-label">ENDEREÇO</label><input class="form-input" id="edit-end"/></div>
+      <div class="form-group form-row2">
+        <div><label class="form-label">ABRE</label><input class="form-input" id="edit-abre" type="time"/></div>
+        <div><label class="form-label">FECHA</label><input class="form-input" id="edit-fecha" type="time"/></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;color:#555;cursor:pointer">
+        <input type="checkbox" id="edit-24h" style="accent-color:#2d8c3e;width:16px;height:16px"> Funciona 24 horas
+      </label>
+      <div class="form-group">
+        <label class="form-label">FOTOS DO LOCAL</label>
+        <div id="edit-fotos-atuais" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+        <div class="foto-upload-area" onclick="document.getElementById('input-fotos-edit').click()">
+          <input type="file" id="input-fotos-edit" accept="image/*" multiple onchange="APP.previsualizarFotosEdit(event)"/>
+          <div style="font-size:20px;margin-bottom:3px">📷</div>
+          <div style="font-size:12px;font-weight:700;color:#555">Adicionar novas fotos (até 5 no total)</div>
+        </div>
+        <div class="fotos-preview" id="fotos-preview-edit" style="margin-top:8px"></div>
+        <div id="fotos-edit-status" style="font-size:11px;color:#2d8c3e;margin-top:4px;display:none"></div>
+      </div>
+      <div id="edit-ok" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;color:#166534;font-size:13px;font-weight:700;text-align:center;margin-bottom:10px">✅ Salvo!</div>
+      <button onclick="APP.salvarEdit()" class="btn-submit">💾 SALVAR ALTERAÇÕES</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP SUCESSO -->
+
+<!-- TELA AVALIAR - seção cadastrar novo modificada -->
+<!-- TELA VAGAS -->
+<div id="tela-vagas" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">💼 Vagas para Motoristas</div>
+  </div>
+  <div class="hero-grad"><h2>Vagas para Motoristas do SINE</h2><p>Vagas para Motoristas próximas a você — atualizadas diariamente</p></div>
+  <div style="padding:14px 16px">
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px;margin-bottom:12px">
+      <div style="font-size:12px;color:#2d8c3e;font-weight:700;margin-bottom:4px">📅 Atualizado em: <span id="vagas-data-hoje"></span></div>
+      <div style="font-size:13px;font-weight:700;color:#1a1a1a" id="vagas-total-msg">Carregando vagas...</div>
+      <div style="height:1px;background:#bbf7d0;margin:10px 0"></div>
+      <div style="font-size:11px;color:#555;line-height:1.6">
+        📌 <strong>Para se candidatar:</strong> dirija-se ao <strong>SINE ou DT da sua cidade</strong> com sua <strong>Carteira de Trabalho</strong> e documentação pessoal. O nome da empresa contratante é informado no momento do atendimento.
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+      <input class="form-input" id="vagas-filtro" placeholder="🔍 Filtrar por cargo ou cidade..." oninput="APP.filtrarVagas()" style="flex:1"/>
+      <button onclick="APP.carregarVagas()" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#2d8c3e;white-space:nowrap">🔄</button>
+    </div>
+    <button onclick="APP.captarVagasIDT()" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:11px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px">🌐 Buscar vagas do SINE agora</button>
+    <div id="vagas-idt-status-pub" style="display:none;font-size:12px;font-weight:700;margin-bottom:10px;text-align:center;padding:8px;border-radius:8px"></div>
+    <div id="vagas-distancia" style="font-size:11px;color:#2d8c3e;font-weight:700;margin-bottom:8px"></div>
+    <div id="lista-vagas"><div class="loading">Carregando vagas...</div></div>
+  </div>
+</div>
+
+<!-- TELA MAPA DE SERVIÇOS -->
+<div id="tela-mapa-servicos" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🗺️ Mapa de Serviços</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:12px 16px">
+    <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#fff">Serviços no Brasil</div>
+    <div style="color:#a8d5b0;font-size:12px" id="mapa-srv-count">Carregando...</div>
+  </div>
+  <div style="padding:10px 16px;background:#fff;border-bottom:1px solid #eee;display:flex;gap:8px;overflow-x:auto">
+    <button class="serv-mapa-btn on" id="smb-todos" onclick="APP.filtrarMapaSrv('todos')">🌐 Todos</button>
+    <button class="serv-mapa-btn" id="smb-mecanico" onclick="APP.filtrarMapaSrv('mecanico')">🔩</button>
+    <button class="serv-mapa-btn" id="smb-borracharia" onclick="APP.filtrarMapaSrv('borracharia')">🔧</button>
+    <button class="serv-mapa-btn" id="smb-posto" onclick="APP.filtrarMapaSrv('posto')">⛽</button>
+    <button class="serv-mapa-btn" id="smb-restaurante" onclick="APP.filtrarMapaSrv('restaurante')">🍽️</button>
+    <button class="serv-mapa-btn" id="smb-pousada" onclick="APP.filtrarMapaSrv('pousada')">🛏️</button>
+  </div>
+  <div id="mapa-servicos-full" style="height:calc(100vh - 200px);width:100%"></div>
+</div>
+
+<!-- TELA CURSOS -->
+<div id="tela-cursos" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">📚 Cursos</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:16px">
+    <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:2px">Cursos para Motoristas</div>
+    <div style="color:#a8d5b0;font-size:12px">Capacitação e qualificação profissional</div>
+  </div>
+
+  <!-- SEST SENAT SECTION -->
+  <div style="background:#003087;padding:14px 16px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="background:#fff;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;color:#003087">SEST SENAT</div>
+      <div style="color:#fff;font-size:13px;font-weight:700">Cursos gratuitos para caminhoneiros</div>
+    </div>
+    <div style="color:#aac4ff;font-size:11px;margin-bottom:12px;line-height:1.5">Trabalhadores do transporte têm acesso <strong style="color:#fff">100% gratuito</strong> aos cursos presenciais e online do SEST SENAT.</div>
+    <div style="display:flex;gap:8px">
+      <button onclick="window.open('https://www.sestsenat.org.br/cursos','_blank')" style="flex:1;background:#fff;border:none;border-radius:8px;color:#003087;padding:10px;font-size:12px;font-weight:700;cursor:pointer">🔍 Cursos Presenciais CE</button>
+      <button onclick="window.open('https://ead.sestsenat.org.br','_blank')" style="flex:1;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;padding:10px;font-size:12px;font-weight:700;cursor:pointer">💻 Cursos Online</button>
+    </div>
+  </div>
+
+  <!-- Cursos fixos SEST SENAT -->
+  <div style="padding:12px 16px 0">
+    <div style="font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:#003087;margin-bottom:10px;text-transform:uppercase">📋 Principais cursos para caminhoneiros</div>
+    <div id="lista-cursos-sest">
+      <!-- Cards dos cursos SEST SENAT -->
+      <div class="curso-sest-card" onclick="window.open('https://www.sestsenat.org.br/cursos?q=MOPP','_blank')">
+        <div class="curso-sest-icon">☢️</div>
+        <div class="curso-sest-info">
+          <div class="curso-sest-nome">MOPP — Movimentação de Produtos Perigosos</div>
+          <div class="curso-sest-desc">Obrigatório para transporte de cargas perigosas. Renovação a cada 5 anos.</div>
+          <div class="curso-sest-tag">🎓 Gratuito para motoristas • Presencial</div>
+        </div>
+        <div class="curso-sest-seta">›</div>
+      </div>
+      <div class="curso-sest-card" onclick="window.open('https://www.sestsenat.org.br/cursos?q=direcao+defensiva','_blank')">
+        <div class="curso-sest-icon">🛡️</div>
+        <div class="curso-sest-info">
+          <div class="curso-sest-nome">Direção Defensiva</div>
+          <div class="curso-sest-desc">Técnicas para prevenir acidentes e reduzir riscos na estrada.</div>
+          <div class="curso-sest-tag">🎓 Gratuito para motoristas • Presencial/Online</div>
+        </div>
+        <div class="curso-sest-seta">›</div>
+      </div>
+      <div class="curso-sest-card" onclick="window.open('https://www.sestsenat.org.br/cursos?q=carga+indivisivel','_blank')">
+        <div class="curso-sest-icon">📏</div>
+        <div class="curso-sest-info">
+          <div class="curso-sest-nome">Transporte de Carga Indivisível</div>
+          <div class="curso-sest-desc">Para transporte de cargas especiais e superdimensionadas (AET).</div>
+          <div class="curso-sest-tag">🎓 Gratuito para motoristas • Presencial</div>
+        </div>
+        <div class="curso-sest-seta">›</div>
+      </div>
+      <div class="curso-sest-card" onclick="window.open('https://www.sestsenat.org.br/cursos?q=primeiros+socorros','_blank')">
+        <div class="curso-sest-icon">🩺</div>
+        <div class="curso-sest-info">
+          <div class="curso-sest-nome">Primeiros Socorros</div>
+          <div class="curso-sest-desc">Atendimento emergencial em acidentes de trânsito.</div>
+          <div class="curso-sest-tag">🎓 Gratuito para motoristas • Presencial/Online</div>
+        </div>
+        <div class="curso-sest-seta">›</div>
+      </div>
+      <div class="curso-sest-card" onclick="window.open('https://www.sestsenat.org.br/cursos?q=relacoes+humanas','_blank')">
+        <div class="curso-sest-icon">🤝</div>
+        <div class="curso-sest-info">
+          <div class="curso-sest-nome">Relações Humanas no Trabalho</div>
+          <div class="curso-sest-desc">Comunicação, liderança e trabalho em equipe para motoristas.</div>
+          <div class="curso-sest-tag">🎓 Gratuito para motoristas • Online</div>
+        </div>
+        <div class="curso-sest-seta">›</div>
+      </div>
+      <div class="curso-sest-card" onclick="window.open('https://www.sestsenat.org.br/cursos?q=legislacao+transporte','_blank')">
+        <div class="curso-sest-icon">📋</div>
+        <div class="curso-sest-info">
+          <div class="curso-sest-nome">Legislação do Transporte Rodoviário</div>
+          <div class="curso-sest-desc">CTB, RNTRC, jornada de trabalho e direitos do motorista.</div>
+          <div class="curso-sest-tag">🎓 Gratuito para motoristas • Online</div>
+        </div>
+        <div class="curso-sest-seta">›</div>
+      </div>
+      <div class="curso-sest-card" onclick="window.open('https://www.sestsenat.org.br/cursos?q=seguranca+veiculo','_blank')">
+        <div class="curso-sest-icon">🔧</div>
+        <div class="curso-sest-info">
+          <div class="curso-sest-nome">Segurança e Manutenção do Veículo</div>
+          <div class="curso-sest-desc">Inspeção preventiva, cuidados com o caminhão e economia de combustível.</div>
+          <div class="curso-sest-tag">🎓 Gratuito para motoristas • Online</div>
+        </div>
+        <div class="curso-sest-seta">›</div>
+      </div>
+      <div class="curso-sest-card" onclick="window.open('https://www.sestsenat.org.br/cursos?q=saude+motorista','_blank')">
+        <div class="curso-sest-icon">💪</div>
+        <div class="curso-sest-info">
+          <div class="curso-sest-nome">Saúde do Motorista Profissional</div>
+          <div class="curso-sest-desc">Ergonomia, alimentação saudável e prevenção de doenças ocupacionais.</div>
+          <div class="curso-sest-tag">🎓 Gratuito para motoristas • Online</div>
+        </div>
+        <div class="curso-sest-seta">›</div>
+      </div>
+    </div>
+    <!-- Unidade SEST SENAT Sobral -->
+    <div style="background:#f0f4ff;border:1px solid #c7d7f5;border-radius:10px;padding:12px;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:6px">📍 SEST SENAT — Sobral/CE</div>
+      <div style="font-size:11px;color:#555;line-height:1.6">Rua Cel. João Silvestre, 201 – Centro<br>Para se inscrever nos cursos presenciais, leve sua CNH e carteira de trabalho.</div>
+      <button onclick="window.open('https://www.sestsenat.org.br/onde-estamos','_blank')" style="background:#003087;border:none;border-radius:8px;color:#fff;padding:8px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px">🗺️ Ver todas as unidades do CE</button>
+    </div>
+  </div>
+
+  <!-- Divisor -->
+  <div style="padding:0 16px">
+    <div style="display:flex;align-items:center;gap:8px;margin:8px 0 12px">
+      <div style="flex:1;height:1px;background:#ddd"></div>
+      <span style="font-size:11px;color:#aaa;font-weight:700">outros cursos cadastrados</span>
+      <div style="flex:1;height:1px;background:#ddd"></div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px 20px"><div id="lista-cursos"><div class="loading">Carregando...</div></div></div>
+</div>
+
+<!-- TELA MOTORISTAS DISPONÍVEIS -->
+<div id="tela-motoristas" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🚛 Motoristas Disponíveis</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:16px">
+    <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:2px">Motoristas Disponíveis</div>
+    <div style="color:#a8d5b0;font-size:12px">Motoristas disponíveis para contratação</div>
+  </div>
+  <div style="padding:14px 16px">
+    <button onclick="APP.abrirCadMot()" id="btn-abrir-cad-mot" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px">🚛 Quero me cadastrar</button>
+    <button onclick="window.open('https://wa.me/5588981363953?text=Olá! Quero me cadastrar no Me Contrata mas não tenho currículo. Pode me ajudar?','_blank')" style="background:#fff;border:2px solid #25d366;border-radius:10px;color:#25d366;padding:11px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-bottom:14px">💬 Não tenho currículo — me ajude a fazer um</button>
+    <div id="cad-mot-form" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:#2d8c3e;margin-bottom:8px;text-transform:uppercase">📋 Cadastro rápido</div>
+      <div style="background:#fff3e0;border:1px solid #ffcc80;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px;color:#e65100">⏱️ Seu cadastro ficará visível por <strong>7 dias</strong> e será removido automaticamente.</div>
+      <div class="form-group">
+        <label class="form-label">📄 CURRÍCULO EM PDF * <span style="color:#dc2626">(obrigatório)</span></label>
+        <div class="foto-upload-area" onclick="document.getElementById('input-curriculo').click()" style="border-color:#2d8c3e;background:#fff;border-width:2px">
+          <input type="file" id="input-curriculo" accept=".pdf,application/pdf" style="display:none" onchange="APP.selecionarCurriculo(event)"/>
+          <div style="font-size:36px;margin-bottom:6px">📄</div>
+          <div style="font-size:14px;font-weight:700;color:#2d8c3e">Toque aqui para enviar seu currículo</div>
+          <div style="font-size:11px;color:#888;margin-top:4px">Somente PDF • A IA lê e preenche os campos</div>
+        </div>
+        <div id="curriculo-status" style="font-size:12px;color:#2d8c3e;margin-top:8px;display:none;text-align:center;font-weight:700;padding:8px;background:#f0fdf4;border-radius:8px"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:14px 0">
+        <div style="flex:1;height:1px;background:#ccc"></div>
+        <span style="font-size:11px;color:#999;font-weight:700">ou preencha manualmente</span>
+        <div style="flex:1;height:1px;background:#ccc"></div>
+      </div>
+      <div class="form-group"><label class="form-label">SEU NOME COMPLETO *</label><input class="form-input" id="mot-nome" placeholder="Nome completo"/></div>
+      <div class="form-group"><label class="form-label">CATEGORIA DA CNH *</label>
+        <select class="form-input" id="mot-cnh">
+          <option value="">Selecione...</option>
+          <option value="C">C — Caminhão</option>
+          <option value="D">D — Ônibus/Van</option>
+          <option value="E">E — Carreta/Bitrem</option>
+          <option value="C+D">C e D</option>
+          <option value="C+E">C e E (Carreteiro)</option>
+          <option value="D+E">D e E</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">TIPOS DE VEÍCULO COM EXPERIÊNCIA * <span style="font-weight:400;color:#aaa;text-transform:none">(selecione todos que já dirigiu)</span></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <div style="grid-column:1/-1;font-size:12px;font-weight:700;color:#2d8c3e">PESADOS</div>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Bitrem" onclick="this.classList.toggle('selected')">Bitrem</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Carreta" onclick="this.classList.toggle('selected')">Carreta</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Carreta 4º Eixo" onclick="this.classList.toggle('selected')">Carreta 4º Eixo</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Carreta LS" onclick="this.classList.toggle('selected')">Carreta LS</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Rodotrem" onclick="this.classList.toggle('selected')">Rodotrem</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Vanderléia" onclick="this.classList.toggle('selected')">Vanderléia</button>
+          <div style="grid-column:1/-1;font-size:12px;font-weight:700;color:#2d8c3e;margin-top:8px">MÉDIOS</div>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Bitruck" onclick="this.classList.toggle('selected')">Bitruck</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Truck" onclick="this.classList.toggle('selected')">Truck</button>
+          <div style="grid-column:1/-1;font-size:12px;font-weight:700;color:#2d8c3e;margin-top:8px">LEVES</div>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="3/4" onclick="this.classList.toggle('selected')">3/4</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Fiorino" onclick="this.classList.toggle('selected')">Fiorino</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="Toco" onclick="this.classList.toggle('selected')">Toco</button>
+          <button type="button" class="mot-veiculo-tag" data-veiculo="VLC" onclick="this.classList.toggle('selected')">VLC</button>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">CIDADE / ESTADO *</label><input class="form-input" id="mot-cidade" placeholder="Ex: Sobral — CE"/></div>
+      <div class="form-group"><label class="form-label">ANOS DE EXPERIÊNCIA</label><input class="form-input" id="mot-exp" type="number" min="0" max="70" placeholder="Ex: 10" style="width:100%"/></div>
+      <div class="form-group"><label class="form-label">WHATSAPP *</label><input class="form-input" id="mot-wpp" placeholder="(88) 99999-9999" type="tel"/></div>
+      <div class="form-group">
+        <label class="form-label">CURSOS E CERTIFICAÇÕES <span style="font-weight:400;color:#aaa;text-transform:none">(opcional — marque os que possui)</span></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+          <label class="mot-tipo-label"><input type="checkbox" value="MOPP" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> ☢️ MOPP</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Direção Defensiva" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🛡️ Dir. Defensiva</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Carga Indivisível" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 📏 Carga Indivisível</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Guincho/Munck" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🏗️ Guincho/Munck</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="NR-11" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 📋 NR-11</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="NR-12" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 📋 NR-12</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Primeiros Socorros" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🩺 Primeiros Socorros</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Prevenção de Roubo" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🔒 Prev. Roubo</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Transporte de Frigorífico" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> ❄️ Frigorífico</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Transporte de Tanque" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 🛢️ Tanque</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Rastreamento/Telemetria" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> 📡 Rastreamento</label>
+          <label class="mot-tipo-label"><input type="checkbox" value="Balança Fiscal" name="mot-curso-check" onchange="this.closest('label').classList.toggle('checked',this.checked)"> ⚖️ Balança Fiscal</label>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">OBSERVAÇÕES (opcional)</label><textarea class="form-input" id="mot-obs" placeholder="Disponibilidade, rotas preferidas..."></textarea></div>
+      <button onclick="APP.salvarMotorista()" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:13px;font-size:14px;font-weight:700;cursor:pointer;width:100%">✅ Publicar disponibilidade</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input class="form-input" id="mot-filtro" placeholder="🔍 Filtrar por nome, CNH, cidade..." oninput="APP.filtrarMotoristas()" style="flex:1;min-width:0"/>
+    </div>
+    <div id="lista-motoristas"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- TELA LOJA -->
+<div id="tela-loja" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">🛒 Loja do Alienígena</div>
+    <a href="https://www.lojadoalienigena.com.br" target="_blank" style="font-size:11px;font-weight:700;color:#2d8c3e;text-decoration:none;white-space:nowrap">🌐 Abrir</a>
+  </div>
+  <!-- Banner -->
+  <div style="background:linear-gradient(160deg,#1a1a1a,#333);padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#fff">👽 Loja do Alienígena</div>
+      <div style="color:#aaa;font-size:11px">Roupas e acessórios para caminhoneiros</div>
+    </div>
+    <a href="https://www.lojadoalienigena.com.br" target="_blank" style="background:#f59e0b;border-radius:8px;color:#1a1a1a;padding:7px 12px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap">Ver tudo →</a>
+  </div>
+  <!-- Categorias -->
+  <div style="background:#1a1a1a;padding:10px 16px;display:flex;gap:8px;overflow-x:auto">
+    <button class="loja-cat-btn on" onclick="APP.lojaFiltrar('todos',this)">🛒 Todos</button>
+    <button class="loja-cat-btn" onclick="APP.lojaFiltrar('masculino',this)">👕 Masculino</button>
+    <button class="loja-cat-btn" onclick="APP.lojaFiltrar('feminino',this)">👗 Feminino</button>
+    <button class="loja-cat-btn" onclick="APP.lojaFiltrar('bones',this)">🧢 Bonés</button>
+    <button class="loja-cat-btn" onclick="APP.lojaFiltrar('acessorios',this)">🎒 Acessórios</button>
+    <button class="loja-cat-btn" onclick="APP.lojaFiltrar('estetica',this)">✨ Estética</button>
+    <button class="loja-cat-btn" onclick="APP.lojaFiltrar('kits',this)">🎁 Kits</button>
+  </div>
+  <!-- Busca -->
+  <div style="padding:10px 16px;background:#f9f9f9;border-bottom:1px solid #eee">
+    <input class="form-input" id="loja-busca" placeholder="🔍 Buscar produto..." oninput="APP.lojaBuscar()" style="font-size:13px"/>
+  </div>
+  <!-- Grid -->
+  <div id="loja-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 16px 24px"></div>
+</div>
+
+<!-- TELA NOTÍCIAS -->
+<div id="tela-noticias" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">📰 Notícias</div>
+    <button onclick="APP.carregarNoticias()" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:700;color:#2d8c3e">🔄</button>
+  </div>
+  <div style="background:linear-gradient(160deg,#1a1a2e,#16213e);padding:14px 16px">
+    <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:2px">📰 Notícias do Caminhoneiro</div>
+    <div style="color:#a8b8d8;font-size:12px">Frete • Diesel • Legislação • Pedágio • ANTT</div>
+  </div>
+  <!-- Filtros de tema -->
+  <div style="padding:10px 16px;background:#fff;border-bottom:1px solid #eee;display:flex;gap:8px;overflow-x:auto">
+    <button class="noticia-filtro on" id="nf-todos" onclick="APP.filtrarNoticias('todos')">📰 Todas</button>
+    <button class="noticia-filtro" id="nf-frete" onclick="APP.filtrarNoticias('frete')">💰 Frete</button>
+    <button class="noticia-filtro" id="nf-diesel" onclick="APP.filtrarNoticias('diesel')">⛽ Diesel</button>
+    <button class="noticia-filtro" id="nf-lei" onclick="APP.filtrarNoticias('lei')">📋 Leis</button>
+    <button class="noticia-filtro" id="nf-pedagio" onclick="APP.filtrarNoticias('pedagio')">🛣️ Pedágio</button>
+    <button class="noticia-filtro" id="nf-antt" onclick="APP.filtrarNoticias('antt')">🏛️ ANTT</button>
+  </div>
+  <div id="lista-noticias" style="padding:14px 16px"><div class="loading">Carregando notícias...</div></div>
+</div>
+
+<!-- TELA EVENTOS -->
+<div id="tela-eventos" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">📅 Eventos</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#1a3a1a,#2d8c3e);padding:16px">
+    <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:2px">Eventos do Motorista</div>
+    <div style="color:#a8d5b0;font-size:12px">Feiras, encontros, palestras e mais</div>
+  </div>
+  <div style="padding:14px 16px"><div id="lista-eventos"><div class="loading">Carregando...</div></div></div>
+</div>
+
+<!-- TELA PROGRAMA DE RÁDIO -->
+<div id="tela-radio" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">📻 Programa de Rádio</div>
+  </div>
+  <div class="tela-conteudo" style="padding:16px">
+    <!-- Informações do Programa -->
+    <div style="background: linear-gradient(135deg, #2d5016 0%, #4a7c2e 100%); border-radius: 12px; padding: 20px; margin-bottom: 20px; color: white; text-align: center;">
+      <h2 style="margin: 0 0 10px 0; font-size: 18px;">📻 Próximo Programa</h2>
+      <p style="margin: 5px 0; font-size: 16px; font-weight: bold;">Sábado, 26 de Abril</p>
+      <p style="margin: 5px 0; font-size: 14px;">15h às 17h</p>
+      <p style="margin: 5px 0; font-size: 14px;">Rádio Educadora 107,5 FM</p>
+      <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.9;">Sobral - Ceará</p>
+    </div>
+
+    <!-- Links de Transmissão -->
+    <div style="margin-bottom: 20px;">
+      <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">Ouça o Programa</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <a href="https://www.facebook.com/radioeducadora" target="_blank" class="social-icon-btn" style="background:#1877f2;">📱</a>
+        <a href="https://www.radiosnet.com.br" target="_blank" class="social-icon-btn" style="background:#ff6b35;">🎙️</a>
+        <a href="https://www.youtube.com" target="_blank" class="social-icon-btn" style="background:#ff0000;">▶️</a>
+      </div>
+    </div>
+
+    <!-- Abas de Interatividade -->
+    <div style="margin-bottom: 20px;">
+      <div style="display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;">
+        <button onclick="APP.mostrarAbaRadio('alo')" id="btn-alo" style="background: #2d8c3e; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap;">🎤 Peça seu Alô</button>
+        <button onclick="APP.mostrarAbaRadio('musica')" id="btn-musica" style="background: #e5e7eb; color: #1f2937; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap;">🎵 Peça sua Música</button>
+        <button onclick="APP.mostrarAbaRadio('entrevista')" id="btn-entrevista" style="background: #e5e7eb; color: #1f2937; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap;">🎙️ Seja Entrevistado</button>
+      </div>
+
+      <!-- Conteúdo das Abas -->
+      <div id="aba-alo" style="display: block;">
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎤 Peça seu Alô</h3>
+        <input type="text" id="alo-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="alo-cidade" placeholder="Sua cidade" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <textarea id="alo-msg" placeholder="Seu alô para o programa (máx. 200 caracteres)" maxlength="200" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 80px;"></textarea>
+        <button onclick="APP.enviarFormularioRadio('alo')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Alô</button>
+        <div id="alo-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>     </div>
+
+      <div id="aba-musica" style="display: none;">
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎵 Peça sua Música</h3>
+        <input type="text" id="musica-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="musica-titulo" placeholder="Nome da música" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="musica-artista" placeholder="Artista" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="musica-dedicacao" placeholder="Para quem você dedica?" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <button onclick="APP.enviarFormularioRadio('musica')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Música</button>
+        <div id="musica-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>     </div>
+
+      <div id="aba-entrevista" style="display: none;">
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: #1f2937;">🎙️ Participe como Entrevistado</h3>
+        <input type="text" id="entrevista-nome" placeholder="Seu nome" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <input type="text" id="entrevista-wpp" placeholder="Seu WhatsApp" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        <textarea id="entrevista-tema" placeholder="Qual é seu tema ou história? (máx. 300 caracteres)" maxlength="300" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; resize: vertical; min-height: 100px;"></textarea>
+        <button onclick="APP.enviarFormularioRadio('entrevista')" style="width: 100%; background: #2d8c3e; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px;">📤 Enviar Proposta</button>
+        <div id="entrevista-historico" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #555;"></div>      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="popup-sucesso" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99998;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:32px 24px;text-align:center;margin:24px;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.2);animation:popIn .3s ease">
+    <div id="popup-icone" style="font-size:56px;margin-bottom:12px">✅</div>
+    <div id="popup-titulo" style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:8px">Sucesso!</div>
+    <div id="popup-msg" style="font-size:14px;color:#555;line-height:1.5;margin-bottom:20px">Operação realizada com sucesso!</div>
+    <button onclick="APP.fecharPopup()" style="background:linear-gradient(135deg,#2d8c3e,#1a5c26);border:none;border-radius:10px;color:#fff;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;width:100%">OK, entendi! 👍</button>
+  </div>
+</div>
+
+<!-- MODAL DE TERMOS PARA PRESTADORES -->
+<div id="modal-termos-prestador-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:99998;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto">
+  <div style="background:#fff;border-radius:16px;max-width:440px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:popIn .4s ease-out;margin:20px 0">
+    <div style="background:linear-gradient(135deg,#1a3a1a,#2d8c3e);padding:20px;text-align:center">
+      <div style="font-size:36px;margin-bottom:8px">⚖️</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:2px">Termo de Responsabilidade</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.8)">Leia com atenção antes de confirmar</div>
+    </div>
+    <div style="padding:18px;max-height:60vh;overflow-y:auto">
+      <!-- DADOS DO RESPONSÁVEL -->
+      <div style="font-size:11px;font-weight:700;color:#2d8c3e;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">📋 Dados do Responsável pelo Cadastro</div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">Nome Completo *</label>
+        <input type="text" id="termos-nome" placeholder="Seu nome completo" style="background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none;font-family:'Barlow',sans-serif"/>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px">E-mail *</label>
+        <input type="email" id="termos-email" placeholder="Seu e-mail" style="background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;width:100%;outline:none;font-family:'Barlow',sans-serif"/>
+      </div>
+      <!-- TEXTO DO TERMO -->
+      <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:8px">TERMO DE RESPONSABILIDADE DE CADASTRO — TR.ALIENIGENA</div>
+        <div style="font-size:11px;color:#555;line-height:1.7">
+          Ao confirmar este cadastro, o responsável declara, para todos os fins de direito, que:<br/><br/>
+          <strong>1.</strong> Todas as informações fornecidas são <strong>verdadeiras, atualizadas e precisas</strong>, assumindo total responsabilidade civil e criminal por qualquer dado falso ou enganoso cadastrado na plataforma.<br/><br/>
+          <strong>2.</strong> Possui <strong>autorização legal</strong> para representar e cadastrar o estabelecimento ou serviço indicado, estando ciente de que o cadastro indevido de terceiros sem autorização pode configurar crime previsto no Código Penal Brasileiro.<br/><br/>
+          <strong>3.</strong> Reconhece que a plataforma <strong>Tr.Alienigena</strong> atua apenas como intermediária de informações, sendo o cadastrante o único responsável pelo conteúdo inserido, isentando a plataforma de qualquer responsabilidade por informações incorretas.<br/><br/>
+          <strong>4.</strong> Compromete-se a <strong>manter as informações atualizadas</strong> e a notificar a plataforma em caso de encerramento ou alteração relevante do serviço.<br/><br/>
+          <strong>5.</strong> Está ciente de que dados do cadastro — incluindo nome e e-mail do responsável — poderão ser utilizados pela Tr.Alienigena para verificação e contato, nos termos da Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018).
+        </div>
+      </div>
+      <!-- CHECKBOX -->
+      <div style="display:flex;gap:10px;align-items:flex-start;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:4px">
+        <input type="checkbox" id="check-termos-prestador" style="margin-top:2px;cursor:pointer;width:18px;height:18px;accent-color:#2d8c3e;flex-shrink:0"/>
+        <label for="check-termos-prestador" style="font-size:12px;color:#166534;cursor:pointer;flex:1;line-height:1.5;font-weight:600">
+          Li, compreendi e concordo com todas as cláusulas deste Termo de Responsabilidade, assumindo as responsabilidades descritas acima.
+        </label>
+      </div>
+      <div style="font-size:10px;color:#aaa;text-align:center;margin-top:6px">Data e hora serão registradas automaticamente junto ao cadastro</div>
+    </div>
+    <div style="padding:14px 18px;border-top:1px solid #eee;display:flex;gap:8px">
+      <button onclick="APP.fecharTermosPrestador()" style="flex:1;background:#f0f0f0;border:none;border-radius:8px;color:#666;padding:12px;font-size:13px;font-weight:700;cursor:pointer">
+        ✕ Cancelar
+      </button>
+      <button onclick="APP.salvarTermosPrestador()" id="btn-aceitar-termos-prestador" disabled style="flex:1;background:#2d8c3e;border:none;border-radius:8px;color:#fff;padding:12px;font-size:13px;font-weight:700;cursor:not-allowed;opacity:.5">
+        ✅ Confirmar Cadastro
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE APOIO -->
+<div id="modal-apoio-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:99997;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;max-width:380px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:popIn .4s ease-out">
+    <div style="background:linear-gradient(135deg,#dc2626,#991b1b);padding:24px 20px;text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">❤️</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:4px">Apoie esse Projeto</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85)">Sua contribuição faz diferença!</div>
+    </div>
+    <div style="padding:24px">
+      <div style="background:#f9fafb;border-radius:12px;padding:16px;margin-bottom:20px;text-align:center">
+        <div style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.6">
+          O <strong>Tr.Alienigena</strong> é mantido com dedicação para ajudar você no trecho. Servidor, desenvolvimento e inovação têm custo. Qualquer contribuição nos ajuda a crescer!
+        </div>
+        <div style="background:#fff;border:2px solid #e5e7eb;border-radius:10px;padding:14px;margin-bottom:12px;font-family:monospace;font-size:14px;font-weight:700;color:#1a1a1a;word-break:break-all">
+          63649771000124
+        </div>
+        <button onclick="APP.copiarPix()" style="background:#2d8c3e;border:none;border-radius:8px;color:#fff;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;transition:background .2s">
+          📋 Copiar Chave Pix
+        </button>
+        <div id="msg-pix-copiado" style="display:none;font-size:12px;color:#2d8c3e;font-weight:700;margin-bottom:10px">✅ Chave copiada! Cole no seu app de banco.</div>
+      </div>
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:12px;color:#999;margin-bottom:8px">Ou abra seu app de Pix:</div>
+        <button onclick="APP.abrirPixCopiaECola()" style="background:#25d366;border:none;border-radius:8px;color:#fff;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;width:100%;transition:background .2s">
+          💚 Abrir Pix
+        </button>
+      </div>
+      <button onclick="APP.fecharApoio()" style="background:#f3f4f6;border:none;border-radius:8px;color:#666;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;width:100%;transition:background .2s">
+        Agora não, obrigado
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TELA REFERÊNCIAS OFICIAIS -->
+<div id="tela-referencias" class="tela">
+  <div class="tela-header">
+    <button class="btn-voltar" onclick="APP.inicio()">← Voltar</button>
+    <div class="tela-titulo">📋 Fontes Oficiais</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#0d2137,#1a3a5c);padding:16px">
+    <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:2px">📋 Referências Oficiais</div>
+    <div style="color:#a8c8e8;font-size:12px">Links diretos e verificados das fontes do governo</div>
+  </div>
+  <!-- Status -->
+  <div style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;padding:8px 16px;display:flex;align-items:center;gap:7px">
+    <div style="width:8px;height:8px;background:#2d8c3e;border-radius:50%;animation:pulseDot 2s infinite;flex-shrink:0"></div>
+    <span style="font-size:11px;color:#166534;font-weight:700">7 fontes verificadas · Atualizado abr/2026</span>
+  </div>
+  
+
+  <!-- FRETE & REGULAÇÃO -->
+  <div class="ref-section">⚖️ Frete & Regulação</div>
+
+  <a class="ref-card" href="https://www.gov.br/antt/pt-br/assuntos/transporte-de-cargas/piso-minimo-de-frete" target="_blank" rel="noopener">
+    <div class="ref-card-bar" style="background:#f5a623"></div>
+    <div class="ref-card-icon">🛣️</div>
+    <div class="ref-card-body">
+      <div class="ref-card-org" style="color:#f5a623">ANTT</div>
+      <div class="ref-card-titulo">Piso Mínimo de Frete</div>
+      <div class="ref-card-desc">Tabela oficial com valores mínimos por km, tipo de carga e eixos</div>
+    </div>
+    <div class="ref-card-arrow">›</div>
+  </a>
+
+  <a class="ref-card" href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13103.htm" target="_blank" rel="noopener">
+    <div class="ref-card-bar" style="background:#e8440a"></div>
+    <div class="ref-card-icon">📜</div>
+    <div class="ref-card-body">
+      <div class="ref-card-org" style="color:#e8440a">Planalto</div>
+      <div class="ref-card-titulo">Lei 13.103 — Lei do Motorista</div>
+      <div class="ref-card-desc">Jornada, descanso, multas e direitos do motorista profissional</div>
+    </div>
+    <div class="ref-card-arrow">›</div>
+  </a>
+
+  <!-- COMBUSTÍVEL -->
+  <div class="ref-section">⛽ Combustível</div>
+
+  <a class="ref-card" href="https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/precos-revenda-e-de-distribuicao-combustiveis/serie-historica-do-levantamento-de-precos" target="_blank" rel="noopener">
+    <div class="ref-card-bar" style="background:#4a9eff"></div>
+    <div class="ref-card-icon">📊</div>
+    <div class="ref-card-body">
+      <div class="ref-card-org" style="color:#4a9eff">ANP</div>
+      <div class="ref-card-titulo">Série Histórica — Preço do Diesel</div>
+      <div class="ref-card-desc">Levantamento semanal com médias estaduais e nacionais do diesel S10</div>
+    </div>
+    <div class="ref-card-arrow">›</div>
+  </a>
+
+  <!-- INFRAESTRUTURA -->
+  <div class="ref-section">🏗️ Infraestrutura & Pesquisa</div>
+
+  <a class="ref-card" href="https://www.cnt.org.br/pesquisa-rodoviaria" target="_blank" rel="noopener">
+    <div class="ref-card-bar" style="background:#2d8c3e"></div>
+    <div class="ref-card-icon">🔍</div>
+    <div class="ref-card-body">
+      <div class="ref-card-org" style="color:#2d8c3e">CNT</div>
+      <div class="ref-card-titulo">Pesquisa Rodoviária</div>
+      <div class="ref-card-desc">Avaliação anual das rodovias: conservação, sinalização e geometria</div>
+    </div>
+    <div class="ref-card-arrow">›</div>
+  </a>
+
+  <!-- FINANCIAMENTO & VEÍCULOS -->
+  <div class="ref-section">💰 Financiamento & Veículos</div>
+
+  <a class="ref-card" href="https://www.bndes.gov.br/wps/portal/site/home/financiamento/produto/finame" target="_blank" rel="noopener">
+    <div class="ref-card-bar" style="background:#a855f7"></div>
+    <div class="ref-card-icon">🏦</div>
+    <div class="ref-card-body">
+      <div class="ref-card-org" style="color:#a855f7">BNDES</div>
+      <div class="ref-card-titulo">Finame — Financiamento de Máquinas</div>
+      <div class="ref-card-desc">Linhas de crédito para compra de caminhões e implementos rodoviários</div>
+    </div>
+    <div class="ref-card-arrow">›</div>
+  </a>
+
+  <a class="ref-card" href="https://veiculos.fipe.org.br/" target="_blank" rel="noopener">
+    <div class="ref-card-bar" style="background:#f5a623"></div>
+    <div class="ref-card-icon">🚛</div>
+    <div class="ref-card-body">
+      <div class="ref-card-org" style="color:#f5a623">FIPE</div>
+      <div class="ref-card-titulo">Tabela FIPE — Caminhões</div>
+      <div class="ref-card-desc">Consulta de valor de mercado para caminhões e carretas</div>
+    </div>
+    <div class="ref-card-arrow">›</div>
+  </a>
+
+  <!-- HABILITAÇÃO -->
+  <div class="ref-section">🪪 Habilitação</div>
+
+  <a class="ref-card" href="https://www.gov.br/senatran/pt-br/assuntos/habilitacao/categorias" target="_blank" rel="noopener">
+    <div class="ref-card-bar" style="background:#14b8a6"></div>
+    <div class="ref-card-icon">🪪</div>
+    <div class="ref-card-body">
+      <div class="ref-card-org" style="color:#14b8a6">SENATRAN</div>
+      <div class="ref-card-titulo">Habilitação Categorias C, D e E</div>
+      <div class="ref-card-desc">Requisitos, exames e procedimentos para CNH de motorista profissional</div>
+    </div>
+    <div class="ref-card-arrow">›</div>
+  </a>
+
+  <div style="padding:16px 16px 28px;text-align:center;font-size:11px;color:#aaa;line-height:1.7">
+    Links das fontes oficiais do governo federal.<br/>
+    Sempre confirme a <strong style="color:#2d8c3e">portaria vigente</strong> antes de calcular frete.
+  </div>
+</div>
+
+<!-- MODAL INSCRIÇÃO EVENTO -->
+<div id="modal-inscricao" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99997;align-items:flex-end;justify-content:center">
+  <div style="background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;animation:slideUp .3s ease">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700">📋 Inscrição no Evento</div>
+      <button onclick="APP.fecharInscricao()" style="background:#f5f5f5;border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div id="inscricao-evento-nome" style="font-size:13px;color:#2d8c3e;font-weight:700;margin-bottom:16px"></div>
+
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px">NOME COMPLETO *</label>
+      <input id="insc-nome" class="form-input" placeholder="Seu nome completo"/>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px">WHATSAPP *</label>
+      <input id="insc-wpp" class="form-input" placeholder="(88) 99999-9999" type="tel"/>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px">TAMANHO BLUSA</label>
+        <select id="insc-blusa" class="form-input">
+          <option value="">Selecione</option>
+          <option>P</option><option>M</option><option>G</option><option>GG</option><option>XGG</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px">TAMANHO SHORT</label>
+        <select id="insc-short" class="form-input">
+          <option value="">Selecione</option>
+          <option>P</option><option>M</option><option>G</option><option>GG</option><option>XGG</option>
+        </select>
+      </div>
+    </div>
+    <button onclick="APP.enviarInscricao()" style="background:linear-gradient(135deg,#25d366,#128c7e);border:none;border-radius:10px;color:#fff;padding:14px;font-size:14px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">
+      💬 Enviar inscrição pelo WhatsApp
+    </button>
+    <div style="font-size:11px;color:#aaa;text-align:center;margin-top:8px">Você será redirecionado ao WhatsApp para confirmar</div>
+  </div>
+</div>
+
+<!-- MODAL FOTO -->
+<div class="foto-modal" id="foto-modal" onclick="APP.fecharFotoModal()">
+  <button class="foto-modal-close" onclick="APP.fecharFotoModal()">✕</button>
+  <img id="foto-modal-img" src="" alt="Foto ampliada"/>
+</div>
+
+<!-- ===== INIT DARK MODE ===== -->
+
+<!-- ===== FIM INIT DARK MODE ===== -->
+
+  <script>
+    // Placeholder global — será substituído pelo app.js quando carregar
+    window.APP = {};
+    window._APP = {};
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
