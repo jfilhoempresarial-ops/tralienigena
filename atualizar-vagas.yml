@@ -1,0 +1,42 @@
+name: Atualizar vagas SINE/IDT
+
+on:
+  schedule:
+    # 11:50 e 16:50 horário de Brasília (UTC-3) = 14:50 e 19:50 UTC
+    # (um pouco depois das atualizações do IDT, que saem às 11h30 e 16h30)
+    - cron: '50 14 * * *'
+    - cron: '50 19 * * *'
+  workflow_dispatch: {}   # permite rodar manualmente em Actions > Run workflow
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar-vagas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Buscar vagas do SINE/IDT e gerar vagas.csv
+        run: node scripts/atualizar-vagas.js
+
+      - name: Commitar vagas.csv se houver mudança
+        run: |
+          git config user.name "tralienigena-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet -- vagas.csv; then
+            echo "Nenhuma mudança nas vagas. Nada para commitar."
+          else
+            git add vagas.csv
+            git commit -m "Atualiza vagas SINE/IDT [automatico]"
+            git push
+          fi

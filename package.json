@@ -1,0 +1,13 @@
+{
+  "name": "tralienigena-vagas-bot",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Script de captura automatica das vagas do SINE/IDT para o app Tr.Alienigena",
+  "type": "module",
+  "scripts": {
+    "atualizar-vagas": "node scripts/atualizar-vagas.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
