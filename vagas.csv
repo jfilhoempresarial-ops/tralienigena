@@ -2,14 +2,17 @@ cidade,cargo,total,telefone,endereco,email
 Fortaleza - Centro,Ajudante de carga e descarga de mercadoria,12,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - Centro,Motofretista,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - Centro,Motorista carreteiro,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
+Fortaleza - Centro,Motorista de automóveis,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - Centro,Motorista de caminhão,5,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
-Fortaleza - Casa do cidadão,Ajudante de carga e descarga de mercadoria,7,(85) 2180-6213,Av. Whashington Soares,vagas.papicu@idt.org.br
+Fortaleza - Casa do cidadão,Ajudante de carga e descarga de mercadoria,2,(85) 2180-6213,Av. Whashington Soares,vagas.papicu@idt.org.br
+Fortaleza - U.a. antônio bezerra,Ajudante de carga e descarga de mercadoria,5,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
 Fortaleza - U.a. antônio bezerra,Ajudante de motorista,10,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
 Fortaleza - U.a. antônio bezerra,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
 Fortaleza - U.a. messejana,Ajudante de carga e descarga de mercadoria,51,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Ajudante de motorista,2,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Motorista de caminhão,1,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Motorista de caminhão guincho pesado com munk,6,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
+Fortaleza - U.a. messejana,Motorista operador de betoneira,30,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Operador de máquina de fabricação de cosméticos,1,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Operador de retro-escavadeira,5,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Aracati,Motorista de caminhão,1,(85) 2180-6227,Rua Cel. Alexanzito,vagas.aracati@idt.org.br
@@ -29,9 +32,9 @@ Juazeiro do norte,Manobrista,1,(88) 2180-6225,Rua Interventor Francisco Erivano 
 Juazeiro do norte,Motorista de caminhão,4,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
 Juazeiro do norte,Motorista de caminhão guincho pesado com munk,10,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
 Juazeiro do norte,Operador de retro-escavadeira,2,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
-Maracanaú,Ajudante de carga e descarga de mercadoria,44,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
+Maracanaú,Ajudante de carga e descarga de mercadoria,32,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Ajudante de motorista,13,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
-Maracanaú,Motofretista,5,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
+Maracanaú,Motofretista,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista de automóveis,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista de caminhão,7,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista de ônibus urbano,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
@@ -48,8 +51,6 @@ Pecém,Motorista operador de betoneira,1,(85) 2180-6221,Rua Francisco Câncio,cu
 Pecém,Motorista operador de bomba de concreto,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
 Pecém,Operador de máquinas de construção civil e mineração,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
 Pecém,Sinaleiro (orientação de guindastes e equipamentos similares),8,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
-Quixeramobim,Operador de retro-escavadeira,1,(85) 3305-8579,Rua Mons. Salviano Pinto,
-Sobral,Ajudante de carga e descarga de mercadoria,6,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Ajudante de motorista,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Motofretista,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Motorista de caminhão,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
