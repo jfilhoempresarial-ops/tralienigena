@@ -1,0 +1,15 @@
+{
+  "rewrites": [
+    { "source": "/vagas", "destination": "/index.html" },
+    { "source": "/eventos", "destination": "/index.html" },
+    { "source": "/noticias", "destination": "/index.html" },
+    { "source": "/cursos", "destination": "/index.html" },
+    { "source": "/radio", "destination": "/index.html" },
+    { "source": "/motoristas", "destination": "/index.html" },
+    { "source": "/me-contrata", "destination": "/index.html" },
+    { "source": "/servicos", "destination": "/index.html" },
+    { "source": "/mapa", "destination": "/index.html" },
+    { "source": "/avaliar", "destination": "/index.html" },
+    { "source": "/cadastro", "destination": "/index.html" }
+  ]
+}
