@@ -1,56 +1,55 @@
 cidade,cargo,total,telefone,endereco,email
 Fortaleza - Centro,Ajudante de carga e descarga de mercadoria,4,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
-Fortaleza - Centro,Manobrista,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
-Fortaleza - Centro,Motorista de caminhão,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
+Fortaleza - Centro,Ajudante de motorista,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
+Fortaleza - Centro,Manobrista,2,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - Centro,Motorista entregador,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - Centro,Motorista de caminhão,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - Centro,"Operador de máquinas fixas, em geral",1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - U.a. antônio bezerra,Motorista entregador,1,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
 Fortaleza - U.a. antônio bezerra,Ajudante de motorista,1,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
 Fortaleza - U.a. messejana,Ajudante de carga e descarga de mercadoria,5,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
-Fortaleza - U.a. messejana,Ajudante de motorista,4,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Motorista carreteiro,2,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Motorista de caminhão,1,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,"Operador de máquinas fixas, em geral",2,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - Casa do cidadão benfica,Motorista entregador,1,(85) 2180-6215,Av. Carapinima,vagas.benfica@idt.org.br
-Aracati,Motorista entregador,1,(85) 2180-6227,Rua Cel. Alexanzito,vagas.aracati@idt.org.br
+Aracati,Motorista entregador,2,(85) 2180-6227,Rua Cel. Alexanzito,vagas.aracati@idt.org.br
 Canindé,Ajudante de motorista,1,,Rua Praça Frei Matias,
 Canindé,Caminhoneiro caçambeiro,1,,Rua Praça Frei Matias,
 Canindé,Motofretista,1,,Rua Praça Frei Matias,
 Crateús,Caminhoneiro caçambeiro,1,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
 Crateús,Motofretista,1,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
 Crateús,Motorista de caminhão guincho pesado com munk,1,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
-Crateús,Motorista entregador,2,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
-Eusébio,Ajudante de carga e descarga de mercadoria,9,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
-Eusébio,Ajudante de motorista,2,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
-Horizonte,Ajudante de carga e descarga de mercadoria,2,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
+Crateús,Motorista entregador,3,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
+Eusébio,Ajudante de carga e descarga de mercadoria,12,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
+Eusébio,Ajudante de motorista,4,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
+Horizonte,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
 Horizonte,Entregador de gás (ajudante de caminhão),2,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
 Horizonte,Motofretista,1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
 Horizonte,Motorista de caminhão,1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
 Horizonte,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
 Iguatu,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6226,Rua Floriano Peixoto,vagas.iguatu@idt.org.br
 Iguatu,Manobrista,1,(85) 2180-6226,Rua Floriano Peixoto,vagas.iguatu@idt.org.br
-Juazeiro do norte,Ajudante de carga e descarga de mercadoria,4,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
+Itapipoca,Motofretista,1,(85) 2180-6222,Av. Anastácio Braga,vagas.itapipoca@idt.org.br
 Juazeiro do norte,Ajudante de motorista,1,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
+Juazeiro do norte,Entregador de gás (ajudante de caminhão),1,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
 Juazeiro do norte,Motorista de caminhão guincho pesado com munk,2,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
-Juazeiro do norte,Motorista entregador,5,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
+Juazeiro do norte,Motorista entregador,6,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
 Juazeiro do norte,Ajudante de carga e descarga de mercadoria,3,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
 Limoeiro do norte,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Ajudante de motorista,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Motorista de caminhão,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Motorista de caminhão guincho pesado com munk,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Limoeiro do norte,Motorista de ônibus rodoviário,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Maracanaú,Ajudante de carga e descarga de mercadoria,38,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
+Limoeiro do norte,Motorista de ônibus rodoviário,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
+Limoeiro do norte,Motorista entregador,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
+Maracanaú,Ajudante de carga e descarga de mercadoria,28,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Ajudante de motorista,7,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
-Maracanaú,Motorista de caminhão-guincho pesado com munk,2,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista de caminhão-pipa,4,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista entregador,4,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Ajudante de carga e descarga de mercadoria,6,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maranguape,Ajudante de carga e descarga de mercadoria,4,(85) 3369-9101,Rua Cel. Antônio Botelho,
-Maranguape,Motorista entregador,1,(85) 3369-9101,Rua Cel. Antônio Botelho,
+Maranguape,Motorista entregador,2,(85) 3369-9101,Rua Cel. Antônio Botelho,
 Morada nova,Ajudante de carga e descarga de mercadoria,3,,Rua Antônio de Castro,
 Morada nova,Motorista de caminhão,2,,Rua Antônio de Castro,
-Morada nova,Motorista de caminhão guincho pesado com munk,2,,Rua Antônio de Castro,
 Morada nova,Motorista de ônibus urbano,2,,Rua Antônio de Castro,
 Pecém,Motofretista,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
 Pecém,Motorista de caminhão,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
@@ -69,6 +68,7 @@ Tianguá,Ajudante de carga e descarga de mercadoria,2,(85) 2180-6224,Av. Prefeit
 Tianguá,Motorista de caminhão,1,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
 Tianguá,Motorista de caminhão basculante,5,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
 Tianguá,Motorista de ônibus urbano,3,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
+Tianguá,Motorista entregador,2,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
 Tianguá,Operador de máquinas de construção civil e mineração,1,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
 Fortim,Motofretista,1,,AV. Joaquim Crisóstomo,
 Fortim,Motorista de caminhão,1,,AV. Joaquim Crisóstomo,
