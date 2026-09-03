@@ -1,5 +1,4 @@
 cidade,cargo,total,telefone,endereco,email
-Fortaleza - Centro,Ajudante de carga e descarga de mercadoria,3,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - Centro,Motorista carreteiro,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - U.a. antônio bezerra,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
 Fortaleza - U.a. antônio bezerra,Ajudante de motorista,10,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
@@ -30,14 +29,13 @@ Juazeiro do norte,Motorista de caminhão guincho pesado com munk,2,(88) 2180-622
 Juazeiro do norte,Motorista entregador,3,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
 Juazeiro do norte,Ajudante de carga e descarga de mercadoria,3,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
 Limoeiro do norte,Ajudante de carga e descarga de mercadoria,4,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Limoeiro do norte,Motorista de caminhão,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Motorista de caminhão guincho pesado com munk,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Motorista entregador,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Operador de máquina perfuratriz,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Operador de retro-escavadeira,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Maracanaú,Ajudante de carga e descarga de mercadoria,24,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
-Maracanaú,Ajudante de motorista,5,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
+Maracanaú,Ajudante de carga e descarga de mercadoria,8,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
+Maracanaú,Ajudante de motorista,9,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista carreteiro,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista de caminhão,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista entregador,4,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
@@ -45,11 +43,14 @@ Maracanaú,"Operador de máquinas fixas, em geral",1,(85) 2180-6220,Av. Senador 
 Maracanaú,Ajudante de carga e descarga de mercadoria,6,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maranguape,Ajudante de carga e descarga de mercadoria,2,(85) 3369-9101,Rua Cel. Antônio Botelho,
 Maranguape,Motorista entregador,2,(85) 3369-9101,Rua Cel. Antônio Botelho,
+Maranguape,"Operador de máquinas fixas, em geral",1,(85) 3369-9101,Rua Cel. Antônio Botelho,
 Pecém,Motofretista,2,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
 Pecém,Motorista de caminhão,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
 Pecém,Motorista de caminhão (rotas regionais e internacionais),2,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
 Pecém,Operador de retro-escavadeira,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
 Quixadá,Motorista de caminhão,1,(85) 2180-6229,Av. Plácido Castelo,
+Quixeramobim,Ajudante de motorista,1,(85) 3305-8579,Rua Mons. Salviano Pinto,
+Quixeramobim,Motorista de caminhão,1,(85) 3305-8579,Rua Mons. Salviano Pinto,
 Sobral,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Motorista de caminhão,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Motorista de furgão ou veículo similar,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
