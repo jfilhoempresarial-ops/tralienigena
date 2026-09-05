@@ -2,9 +2,10 @@ cidade,cargo,total,telefone,endereco,email
 Fortaleza - Centro,Motorista carreteiro,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
 Fortaleza - U.a. antônio bezerra,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
 Fortaleza - U.a. antônio bezerra,Ajudante de motorista,10,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
-Fortaleza - U.a. messejana,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
-Fortaleza - U.a. messejana,Ajudante de motorista,10,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
+Fortaleza - U.a. messejana,Ajudante de carga e descarga de mercadoria,4,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
+Fortaleza - U.a. messejana,Ajudante de motorista,15,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Motofretista,1,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
+Fortaleza - U.a. messejana,Motorista de caminhão,1,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,Motorista entregador,1,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - U.a. messejana,"Operador de máquinas fixas, em geral",2,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
 Fortaleza - Casa do cidadão benfica,Motorista entregador,1,(85) 2180-6215,Av. Carapinima,vagas.benfica@idt.org.br
@@ -14,7 +15,7 @@ Canindé,Motofretista,1,,Rua Praça Frei Matias,
 Canindé,Motorista entregador,1,,Rua Praça Frei Matias,
 Crateús,Caminhoneiro caçambeiro,1,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
 Crateús,Motorista de caminhão,1,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
-Crateús,Motorista entregador,3,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
+Crateús,Motorista entregador,2,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
 Eusébio,Ajudante de carga e descarga de mercadoria,10,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
 Eusébio,Ajudante de motorista,4,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
 Horizonte,Entregador de gás (ajudante de caminhão),1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
@@ -32,10 +33,9 @@ Juazeiro do norte,Ajudante de carga e descarga de mercadoria,3,(88) 2180-6225,Ru
 Limoeiro do norte,Ajudante de carga e descarga de mercadoria,6,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Motorista de caminhão guincho pesado com munk,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Motorista entregador,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Limoeiro do norte,Operador de máquina perfuratriz,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Operador de retro-escavadeira,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
 Limoeiro do norte,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Maracanaú,Ajudante de carga e descarga de mercadoria,4,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
+Maracanaú,Ajudante de carga e descarga de mercadoria,8,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Ajudante de motorista,8,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista carreteiro,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
 Maracanaú,Motorista de caminhão,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
@@ -50,14 +50,12 @@ Pecém,Motorista de caminhão (rotas regionais e internacionais),2,(85) 2180-622
 Pecém,Operador de retro-escavadeira,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
 Quixadá,Motorista de caminhão,1,(85) 2180-6229,Av. Plácido Castelo,
 Quixeramobim,Ajudante de motorista,1,(85) 3305-8579,Rua Mons. Salviano Pinto,
-Quixeramobim,Motorista de caminhão,1,(85) 3305-8579,Rua Mons. Salviano Pinto,
 Sobral,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Motorista de automóveis,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Motorista de caminhão,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Motorista de furgão ou veículo similar,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,Motorista entregador,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
 Sobral,"Operador de máquinas de fabricação de doces, salgados e massas alimentícias",1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
-Tianguá,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
 Tianguá,Motorista de caminhão,1,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
 Tianguá,Motorista de caminhão basculante,3,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
 Tianguá,Motorista de ônibus urbano,3,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
