@@ -1,67 +1,66 @@
 cidade,cargo,total,telefone,endereco,email
-Fortaleza - Centro,Ajudante de carga e descarga de mercadoria,2,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
-Fortaleza - Centro,Ajudante de motorista,2,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
-Fortaleza - Centro,Motorista carreteiro,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
-Fortaleza - Centro,Motorista de automóveis,1,(85) 3222.0340,Rua Rufino de Alencar,vagas.centro@idt.org.br
-Fortaleza - Casa do cidadão,Ajudante de carga e descarga de mercadoria,2,(85) 2180-6213,Av. Whashington Soares,vagas.papicu@idt.org.br
-Fortaleza - Casa do cidadão,Ajudante de motorista,1,(85) 2180-6213,Av. Whashington Soares,vagas.papicu@idt.org.br
-Fortaleza - Casa do cidadão,Motorista de caminhão,1,(85) 2180-6213,Av. Whashington Soares,vagas.papicu@idt.org.br
-Fortaleza - U.a. antônio bezerra,Ajudante de carga e descarga de mercadoria,2,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
-Fortaleza - U.a. antônio bezerra,Motofretista,2,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
-Fortaleza - U.a. antônio bezerra,Motorista entregador,2,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
-Fortaleza - U.a. antônio bezerra,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
-Fortaleza - U.a. antônio bezerra,Ajudante de motorista,10,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
-Fortaleza - U.a. antônio bezerra,Motorista de ônibus urbano,2,(85) 2180-6216,Av. Demétrio de Menezes,vagas.antoniobezerra@idt.org.br
-Fortaleza - U.a. messejana,Ajudante de carga e descarga de mercadoria,14,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
-Fortaleza - U.a. messejana,Ajudante de motorista,5,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
-Fortaleza - U.a. messejana,Motorista de caminhão,3,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
-Fortaleza - U.a. messejana,Motorista entregador,1,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
-Fortaleza - U.a. messejana,"Operador de máquinas fixas, em geral",2,(85) 2180-6217,Av. Jornalista Tomaz Coelho,vagas.messejana@idt.org.br
-Fortaleza - Casa do cidadão benfica,Motofretista,1,(85) 2180-6215,Av. Carapinima,vagas.benfica@idt.org.br
-Fortaleza - Casa do cidadão benfica,Motorista entregador,2,(85) 2180-6215,Av. Carapinima,vagas.benfica@idt.org.br
-Canindé,Motorista entregador,1,,Rua Praça Frei Matias,
-Crateús,Caminhoneiro caçambeiro,1,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
-Crateús,Motorista entregador,3,(85) 2180-6230,Rua Dom Pedro II,vagas.crateus@idt.org.br
-Eusébio,Ajudante de carga e descarga de mercadoria,10,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
-Eusébio,Ajudante de motorista,4,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
-Eusébio,Ajudante de carga e descarga de mercadoria,2,(85) 2180-6218,Rua Irmã Ambrosina,vagas.eusebio@idt.org.br
-Horizonte,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
-Horizonte,Entregador de gás (ajudante de caminhão),1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
-Horizonte,Motofretista,1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
-Horizonte,Motorista de caminhão,2,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
-Horizonte,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6219,Avenida Presidente Castelo Branco,vagas.horizonte@idt.org.br
-Iguatu,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6226,Rua Floriano Peixoto,vagas.iguatu@idt.org.br
-Iguatu,Motorista entregador,1,(85) 2180-6226,Rua Floriano Peixoto,vagas.iguatu@idt.org.br
-Juazeiro do norte,Ajudante de carga e descarga de mercadoria,3,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
-Juazeiro do norte,Motorista de caminhão guincho pesado com munk,2,(88) 2180-6225,Rua Interventor Francisco Erivano Cruz,vagas.juazeirodonorte@idt.org.br
-Limoeiro do norte,Ajudante de carga e descarga de mercadoria,3,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Limoeiro do norte,Motorista de caminhão,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Limoeiro do norte,Motorista de caminhão guincho pesado com munk,2,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Limoeiro do norte,Motorista entregador,3,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Limoeiro do norte,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6228,Rua José Satino,vagas.limoeirodonorte@idt.org.br
-Maracanaú,Ajudante de motorista,4,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
-Maracanaú,Motorista carreteiro,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
-Maracanaú,Motorista de caminhão,1,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
-Maracanaú,Motorista entregador,4,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
-Maracanaú,Ajudante de carga e descarga de mercadoria,18,(85) 2180-6220,Av. Senador Virgílio Távora,vagas.maracanau@idt.org.br
-Maranguape,Ajudante de carga e descarga de mercadoria,2,(85) 3369-9101,Rua Cel. Antônio Botelho,
-Maranguape,Motorista entregador,2,(85) 3369-9101,Rua Cel. Antônio Botelho,
-Pecém,Motofretista,2,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
-Pecém,Motorista de automóveis,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
-Pecém,Motorista de caminhão,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
-Pecém,Motorista de caminhão (rotas regionais e internacionais),2,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
-Pecém,Operador de retro-escavadeira,1,(85) 2180-6221,Rua Francisco Câncio,curriculos.pecem@idt.org.br
-Quixadá,Motofretista,1,(85) 2180-6229,Av. Plácido Castelo,
-Quixadá,Motorista de caminhão,1,(85) 2180-6229,Av. Plácido Castelo,
-Quixeramobim,Ajudante de carga e descarga de mercadoria,2,(85) 3305-8579,Rua Mons. Salviano Pinto,
-Quixeramobim,Ajudante de motorista,1,(85) 3305-8579,Rua Mons. Salviano Pinto,
-Quixeramobim,Motorista de caminhão,2,(85) 3305-8579,Rua Mons. Salviano Pinto,
-Quixeramobim,Motorista entregador,2,(85) 3305-8579,Rua Mons. Salviano Pinto,
-Sobral,Ajudante de carga e descarga de mercadoria,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
-Sobral,Controlador de tráfego,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
-Sobral,Motorista de caminhão,1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
-Sobral,Motorista entregador,3,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
-Sobral,"Operador de máquinas de fabricação de doces, salgados e massas alimentícias",1,(85) 2180-6223,Rua Cel. João Silvestre,vagas.sobral@idt.org.br
-Tianguá,Motorista de caminhão,1,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
-Tianguá,Operador de máquinas de construção civil e mineração,1,(85) 2180-6224,Av. Prefeito Jaques Nunes,vagas.tiangua@idt.org.br
-Fortim,Motofretista,1,,AV. Joaquim Crisóstomo,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,2,,,
+Vagas regulares,Ajudante de motorista,2,,,
+Vagas regulares,Motorista carreteiro,1,,,
+Vagas regulares,Motorista de automóveis,1,,,
+Vagas exclusiva pcd,Ajudante de carga e descarga de mercadoria,3,,,
+Vagas exclusiva pcd,Motorista de caminhão,3,,,
+Vagas regulares,Ajudante de motorista,1,,,
+Vagas regulares,Motorista de caminhão,1,,,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,2,,,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,2,,,
+Vagas regulares,Motofretista,2,,,
+Vagas regulares,Motorista entregador,2,,,
+Vagas inclusivas,Ajudante de motorista,10,,,
+Vagas inclusivas,Motorista de ônibus urbano,2,,,
+Vagas exclusiva pcd,Ajudante de carga e descarga de mercadoria,1,,,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,13,,,
+Vagas regulares,Ajudante de motorista,5,,,
+Vagas regulares,Motorista de caminhão,2,,,
+Vagas regulares,Motorista entregador,1,,,
+Vagas regulares,Motorista entregador,1,,,
+Vagas inclusivas,Motorista entregador,1,,,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,5,,,
+Vagas regulares,Ajudante de motorista,2,,,
+Vagas inclusivas,Ajudante de carga e descarga de mercadoria,2,,,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,1,,,
+Vagas regulares,Entregador de gás (ajudante de caminhão),1,,,
+Vagas regulares,Motofretista,1,,,
+Vagas regulares,Motorista de caminhão,2,,,
+Vagas exclusiva pcd,Ajudante de carga e descarga de mercadoria,1,,,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,1,,,
+Vagas regulares,Motorista entregador,1,,,
+Vagas inclusivas,Motorista de caminhão guincho pesado com munk,2,,,
+Vagas exclusiva pcd,Ajudante de carga e descarga de mercadoria,3,,,
+Vagas regulares,Motorista de caminhão guincho pesado com munk,2,,,
+Vagas regulares,Motorista entregador,1,,,
+Vagas regulares,Operador de retro-escavadeira,1,,,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,3,,,
+Vagas exclusiva pcd,Ajudante de carga e descarga de mercadoria,1,,,
+Vagas regulares,Ajudante de motorista,4,,,
+Vagas regulares,Motorista de caminhão,1,,,
+Vagas regulares,Motorista entregador,4,,,
+Vagas regulares,Motorista carreteiro,1,,,
+Vagas inclusivas,Ajudante de carga e descarga de mercadoria,12,,,
+Vagas inclusivas,Ajudante de carga e descarga de mercadoria,2,,,
+Vagas inclusivas,Motorista entregador,2,,,
+Vagas regulares,Motofretista,2,,,
+Vagas regulares,Motorista de caminhão,1,,,
+Vagas regulares,Motorista de caminhão (rotas regionais e internacionais),2,,,
+Vagas regulares,Operador de retro-escavadeira,1,,,
+Vagas regulares,Motofretista,1,,,
+Vagas regulares,Motorista de caminhão,1,,,
+Vagas inclusivas,Ajudante de carga e descarga de mercadoria,2,,,
+Vagas inclusivas,Ajudante de motorista,1,,,
+Vagas inclusivas,Motorista de caminhão,2,,,
+Vagas inclusivas,Motorista entregador,2,,,
+Vagas regulares,Controlador de tráfego,1,,,
+Vagas regulares,Motorista entregador,3,,,
+Vagas regulares,Ajudante de carga e descarga de mercadoria,1,,,
+Vagas regulares,Motorista de caminhão,1,,,
+Vagas inclusivas,Ajudante de carga e descarga de mercadoria,10,,,
+Vagas inclusivas,Motorista de caminhão,1,,,
+Vagas inclusivas,Motorista de caminhão basculante,1,,,
+Vagas inclusivas,Motorista entregador,3,,,
+Vagas inclusivas,Operador de máquinas de construção civil e mineração,1,,,
+Vagas inclusivas,Motofretista,1,,,
